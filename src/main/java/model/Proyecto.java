@@ -5,18 +5,18 @@ public class Proyecto {
     private String nombre;
     private String descripcion;
     private Boolean estado;
-    private String prioridad;
-    private Usuario propietario; 
+    private String areaDeInteres;
+    private Usuario propietario;
     private Usuario tutorExterno;
     private Usuario docenteSupervisor;
 
-    public Proyecto(int id, String nombre, String descripcion, Boolean estado, String prioridad,
+    public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
                     Usuario propietario, Usuario tutorExterno, Usuario docenteSupervisor) {
         this.id_proyecto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.estado = estado;
-        this.prioridad = prioridad;
+        this.areaDeInteres = areaDeInteres;
         this.propietario = propietario;
         this.tutorExterno = tutorExterno;
         this.docenteSupervisor = docenteSupervisor;
