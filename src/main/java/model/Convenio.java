@@ -18,6 +18,7 @@ public class Convenio {
         this.fechaFin = fechaFin;
     }
 
-    public void generarConvenio(ConvenioDAO convenioDAO)
+    public void generarConvenio(ConvenioDAO convenioDAO) {
         convenioDAO.create(this);
     }
+}
