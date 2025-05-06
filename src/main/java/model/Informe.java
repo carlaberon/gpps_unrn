@@ -10,9 +10,13 @@ public class Informe {
     private LocalDate fechaEntrega;
     private String tipo;
     private String archivo;
+    private boolean estado; //true: entregado || false: no entregado
+    private int valoracionInforme;
 
-    public Informe(String descripcion, String tipo) {
+    public Informe(int id, String descripcion, LocalDate fechaEntrega, String tipo) {
+        this.id = id;
         this.descripcion = descripcion;
+        this.fechaEntrega = fechaEntrega;
         this.tipo = tipo;
     }
 }
