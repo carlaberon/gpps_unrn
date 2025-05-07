@@ -6,12 +6,12 @@ public class Proyecto {
     private String descripcion;
     private Boolean estado;
     private String areaDeInteres;
-    private Usuario estudiante;
-    private Usuario director;
-    private Usuario docenteSupervisor;
+    private Estudiante estudiante;
+    private Director director;
+    private Tutor docenteSupervisor;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                    Usuario estudiante, Usuario director, Usuario docenteSupervisor) {
+                    Estudiante estudiante, Director director, Tutor docenteSupervisor) {
         this.id_proyecto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -20,5 +20,44 @@ public class Proyecto {
         this.estudiante = estudiante;
         this.director = director;
         this.docenteSupervisor = docenteSupervisor;
+    }
+
+    public boolean esValido() {
+        return nombre != null && !nombre.isEmpty()
+                && descripcion != null && !descripcion.isEmpty()
+                && areaDeInteres != null && !areaDeInteres.isEmpty()
+                && estudiante != null && director != null && docenteSupervisor != null;
+    }
+
+    public int getId() {
+        return id_proyecto;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public String getAreaDeInteres() {
+        return areaDeInteres;
+    }
+
+    public boolean getEstado() {
+        return estado;
+    }
+
+    public Tutor getDocenteSupervisor() {
+        return docenteSupervisor;
+    }
+
+    public Director getDirector() {
+        return director;
+    }
+
+    public Estudiante getEstudiante() {
+        return estudiante;
     }
 }
