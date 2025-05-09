@@ -1,16 +1,7 @@
 package model;
 
 public class Director extends Usuario {
-
-    public Director(String nombreUsuario, String contraseña, String nombre, String email) {
-        super(nombreUsuario, contraseña, nombre, email);
-    }
-
-    public void aprobarPlan(PlanDeTrabajo plan) {
-        plan.aprobar();
-    }
-
-    public void rechazarPlan(PlanDeTrabajo plan) {
-        plan.rechazar();
+    public Director(int id, String nombreUsuario, String contrasenia, String nombre, String email) {
+        super(id, nombreUsuario, contrasenia, nombre, email);
     }
 }
