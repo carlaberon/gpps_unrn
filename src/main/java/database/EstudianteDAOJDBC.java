@@ -1,6 +1,8 @@
 package database;
 
 import model.Estudiante;
+import model.EstudianteDAO;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
 package database;
 
 import model.Proyecto;
+import model.ProyectoDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
     }
 
     @Override
-    public void guardar(Proyecto proyecto) throws SQLException {
+    public void guardar(Proyecto proyecto)  {
         String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, docenteSupervisor, idUsuario_director, idUsuario_estudiante) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, proyecto.getId());
@@ -29,9 +29,11 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
             stmt.setInt(7, proyecto.getDirector().getId());
             stmt.setInt(8, proyecto.getEstudiante().getId());
             stmt.executeUpdate();
+        }catch (Exception e){
+            throw new RuntimeException("",e);
         }
     }
-    public List<Proyecto> obtenerProyectos() throws SQLException {
+    public List<Proyecto> obtenerProyectos() {
         List<Proyecto> proyectos = new ArrayList<>();
         String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.areaDeInteres, "
                 + "p.idUsuario_estudiante, p.idUsuario_director, p.docenteSupervisor "
@@ -53,6 +55,8 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
                 );
                 proyectos.add(proyecto);
             }
+        }catch (Exception e){
+            throw new RuntimeException("", e);
         }
         System.out.println("Proyectos cargados: " + proyectos.size());
         return proyectos;

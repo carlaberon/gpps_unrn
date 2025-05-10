@@ -1,6 +1,5 @@
-package database;
+package model;
 
-import model.Director;
 import java.util.List;
 
 public interface DirectorDAO {

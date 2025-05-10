@@ -1,6 +1,8 @@
 package database;
 
 import model.Tutor;
+import model.TutorDAO;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

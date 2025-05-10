@@ -1,12 +1,15 @@
 package org.example.gpps_unrn;
 
-import database.*;
+//import database.*;
+import database.Conn;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.StringConverter;
 import java.sql.Connection;
+import java.sql.SQLException;
+
 import model.*;
 
 public class ProyectoFormController {
@@ -28,7 +31,12 @@ public class ProyectoFormController {
     public void initialize() {
         try {
             Connection conn = Conn.getConnection();
-            proyectoDAO = new ProyectoDAOJDBC(conn);
+            proyectoDAO = new ProyectoDAO() {
+                @Override
+                public void guardar(Proyecto proyecto) throws SQLException {
+
+                }
+            };
             estudianteDAO = new EstudianteDAOJDBC(conn);
             directorDAO = new DirectorDAOJDBC(conn);
             tutorDAO = new TutorDAOJDBC(conn);

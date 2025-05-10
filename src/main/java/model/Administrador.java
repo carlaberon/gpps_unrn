@@ -1,26 +1,29 @@
 package model;
 
 import java.time.LocalDate;
-import database.ConvenioDAO;
-import database.DataBaseConnectionException;
+//import database.ConvenioDAOJDBC;
+//import database.DataBaseConnectionException;
 
 public class Administrador extends Usuario {
-    public Administrador(int id, String nombreUsuario, String contrasenia, String nombre, String email) {
+	private ConvenioDAO dao;
+
+    public Administrador(int id, String nombreUsuario, String contrasenia, String nombre, String email, ConvenioDAO dao) {
         super(id, nombreUsuario, contrasenia, nombre, email);
+        this.dao = dao;
     }
 
     public Convenio generarConvenio(int idEntidad, int idProyecto, String descripcion, 
-            LocalDate fechaInicio, LocalDate fechaFin, ConvenioDAO dao)throws DataBaseConnectionException {
+            LocalDate fechaInicio, LocalDate fechaFin){
     	
     	Convenio convenio = new Convenio(idEntidad, idProyecto, descripcion, fechaInicio, fechaFin);
-    	dao.create(convenio);
+    	this.dao.create(convenio);
     	return convenio;
 }
 
-public void cargarConvenioFirmado(Convenio convenio, byte[] archivoPdf, ConvenioDAO dao)
-              throws DataBaseConnectionException {
+public void cargarConvenioFirmado(Convenio convenio, byte[] archivoPdf)
+              {
 	convenio.setArchivoPdf(archivoPdf);
 	convenio.activar(); 
-	dao.updateArchivo(convenio); 
+	this.dao.updateArchivo(convenio);
 	}
 }
