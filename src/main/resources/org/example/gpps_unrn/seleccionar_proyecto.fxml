@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ui.SeleccionarProyectoController"
+      spacing="10" alignment="CENTER"
+      prefWidth="600" prefHeight="400">
+
+    <TableView fx:id="tableProyectos" prefHeight="300">
+        <columns>
+            <TableColumn fx:id="colNombre" text="Nombre del Proyecto" />
+            <TableColumn fx:id="colDescripcion" text="Descripción" />
+        </columns>
+    </TableView>
+
+    <Button fx:id="btnSeleccionar" text="Seleccionar Proyecto" onAction="#seleccionarProyecto"/>
+</VBox>

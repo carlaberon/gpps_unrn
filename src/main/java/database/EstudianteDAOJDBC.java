@@ -68,4 +68,18 @@ public class EstudianteDAOJDBC implements EstudianteDAO {
         }
         return null;
     }
-} 
+    	public void seleccionarProyecto(Estudiante estudiante) throws DataBaseConnectionException {
+    		if (estudiante.getProyectoSeleccionado() != null) {
+    		    try (Connection conn = Conn.getConnection()) {
+    		        PreparedStatement stmt = conn.prepareStatement(
+    		            "UPDATE estudiante SET id_proyecto = ? WHERE id = ?");
+    		        stmt.setInt(1, estudiante.getProyectoSeleccionado().getId());
+    		        stmt.setInt(2, estudiante.getId());
+    		        stmt.executeUpdate();
+    		    } catch (SQLException e) {
+    		        throw new DataBaseConnectionException("Error al asignar proyecto al estudiante.");
+    		    }
+    		}
+    	}
+    
+}

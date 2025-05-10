@@ -1,7 +1,7 @@
 package model;
 
 public abstract class Usuario {
-    private int id;
+    protected int id;
     private String nombreUsuario;
     private String contrasenia;
     private String nombre;
