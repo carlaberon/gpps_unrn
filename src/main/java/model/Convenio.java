@@ -1,8 +1,6 @@
 package model;
 
 import java.time.LocalDate;
-import database.ConvenioDAO;
-import database.DataBaseConnectionException;
 
 public class Convenio {
     private int id;
@@ -20,10 +18,6 @@ public class Convenio {
         this.descripcion = descripcion;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
-    }
-
-    public void generarConvenio(ConvenioDAO convenioDAO) throws DataBaseConnectionException {
-        convenioDAO.create(this);
     }
     public void setArchivoPdf(byte[] archivoPdf) { 
     	this.archivoPdf = archivoPdf; 

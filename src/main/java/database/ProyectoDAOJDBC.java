@@ -4,7 +4,10 @@ import model.Proyecto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProyectoDAOJDBC implements ProyectoDAO {
     private Connection conn;
@@ -27,5 +30,31 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
             stmt.setInt(8, proyecto.getEstudiante().getId());
             stmt.executeUpdate();
         }
+    }
+    public List<Proyecto> obtenerProyectos() throws SQLException {
+        List<Proyecto> proyectos = new ArrayList<>();
+        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.areaDeInteres, "
+                + "p.idUsuario_estudiante, p.idUsuario_director, p.docenteSupervisor "
+                + "FROM Proyecto p "
+                + "WHERE p.estado = true AND p.idUsuario_estudiante IS NULL";
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Proyecto proyecto = new Proyecto(
+                    rs.getInt("id_proyecto"),
+                    rs.getString("nombre"),
+                    rs.getString("descripcion"),
+                    rs.getBoolean("estado"),
+                    rs.getString("areaDeInteres"),
+                    null, // estudiante aún no asignado
+                    null, // cargar director si es necesario
+                    null  // cargar tutor si es necesario
+                );
+                proyectos.add(proyecto);
+            }
+        }
+        System.out.println("Proyectos cargados: " + proyectos.size());
+        return proyectos;
     }
 }

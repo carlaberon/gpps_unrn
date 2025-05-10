@@ -34,7 +34,7 @@
             <version>${javafx.version}</version>
         </dependency>
 
-        <!-- MySQL -->
+        <!-- MySQL (correcto y actualizado) -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -47,20 +47,6 @@
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.2</version>
             <scope>test</scope>
-        </dependency>
-
-        <!-- MySQL JDBC Driver (repetido, puede eliminarse si se desea evitar duplicación) -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
-        </dependency>
-
-        <!-- Dependencia personalizada -->
-        <dependency>
-            <groupId>Restaurante</groupId>
-            <artifactId>Restaurante</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -75,6 +61,7 @@
                     <target>17</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -86,3 +73,4 @@
         </plugins>
     </build>
 </project>
+
