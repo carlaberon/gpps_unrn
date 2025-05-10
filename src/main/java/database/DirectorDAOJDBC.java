@@ -1,8 +1,6 @@
 package database;
 
 import model.Director;
-import model.DirectorDAO;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

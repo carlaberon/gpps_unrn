@@ -1,7 +1,6 @@
-package model;
+package database;
 
-import database.DataBaseConnectionException;
-
+import model.Estudiante;
 import java.util.List;
 
 public interface EstudianteDAO {

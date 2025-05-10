@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AdministradorDAO implements model.AdministradorDAO {
+public class AdministradorDAO {
 
     public void cargarArchivoConvenio(int idConvenio, InputStream archivoPDF)
             throws DataBaseConnectionException {
