@@ -1,7 +1,7 @@
 package model;
 import java.io.InputStream;
 
-public class GestorDeConvenios {
+public interface GestorDeConvenios {
     void create(Convenio convenio);
     void upDateArchivo(Convenio convenio);
     void cargarArchivoConvenioFirmado(int idConvenio, InputStream archivoPDF);
