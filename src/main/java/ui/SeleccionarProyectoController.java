@@ -4,9 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Proyecto;
-import model.Estudiante;
 import database.*;
-
 import javafx.event.ActionEvent;
 import java.sql.Connection;
 import java.util.List;
