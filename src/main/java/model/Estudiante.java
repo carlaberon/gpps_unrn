@@ -2,7 +2,7 @@ package model;
 
 public class Estudiante extends Usuario {
     private static int id;
-	private String legajo;
+    private String legajo;
     private Boolean regular;
     private String direccionPostal;
     private Proyecto proyectoSeleccionado;
@@ -31,10 +31,11 @@ public class Estudiante extends Usuario {
     public Proyecto getProyectoSeleccionado() {
         return proyectoSeleccionado;
     }
-/*    public int getId() {
-        return id;
-    }
-*/
+
+    /*    public int getId() {
+            return id;
+        }
+    */
     public void seleccionarProyecto(Proyecto proyecto) {
         if (this.proyectoSeleccionado != null) {
             throw new IllegalStateException("El estudiante ya seleccionó un proyecto.");

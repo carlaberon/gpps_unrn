@@ -12,7 +12,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/gpps_unrn/seleccionar_proyecto.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/gpps_unrn/ProyectoForm.fxml"));
         Scene scene = new Scene(loader.load(), 400, 300);
 
         stage.setTitle("Seleccionar Proyecto PPS");
