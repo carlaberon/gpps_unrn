@@ -2,12 +2,12 @@ package model;
 
 public class Estudiante extends Usuario {
     private static int id;
-	private String legajo;
+    private String legajo;
     private Boolean regular;
     private String direccionPostal;
     private Proyecto proyectoSeleccionado;
 
-    public Estudiante(String nombreUsuario, String contrasenia, String nombre, String email,
+    public Estudiante(int id, String nombreUsuario, String contrasenia, String nombre, String email,
                       String legajo, Boolean regular, String direccionPostal) {
         super(id, nombreUsuario, contrasenia, nombre, email);
         this.legajo = legajo;
@@ -31,10 +31,11 @@ public class Estudiante extends Usuario {
     public Proyecto getProyectoSeleccionado() {
         return proyectoSeleccionado;
     }
-/*    public int getId() {
-        return id;
-    }
-*/
+
+    /*    public int getId() {
+            return id;
+        }
+    */
     public void seleccionarProyecto(Proyecto proyecto) {
         if (this.proyectoSeleccionado != null) {
             throw new IllegalStateException("El estudiante ya seleccionó un proyecto.");
