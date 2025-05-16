@@ -22,7 +22,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         String sql = "UPDATE proyecto SET docenteSupervisor = ?, idUsuario_tutor = ? WHERE id_proyecto = ?";
         try (Connection conn = Conn.getConnection();
              PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, idDocente);   // suponiendo que Tutor tiene getId()
+            statement.setInt(1, idDocente);
             statement.setInt(2, idTutor);
             statement.setInt(3, idProyecto);
             statement.executeUpdate();
