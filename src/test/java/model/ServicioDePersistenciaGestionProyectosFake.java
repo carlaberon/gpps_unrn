@@ -3,8 +3,8 @@ package model;
 public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProyectos {
     private Proyecto propuestaDeProyecto;
     private int idProyecto;
-    private Tutor tutor;
-    private Tutor docente;
+    private int idTutor;
+    private int idDocente;
 
     @Override
     public void registrarPropuestaDeProyecto(Proyecto proyecto) {
@@ -14,10 +14,10 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
-    public void registrarAsignacionDocenteTutor(int idProyecto, Tutor docente, Tutor tutor) {
+    public void registrarAsignacionDocenteTutor(int idProyecto, int idDocente, int idTutor) {
         this.idProyecto = idProyecto;
-        this.docente = docente;
-        this.tutor = tutor;
+        this.idDocente = idDocente;
+        this.idTutor = idTutor;
     }
 
     //este metodo es para llamar en los assert
@@ -29,11 +29,11 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
         return this.idProyecto;
     }
 
-    public Tutor docente() {
-        return this.docente;
+    public int idDocente() {
+        return this.idDocente;
     }
 
-    public Tutor tutor() {
-        return this.tutor;
+    public int idTutor() {
+        return this.idTutor;
     }
 }

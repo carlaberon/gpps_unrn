@@ -2,10 +2,14 @@ package database;
 
 import model.GestorDeProyectos;
 import model.Proyecto;
-import model.Tutor;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 //el import...dependencia
 
 public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos {
+    private Connection conn;
+
     @Override
     public void registrarPropuestaDeProyecto(Proyecto proyecto) {
         //aca implemento
@@ -14,7 +18,17 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     }
 
     @Override
-    public void registrarAsignacionDocenteTutor(int idProyecto, Tutor docente, Tutor tutor) {
-        //aca implemento el update para darle valor a los atributos tutor y docente del proyecto en BD
+    public void registrarAsignacionDocenteTutor(int idProyecto, int idDocente, int idTutor) {
+        String sql = "UPDATE proyecto SET docenteSupervisor = ?, idUsuario_tutor = ? WHERE id_proyecto = ?";
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, idDocente);   // suponiendo que Tutor tiene getId()
+            statement.setInt(2, idTutor);
+            statement.setInt(3, idProyecto);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("Problema con la persistencia");
+        }
+
     }
 }

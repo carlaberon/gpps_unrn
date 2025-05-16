@@ -23,9 +23,6 @@ public class testGestionProyectos {
         boolean regular = true;
         String dirPostal = "8500";
 
-        var director = new Director(1, "director", "1234", "gabriel", "gabriel@gmail.com");
-
-
         //ejercitacion
 
         proyectos.propuestaDeProyecto(1, nombreProyecto, descripcion, estado, areaDeInteres, null, null, null);
@@ -46,5 +43,20 @@ public class testGestionProyectos {
         //aca puedo asertar los datos del director y del tutor
 
 
+    }
+
+    @Test
+    public void asignarDocenteYTutor() {
+//        var docente = new Tutor(1, "Juan123", "123", "Juan", "juansito_123@hotmail.com", "Docente");
+//        var tutorExterno = new Tutor(1, "Ana123", "1234", "Ana", "ana_123@hotmail.com", "Externo");
+        var registroDocenteTutorFake = new ServicioDePersistenciaGestionProyectosFake();
+        var proyectos = new Proyectos(registroDocenteTutorFake);
+        var proyecto = new Proyecto(1, "Proyecto1", "nada", false, "ninguna", null, null, null);
+
+        proyectos.asignarDocenteTutor(1, 11, 12);
+
+        assertEquals(11, registroDocenteTutorFake.idDocente());
+        assertEquals(12, registroDocenteTutorFake.idTutor());
+        assertEquals(1, registroDocenteTutorFake.idProyecto());
     }
 }
