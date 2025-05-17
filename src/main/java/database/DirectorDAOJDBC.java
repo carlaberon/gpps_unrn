@@ -1,6 +1,9 @@
 package database;
 
 import model.Director;
+import model.Usuario;
+
+import java.net.UnknownServiceException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +16,8 @@ public class DirectorDAOJDBC implements DirectorDAO {
     }
 
     @Override
-    public List<Director> obtenerTodos() {
-        List<Director> directores = new ArrayList<>();
+    public List<Usuario> obtenerTodos() {
+        List<Usuario> directores = new ArrayList<>();
         String sql = "SELECT u.idUsuario, u.nombreUsuario, u.nombre, u.email " +
                     "FROM Usuario u " +
                     "JOIN Director d ON u.idUsuario = d.id_Usuario";

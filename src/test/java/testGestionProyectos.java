@@ -10,7 +10,7 @@ public class testGestionProyectos {
         //setup
         //creo un fake
         var servicioDePersistenciaFake = new ServicioDePersistenciaGestionProyectosFake();
-        var proyectos = new Proyectos(servicioDePersistenciaFake);
+        var proyectos = new Proyectos(servicioDePersistenciaFake, );
         String nombreProyecto = "gpps";
         String descripcion = "desarrollar plataforma para la gestión de prácticas profesionales supervisadas en la UNRN";
         boolean estado = false; //el proyecto no se encuentra aprobado
@@ -50,7 +50,7 @@ public class testGestionProyectos {
 //        var docente = new Tutor(1, "Juan123", "123", "Juan", "juansito_123@hotmail.com", "Docente");
 //        var tutorExterno = new Tutor(1, "Ana123", "1234", "Ana", "ana_123@hotmail.com", "Externo");
         var registroDocenteTutorFake = new ServicioDePersistenciaGestionProyectosFake();
-        var proyectos = new Proyectos(registroDocenteTutorFake);
+        var proyectos = new Proyectos(registroDocenteTutorFake, );
         var proyecto = new Proyecto(1, "Proyecto1", "nada", false, "ninguna", null, null, null);
 
         proyectos.asignarDocenteTutor(1, 11, 12);
