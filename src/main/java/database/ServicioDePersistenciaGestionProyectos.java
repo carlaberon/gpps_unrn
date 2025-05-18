@@ -1,6 +1,7 @@
 package database;
 
 import model.GestorDeProyectos;
+import model.Informe;
 import model.Proyecto;
 
 import java.sql.Connection;
@@ -31,4 +32,15 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         }
 
     }
+
+    @Override
+    public void cargarInformeParcial(Informe informeParcial) {
+        //cargar informeParcial
+    }
+
+    @Override
+    public void cargarInformeFinal(Informe informeFinal) {
+        //cargar informeFinal
+    }
+
 }

@@ -34,7 +34,7 @@ public class Main {
 
         //Pruebo metodo registrarAsignacionDocenteTutor en BD. Pruebo con los datos cargados ya en la BD
 
-        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos());
+        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), );
         proyectos.asignarDocenteTutor(1, 11, 12);
     }
 }
