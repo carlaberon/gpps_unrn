@@ -14,9 +14,13 @@ import java.util.List;
 public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos {
     private Connection conn;
 
-//    public ServicioDePersistenciaGestionProyectos(Connection conn) {
-//        this.conn = conn;
-//    }
+    public ServicioDePersistenciaGestionProyectos(Connection conn) {
+        try {
+            this.conn = Conn.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void registrarPropuestaDeProyecto(Proyecto proyecto) {
@@ -37,6 +41,21 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             stmt.setInt(6, proyecto.getDocenteSupervisor().getId());
             stmt.setInt(7, proyecto.getTutor().getId());
             stmt.setInt(8, proyecto.getEstudiante().getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
+        String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, docenteSupervisor, idUsuario_tutor) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, proyecto.getId());
+            stmt.setString(2, proyecto.getNombre());
+            stmt.setString(3, proyecto.getDescripcion());
+            stmt.setString(4, proyecto.getAreaDeInteres());
+            stmt.setBoolean(5, proyecto.getEstado());
+            stmt.setInt(6, proyecto.getDocenteSupervisor().getId());
+            stmt.setInt(7, proyecto.getTutor().getId());
             stmt.executeUpdate();
         }
     }

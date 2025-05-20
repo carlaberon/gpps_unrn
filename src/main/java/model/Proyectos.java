@@ -21,4 +21,8 @@ public class Proyectos {
         this.gestorDeProyectos.guardar(proyecto);
     }
 
+    public void guardarProyectoSinEstudiante(Proyecto proyecto) throws SQLException {
+        this.gestorDeProyectos.guardarSinEstudiante(proyecto);
+    }
+
 }

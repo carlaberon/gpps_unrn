@@ -220,14 +220,14 @@ public class ProyectoFormSwing extends JFrame {
                     descripcionField.getText(),
                     estadoCheck.isSelected(),
                     areaField.getText(),
-                    (Estudiante) estudianteCombo.getSelectedItem(),
+                    //(Estudiante) estudianteCombo.getSelectedItem(),
                     (Tutor) tutorCombo.getSelectedItem(),
                     (Tutor) supervisorCombo.getSelectedItem()
             );
 
             if (proyecto.esValido()) {
                 //proyectoDAO.guardar(proyecto);
-                proyectoDAO.guardarProyecto(proyecto);
+                proyectoDAO.guardarProyectoSinEstudiante(proyecto);
                 mostrarAlerta("Éxito", "Proyecto guardado correctamente");
                 limpiarCampos();
             } else {

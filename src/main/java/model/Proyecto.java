@@ -22,11 +22,22 @@ public class Proyecto {
         this.docenteSupervisor = docenteSupervisor;
     }
 
+    public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
+                    Tutor tutor, Tutor docenteSupervisor) {
+        this.id_proyecto = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.estado = estado;
+        this.areaDeInteres = areaDeInteres;
+        this.tutor = tutor;
+        this.docenteSupervisor = docenteSupervisor;
+    }
+
     public boolean esValido() {
         return nombre != null && !nombre.isEmpty()
                 && descripcion != null && !descripcion.isEmpty()
                 && areaDeInteres != null && !areaDeInteres.isEmpty()
-                && estudiante != null && tutor != null && docenteSupervisor != null;
+                && tutor != null && docenteSupervisor != null;
     }
 
     public int getId() {

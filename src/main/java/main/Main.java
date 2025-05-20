@@ -19,7 +19,8 @@ public class Main {
 //        }
         //comento lo anterior
         //HU: proponer proyecto
-        var gestorDeProyectoPersistencia = new ServicioDePersistenciaGestionProyectos();
+        Connection conn = null;
+        var gestorDeProyectoPersistencia = new ServicioDePersistenciaGestionProyectos(conn);
         var proyectos = new Proyectos(gestorDeProyectoPersistencia);
         //hago una prueba, aportando datos
         String nombreProyecto = "gpps";
@@ -32,9 +33,9 @@ public class Main {
         var tutorExterno = new Tutor(1, "tutorexterno", "1234", "hernan", "hernan@gmail.com", "tutor externo");
 
         proyectos.propuestaDeProyecto(1, nombreProyecto, descripcion, estado, areaDeInteres, estudiante, tutorInterno, tutorExterno);
-        Connection conn = null;
+
         GestorDeUsuarios gestorUsuarios = new ServicioDePersistenciaGestionUsuarios(conn);
-        GestorDeProyectos gestorProyectos = new ServicioDePersistenciaGestionProyectos();
+        GestorDeProyectos gestorProyectos = new ServicioDePersistenciaGestionProyectos(conn);
         new ProyectoFormSwing(gestorUsuarios, gestorProyectos).setVisible(true);
         //HAGO LA PRUEBA CON TEST UNITARIOS
     }
