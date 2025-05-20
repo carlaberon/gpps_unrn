@@ -1,25 +1,22 @@
 package main;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import database.Conn;
 import database.ServicioDePersistenciaGestionProyectos;
-import model.Director;
-import model.Estudiante;
-import model.Proyectos;
-import model.Tutor;
+import database.ServicioDePersistenciaGestionUsuarios;
+import model.*;
+import ui.ProyectoFormSwing;
+
+import java.sql.Connection;
 
 public class Main {
     public static void main(String[] args) {
-//            try {
-//                Connection conexion = Conn.getConnection();
-//                if (conexion != null && !conexion.isClosed()) {
-//                    System.out.println("✅ Conexión exitosa a la base de datos.");
-//                }
-//            } catch (SQLException e) {
-//                System.err.println("❌ Error al conectar: " + e.getMessage());
+//        try {
+//            Connection conexion = Conn.getConnection();
+//            if (conexion != null && !conexion.isClosed()) {
+//                System.out.println("✅ Conexión exitosa a la base de datos.");
 //            }
+//        } catch (SQLException e) {
+//            System.err.println("❌ Error al conectar: " + e.getMessage());
+//        }
         //comento lo anterior
         //HU: proponer proyecto
         var gestorDeProyectoPersistencia = new ServicioDePersistenciaGestionProyectos();
@@ -30,12 +27,15 @@ public class Main {
         boolean estado = false; //es una propuesta, el proyecto no se encuentra aprobado
         String areaDeInteres = "practicas pre-profesionales";
         //estudiante, director, tutor
-        var estudiante = new Estudiante("carla","contra1", "alrac", "alracnoreb@gmail.com", "UNRN-14183", true, "8500");
-        var director = new Director(1,"director", "1234", "gabriel", "gabriel@gmail.com");
-        var tutor = new Tutor(1, "tutor", "1234","hernan", "hernan@gmail.com", "interno");
+        var estudiante = new Estudiante(1, "carla", "contra1", "alrac", "alracnoreb@gmail.com", "UNRN-14183", true, "8500");
+        var tutorInterno = new Tutor(1, "tutorinterno", "1234", "gabriel", "gabriel@gmail.com", "tutor interno");
+        var tutorExterno = new Tutor(1, "tutorexterno", "1234", "hernan", "hernan@gmail.com", "tutor externo");
 
-        proyectos.propuestaDeProyecto(1, nombreProyecto, descripcion, estado, areaDeInteres, estudiante, director,tutor);
-
+        proyectos.propuestaDeProyecto(1, nombreProyecto, descripcion, estado, areaDeInteres, estudiante, tutorInterno, tutorExterno);
+        Connection conn = null;
+        GestorDeUsuarios gestorUsuarios = new ServicioDePersistenciaGestionUsuarios(conn);
+        GestorDeProyectos gestorProyectos = new ServicioDePersistenciaGestionProyectos();
+        new ProyectoFormSwing(gestorUsuarios, gestorProyectos).setVisible(true);
         //HAGO LA PRUEBA CON TEST UNITARIOS
     }
-    }
+}
