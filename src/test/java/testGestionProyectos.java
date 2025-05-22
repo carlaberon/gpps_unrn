@@ -53,7 +53,7 @@ public class testGestionProyectos {
         var proyectos = new Proyectos(registroDocenteTutorFake, );
         var proyecto = new Proyecto(1, "Proyecto1", "nada", false, "ninguna", null, null, null);
 
-        proyectos.asignarDocenteTutor(1, 11, 12);
+        proyectos.asignarDocenteTutor(1, 11);
 
         assertEquals(11, registroDocenteTutorFake.idDocente());
         assertEquals(12, registroDocenteTutorFake.idTutor());
