@@ -14,7 +14,7 @@ public class Proyectos {
         //registra el proyecto
     }
 
-    public void asignarDocenteTutor(int idProyecto, int idDocente, int idTutor) {
-        this.gestorDeProyectos.registrarAsignacionDocenteTutor(idProyecto, idDocente, idTutor);
+    public void asignarDocenteTutor(int idProyecto, int idTutorInterno) {
+        this.gestorDeProyectos.registrarAsignacionTutorInterno(idProyecto, idTutorInterno);
     }
 }

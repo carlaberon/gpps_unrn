@@ -18,13 +18,12 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     }
 
     @Override
-    public void registrarAsignacionDocenteTutor(int idProyecto, int idDocente, int idTutor) {
-        String sql = "UPDATE proyecto SET docenteSupervisor = ?, idUsuario_tutor = ? WHERE id_proyecto = ?";
+    public void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno) {
+        String sql = "UPDATE proyecto SET docenteSupervisor = ? WHERE id_proyecto = ?";
         try (Connection conn = Conn.getConnection();
              PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, idDocente);
-            statement.setInt(2, idTutor);
-            statement.setInt(3, idProyecto);
+            statement.setInt(1, idTutorInterno);
+            statement.setInt(2, idProyecto);
             statement.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException("Problema con la persistencia");
