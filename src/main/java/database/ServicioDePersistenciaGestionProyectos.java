@@ -31,7 +31,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void guardar(Proyecto proyecto) throws SQLException {
-        String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, docenteSupervisor, idUsuario_tutor, idUsuario_estudiante) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, idUsuario_tutorInterno, idUsuario_tutorExterno, idUsuario_estudiante) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, proyecto.getId());
             stmt.setString(2, proyecto.getNombre());
@@ -47,7 +47,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
-        String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, docenteSupervisor, idUsuario_tutor) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, idUsuario_tutorInterno, idUsuario_tutorExterno) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, proyecto.getId());
             stmt.setString(2, proyecto.getNombre());

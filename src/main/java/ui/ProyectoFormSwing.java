@@ -97,17 +97,17 @@ public class ProyectoFormSwing extends JFrame {
         gbc.gridx = 1;
         mainPanel.add(estudianteCombo, gbc);
 
-        // Director
+        // Tutor Interno
         gbc.gridx = 0;
         gbc.gridy = 5;
         mainPanel.add(new JLabel("Tutor Interno:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(tutorCombo, gbc);
 
-        // Supervisor
+        // Tutor Externo
         gbc.gridx = 0;
         gbc.gridy = 6;
-        mainPanel.add(new JLabel("Supervisor:"), gbc);
+        mainPanel.add(new JLabel("Tutor Externo:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(supervisorCombo, gbc);
 
@@ -214,25 +214,37 @@ public class ProyectoFormSwing extends JFrame {
         }
 
         try {
-            Proyecto proyecto = new Proyecto(
-                    0,
-                    nombreField.getText(),
-                    descripcionField.getText(),
-                    estadoCheck.isSelected(),
-                    areaField.getText(),
-                    //(Estudiante) estudianteCombo.getSelectedItem(),
-                    (Tutor) tutorCombo.getSelectedItem(),
-                    (Tutor) supervisorCombo.getSelectedItem()
-            );
+            Estudiante estudianteSeleccionado = (Estudiante) estudianteCombo.getSelectedItem();
 
-            if (proyecto.esValido()) {
-                //proyectoDAO.guardar(proyecto);
-                proyectoDAO.guardarProyectoSinEstudiante(proyecto);
-                mostrarAlerta("Éxito", "Proyecto guardado correctamente");
-                limpiarCampos();
+            Proyecto proyecto;
+            if (estudianteSeleccionado != null) {
+                proyecto = new Proyecto(
+                        0,
+                        nombreField.getText(),
+                        descripcionField.getText(),
+                        estadoCheck.isSelected(),
+                        areaField.getText(),
+                        estudianteSeleccionado,
+                        (Tutor) tutorCombo.getSelectedItem(),
+                        (Tutor) supervisorCombo.getSelectedItem()
+                );
+                proyectoDAO.guardarProyecto(proyecto);
             } else {
-                mostrarAlerta("Error", "Los datos del proyecto no son válidos");
+                proyecto = new Proyecto(
+                        0,
+                        nombreField.getText(),
+                        descripcionField.getText(),
+                        estadoCheck.isSelected(),
+                        areaField.getText(),
+                        (Tutor) tutorCombo.getSelectedItem(),
+                        (Tutor) supervisorCombo.getSelectedItem()
+                );
+                proyectoDAO.guardarProyectoSinEstudiante(proyecto);
             }
+
+            mostrarAlerta("Éxito", "Proyecto guardado correctamente");
+            limpiarCampos();
+
         } catch (Exception e) {
             mostrarAlerta("Error", "Error al guardar el proyecto: " + e.getMessage());
         }
