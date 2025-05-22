@@ -4,5 +4,5 @@ public interface GestorDeProyectos {
 
     void registrarPropuestaDeProyecto(Proyecto proyecto);
 
-    void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno);
+    void registrarAsignacionDocenteTutor(int idProyecto, int idDocente, int idTutor);
 }

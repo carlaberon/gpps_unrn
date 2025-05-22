@@ -7,7 +7,7 @@ public class Estudiante extends Usuario {
     private String direccionPostal;
     private Proyecto proyectoSeleccionado;
 
-    public Estudiante(int id, String nombreUsuario, String contrasenia, String nombre, String email,
+    public Estudiante(String nombreUsuario, String contrasenia, String nombre, String email,
                       String legajo, Boolean regular, String direccionPostal) {
         super(id, nombreUsuario, contrasenia, nombre, email);
         this.legajo = legajo;
