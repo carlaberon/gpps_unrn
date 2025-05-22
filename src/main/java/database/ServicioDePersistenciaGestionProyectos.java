@@ -20,7 +20,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno) {
-        String sql = "UPDATE proyecto SET docenteSupervisor = ? WHERE id_proyecto = ?";
+        String sql = "UPDATE proyecto SET idUsuario_tutorInterno = ? WHERE id_proyecto = ?";
         try (Connection conn = Conn.getConnection();
              PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, idTutorInterno);
