@@ -2,9 +2,8 @@ package main;
 
 
 import database.ServicioDePersistenciaGestionProyectos;
-import model.Informe;
+import database.ServicioDePersistenciaInforme;
 import model.Proyectos;
-import model.ServiceInformes;
 
 public class Main {
     public static void main(String[] args) {
@@ -36,22 +35,7 @@ public class Main {
 
         //Pruebo metodo registrarAsignacionDocenteTutor en BD. Pruebo con los datos cargados ya en la BD
 
-        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), new ServiceInformes() {
-            @Override
-            public boolean verificarInformeParcialAprobado(int idInformeParcial) {
-                return false;
-            }
-
-            @Override
-            public Informe obtenerInforme(int idInforme) {
-                return null;
-            }
-
-            @Override
-            public void valorarInforme(Informe informe, int valor) {
-
-            }
-        });
-        proyectos.asignarDocenteTutor(1, 9);
+        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), new ServicioDePersistenciaInforme());
+        proyectos.asignarDocenteTutor(1, 11);
     }
 }

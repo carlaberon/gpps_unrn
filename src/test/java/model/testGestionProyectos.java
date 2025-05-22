@@ -22,10 +22,11 @@ public class testGestionProyectos {
         String legajoEstudiante = "UNRN-18143";
         boolean regular = true;
         String dirPostal = "8500";
+        var ubicacion = "Finlandia";
 
         //ejercitacion
 
-        proyectos.propuestaDeProyecto(1, nombreProyecto, descripcion, estado, areaDeInteres, null, null, null);
+        proyectos.propuestaDeProyecto(1, nombreProyecto, descripcion, estado, areaDeInteres, null, null, null, ubicacion);
 
 
         //verificacion
@@ -51,7 +52,7 @@ public class testGestionProyectos {
 //        var tutorExterno = new Tutor(1, "Ana123", "1234", "Ana", "ana_123@hotmail.com", "Externo");
         var registroDocenteTutorFake = new ServicioDePersistenciaGestionProyectosFake();
         var proyectos = new Proyectos(registroDocenteTutorFake, new ServicioInformeFake());
-        var proyecto = new Proyecto(1, "Proyecto1", "nada", false, "ninguna", null, null, null);
+        var proyecto = new Proyecto(1, "Proyecto1", "nada", false, "ninguna", null, null, null, "Finlandia");
 
         proyectos.asignarDocenteTutor(1, 11);
 
