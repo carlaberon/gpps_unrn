@@ -20,6 +20,16 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
         this.idTutor = idTutor;
     }
 
+    @Override
+    public void cargarInformeParcial(Informe informeParcial) {
+
+    }
+
+    @Override
+    public void cargarInformeFinal(Informe informeFinal) {
+
+    }
+
     //este metodo es para llamar en los assert
     public Proyecto project() {
         return this.propuestaDeProyecto;
