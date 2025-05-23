@@ -1,6 +1,5 @@
 package model;
 
-import database.ConvenioDAO;
 import database.DataBaseConnectionException;
 
 import java.time.LocalDate;

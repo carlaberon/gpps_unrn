@@ -60,4 +60,20 @@ public class Proyecto {
     public Estudiante getEstudiante() {
         return estudiante;
     }
+
+	public void setId(int id) {
+		this.id_proyecto = id;
+		
+	}
+
+	public void setNombre(String nombre2) {
+		this.nombre = nombre2;
+		
+	}
+	@Override
+	public String toString() {
+	    return this.nombre;
+	}
+
+
 }
