@@ -114,10 +114,6 @@ public class GenerarConvenio extends JFrame {
             LocalDate fechaInicio = convertirFecha((Date) spinnerFechaInicio.getValue());
             LocalDate fechaFin = convertirFecha((Date) spinnerFechaFin.getValue());
 
-            if (entidad == null || proyecto == null || descripcion.isEmpty() || fechaInicio == null || fechaFin == null) {
-                mostrarError("Todos los campos deben estar completos.");
-                return;
-            }
             admin.generarConvenio(entidad.getId(), proyecto.getId(), descripcion, fechaInicio, fechaFin, convenioDAO);
             this.dispose();
         } catch (Exception ex) {

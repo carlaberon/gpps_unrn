@@ -2,8 +2,9 @@ package main;
 
 import javax.swing.SwingUtilities;
 
-import front.GenerarConvenio;
 import model.Administrador;
+import front.GenerarConvenio;
+
 import model.ConvenioDAO;
 
 public class Main3 {
@@ -13,5 +14,6 @@ public class Main3 {
             ConvenioDAO dao = new database.ConvenioDAOJDBC();
             new GenerarConvenio(admin, dao).setVisible(true);
         });
+
     }
 }
