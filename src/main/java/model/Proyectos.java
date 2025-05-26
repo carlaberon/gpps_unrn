@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 public class Proyectos {
     private GestorDeProyectos gestorDeProyectos;
     private ServiceInformes servicioDeVerificacionInformes;
@@ -24,8 +26,8 @@ public class Proyectos {
         var informeParcial = new Informe(idInformeParcial, descripcionInformeParcial, tipo);
         this.gestorDeProyectos.cargarInformeParcial(informeParcial);
     }
-    public void cargarInformeFinal(int idInformeParcial, int idInformeFinal,String descripcionInformeFinal, String tipo){
-        if (! this.servicioDeVerificacionInformes.verificarInformeParcialAprobado(idInformeParcial)){ //lista de informes parciales
+    public void cargarInformeFinal(String descripcionInformeFinal, String tipo, List<Integer> idInformesParciales, int idInformeFinal){
+        if (! this.servicioDeVerificacionInformes.verificarInformeParcialAprobado(idInformesParciales)){ //lista de informes parciales
             throw new RuntimeException("El informe parcial no se encuentra aprobado. Intente en otro momento.");
         }
         var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal, tipo);
