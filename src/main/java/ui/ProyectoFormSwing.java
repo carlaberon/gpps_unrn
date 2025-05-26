@@ -12,7 +12,7 @@ public class ProyectoFormSwing extends JFrame {
     private JTextField nombreField;
     private JTextArea descripcionField;
     private JTextField areaField;
-    private JComboBox<Estudiante> estudianteCombo;
+    private JTextField ubicacionField;
     private JComboBox<Tutor> tutorCombo;
     private JComboBox<Tutor> supervisorCombo;
     private JCheckBox estadoCheck;
@@ -20,16 +20,13 @@ public class ProyectoFormSwing extends JFrame {
     private JButton limpiarButton;
 
     private GestorDeProyectos proyectoDAOPersistencia;
-    private GestorDeUsuarios estudianteDAOPersistencia;
     private GestorDeUsuarios tutorDAOPersistencia;
 
     private Proyectos proyectoDAO;
-    private Usuarios estudianteDAO;
     private Usuarios tutorDAO;
 
     public ProyectoFormSwing(GestorDeUsuarios gestorDeUsuarios, GestorDeProyectos gestorDeProyectos) {
         this.proyectoDAOPersistencia = gestorDeProyectos;
-        this.estudianteDAOPersistencia = gestorDeUsuarios;
         this.tutorDAOPersistencia = gestorDeUsuarios;
         initializeComponents();
         setupLayout();
@@ -47,7 +44,7 @@ public class ProyectoFormSwing extends JFrame {
         descripcionField = new JTextArea(4, 20);
         descripcionField.setLineWrap(true);
         areaField = new JTextField(20);
-        estudianteCombo = new JComboBox<>();
+        ubicacionField = new JTextField(20);
         tutorCombo = new JComboBox<>();
         supervisorCombo = new JComboBox<>();
         estadoCheck = new JCheckBox("Activo");
@@ -56,7 +53,6 @@ public class ProyectoFormSwing extends JFrame {
 
         try {
             proyectoDAO = new Proyectos(proyectoDAOPersistencia);
-            estudianteDAO = new Usuarios(estudianteDAOPersistencia);
             tutorDAO = new Usuarios(tutorDAOPersistencia);
         } catch (Exception e) {
             mostrarAlerta("Error de conexión", e.getMessage());
@@ -90,12 +86,12 @@ public class ProyectoFormSwing extends JFrame {
         gbc.gridx = 1;
         mainPanel.add(areaField, gbc);
 
-        // Estudiante
+        //Ubicación
         gbc.gridx = 0;
-        gbc.gridy = 4;
-        mainPanel.add(new JLabel("Estudiante:"), gbc);
+        gbc.gridy = 3;
+        mainPanel.add(new JLabel("Úbicación:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(estudianteCombo, gbc);
+        mainPanel.add(ubicacionField, gbc);
 
         // Tutor Interno
         gbc.gridx = 0;
@@ -130,29 +126,8 @@ public class ProyectoFormSwing extends JFrame {
     }
 
     private void loadData() {
-        cargarEstudiantes();
         cargarTutoresInternos();
         cargarTutoresExternos();
-    }
-
-    private void cargarEstudiantes() {
-        List<Estudiante> estudiantes = estudianteDAO.obtenerEstudiantes();
-        DefaultComboBoxModel<Estudiante> model = new DefaultComboBoxModel<>();
-        for (Estudiante e : estudiantes) {
-            model.addElement(e);
-        }
-        estudianteCombo.setModel(model);
-        estudianteCombo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Estudiante) {
-                    Estudiante e = (Estudiante) value;
-                    setText(e.getNombre() + " (" + e.getLegajo() + ")");
-                }
-                return this;
-            }
-        });
     }
 
     private void cargarTutoresInternos() {
@@ -160,7 +135,7 @@ public class ProyectoFormSwing extends JFrame {
         DefaultComboBoxModel<Tutor> model = new DefaultComboBoxModel<>();
 
         for (Tutor t : tutores) {
-            if ("Tutor Interno".equalsIgnoreCase(t.getTipo().trim())) {
+            if ("Interno".equalsIgnoreCase(t.getTipo().trim())) {
                 model.addElement(t);
             }
         }
@@ -184,7 +159,7 @@ public class ProyectoFormSwing extends JFrame {
         DefaultComboBoxModel<Tutor> model = new DefaultComboBoxModel<>();
 
         for (Tutor t : tutores) {
-            if ("Tutor Externo".equalsIgnoreCase(t.getTipo())) {
+            if ("Externo".equalsIgnoreCase(t.getTipo())) {
                 model.addElement(t);
             }
         }
@@ -214,37 +189,24 @@ public class ProyectoFormSwing extends JFrame {
         }
 
         try {
-            Estudiante estudianteSeleccionado = (Estudiante) estudianteCombo.getSelectedItem();
+            Proyecto proyecto = new Proyecto(
+                    0,
+                    nombreField.getText(),
+                    descripcionField.getText(),
+                    estadoCheck.isSelected(),
+                    areaField.getText(),
+                    (Tutor) tutorCombo.getSelectedItem(),
+                    (Tutor) supervisorCombo.getSelectedItem(),
+                    ubicacionField.getText()
+            );
 
-            Proyecto proyecto;
-            if (estudianteSeleccionado != null) {
-                proyecto = new Proyecto(
-                        0,
-                        nombreField.getText(),
-                        descripcionField.getText(),
-                        estadoCheck.isSelected(),
-                        areaField.getText(),
-                        estudianteSeleccionado,
-                        (Tutor) tutorCombo.getSelectedItem(),
-                        (Tutor) supervisorCombo.getSelectedItem()
-                );
-                proyectoDAO.guardarProyecto(proyecto);
-            } else {
-                proyecto = new Proyecto(
-                        0,
-                        nombreField.getText(),
-                        descripcionField.getText(),
-                        estadoCheck.isSelected(),
-                        areaField.getText(),
-                        (Tutor) tutorCombo.getSelectedItem(),
-                        (Tutor) supervisorCombo.getSelectedItem()
-                );
+            if (proyecto.esValido()) {
                 proyectoDAO.guardarProyectoSinEstudiante(proyecto);
+                mostrarAlerta("Éxito", "Proyecto guardado correctamente");
+                limpiarCampos();
+            } else {
+                mostrarAlerta("Error", "Los datos del proyecto no son válidos");
             }
-
-            mostrarAlerta("Éxito", "Proyecto guardado correctamente");
-            limpiarCampos();
-
         } catch (Exception e) {
             mostrarAlerta("Error", "Error al guardar el proyecto: " + e.getMessage());
         }
@@ -262,15 +224,15 @@ public class ProyectoFormSwing extends JFrame {
         if (areaField.getText().isEmpty()) {
             errores.append("- El área de interés es obligatoria\n");
         }
-//        if (estudianteCombo.getSelectedItem() == null) {
-//            errores.append("- Debe seleccionar un estudiante\n");
-//        }
-//        if (tutorCombo.getSelectedItem() == null) {
-//            errores.append("- Debe seleccionar un tutor interno\n");
-//        }
-//        if (supervisorCombo.getSelectedItem() == null) {
-//            errores.append("- Debe seleccionar un supervisor\n");
-//        }
+        if (ubicacionField.getText().isEmpty()) {
+            errores.append("- La ubicación es obligatoria\n");
+        }
+        if (tutorCombo.getSelectedItem() == null) {
+            errores.append("- Debe seleccionar un tutor interno\n");
+        }
+        if (supervisorCombo.getSelectedItem() == null) {
+            errores.append("- Debe seleccionar un tutor externo\n");
+        }
 
         if (errores.length() > 0) {
             mostrarAlerta("Error de validación", errores.toString());
@@ -287,7 +249,7 @@ public class ProyectoFormSwing extends JFrame {
         nombreField.setText("");
         descripcionField.setText("");
         areaField.setText("");
-        estudianteCombo.setSelectedItem(null);
+        ubicacionField.setText("");
         tutorCombo.setSelectedItem(null);
         supervisorCombo.setSelectedItem(null);
         estadoCheck.setSelected(false);

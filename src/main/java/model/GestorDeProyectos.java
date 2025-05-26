@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public interface GestorDeProyectos {
 
@@ -9,4 +10,6 @@ public interface GestorDeProyectos {
     void guardar(Proyecto proyecto) throws SQLException;
 
     void guardarSinEstudiante(Proyecto proyecto) throws SQLException;
+
+    List<Proyecto> obtenerProyectos() throws SQLException;
 }

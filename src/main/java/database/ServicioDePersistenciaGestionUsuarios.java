@@ -53,17 +53,17 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
     @Override
     public List<Tutor> obtenerTodosTutores() {
         List<Tutor> tutores = new ArrayList<>();
-        String sql = "SELECT u.idUsuario, u.nombreUsuario, u.nombre, u.email, t.tipo " +
-                "FROM Usuario u " +
-                "JOIN Tutor t ON u.idUsuario = t.id_Usuario";
+        String sql = "SELECT u.id_usuario, u.nombre_usuario, u.nombre, u.email, t.tipo " +
+                "FROM usuarios u " +
+                "JOIN tutores t ON u.id_usuario = t.id_usuario";
 
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 tutores.add(new Tutor(
-                        rs.getInt("idUsuario"),
-                        rs.getString("nombreUsuario"),
+                        rs.getInt("id_usuario"),
+                        rs.getString("nombre_usuario"),
                         "", // No obtenemos la contraseña por seguridad
                         rs.getString("nombre"),
                         rs.getString("email"),

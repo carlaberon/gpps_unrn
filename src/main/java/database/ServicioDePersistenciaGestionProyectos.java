@@ -31,41 +31,45 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void guardar(Proyecto proyecto) throws SQLException {
-        String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, idUsuario_tutorInterno, idUsuario_tutorExterno, idUsuario_estudiante) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, ubicacion, estado, idUsuario_tutorInterno, idUsuario_tutorExterno, idUsuario_estudiante) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, proyecto.getId());
             stmt.setString(2, proyecto.getNombre());
             stmt.setString(3, proyecto.getDescripcion());
             stmt.setString(4, proyecto.getAreaDeInteres());
-            stmt.setBoolean(5, proyecto.getEstado());
-            stmt.setInt(6, proyecto.getDocenteSupervisor().getId());
-            stmt.setInt(7, proyecto.getTutor().getId());
-            stmt.setInt(8, proyecto.getEstudiante().getId());
+            stmt.setString(5, proyecto.getUbicacion());
+            stmt.setBoolean(6, proyecto.getEstado());
+            stmt.setInt(7, proyecto.getDocenteSupervisor().getId());
+            stmt.setInt(8, proyecto.getTutor().getId());
+            stmt.setInt(9, proyecto.getEstudiante().getId());
             stmt.executeUpdate();
         }
     }
 
     @Override
     public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
-        String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, idUsuario_tutorInterno, idUsuario_tutorExterno) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, proyecto.getId());
-            stmt.setString(2, proyecto.getNombre());
-            stmt.setString(3, proyecto.getDescripcion());
-            stmt.setString(4, proyecto.getAreaDeInteres());
+            stmt.setString(1, proyecto.getNombre());
+            stmt.setString(2, proyecto.getDescripcion());
+            stmt.setString(3, proyecto.getAreaDeInteres());
+            stmt.setString(4, proyecto.getUbicacion());
             stmt.setBoolean(5, proyecto.getEstado());
-            stmt.setInt(6, proyecto.getDocenteSupervisor().getId());
-            stmt.setInt(7, proyecto.getTutor().getId());
+            stmt.setInt(6, proyecto.getDocenteSupervisor().getId()); // o getTutorInterno()
+            stmt.setInt(7, proyecto.getTutor().getId()); // o getTutorExterno()
             stmt.executeUpdate();
         }
     }
 
     public List<Proyecto> obtenerProyectos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
-        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.areaDeInteres, "
-                + "p.idUsuario_estudiante, p.idUsuario_director, p.docenteSupervisor "
-                + "FROM Proyecto p "
-                + "WHERE p.estado = true AND p.idUsuario_estudiante IS NULL";
+        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.area_de_interes, " +
+                "p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.id_usuario_estudiante " +
+                "FROM proyectos p " +
+                "WHERE p.estado = TRUE AND p.id_usuario_estudiante IS NULL";
+
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -75,14 +79,15 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         rs.getString("nombre"),
                         rs.getString("descripcion"),
                         rs.getBoolean("estado"),
-                        rs.getString("areaDeInteres"),
+                        rs.getString("area_de_interes"),
                         null, // estudiante aún no asignado
-                        null, // cargar director si es necesario
-                        null  // cargar tutor si es necesario
+                        null, // tutor interno (puede cargarse si querés)
+                        null  // tutor externo (igual)
                 );
                 proyectos.add(proyecto);
             }
         }
+
         System.out.println("Proyectos cargados: " + proyectos.size());
         return proyectos;
     }

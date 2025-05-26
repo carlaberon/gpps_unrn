@@ -9,9 +9,10 @@ public class Proyecto {
     private Estudiante estudiante;
     private Tutor tutor;
     private Tutor docenteSupervisor;
+    private String ubicacion;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                    Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor) {
+                    Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
         this.id_proyecto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -20,10 +21,11 @@ public class Proyecto {
         this.estudiante = estudiante;
         this.tutor = tutor;
         this.docenteSupervisor = docenteSupervisor;
+        this.ubicacion = ubicacion;
     }
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                    Tutor tutor, Tutor docenteSupervisor) {
+                    Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
         this.id_proyecto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -31,6 +33,7 @@ public class Proyecto {
         this.areaDeInteres = areaDeInteres;
         this.tutor = tutor;
         this.docenteSupervisor = docenteSupervisor;
+        this.ubicacion = ubicacion;
     }
 
     public boolean esValido() {
@@ -70,5 +73,9 @@ public class Proyecto {
 
     public Estudiante getEstudiante() {
         return estudiante;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
     }
 }
