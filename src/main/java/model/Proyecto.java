@@ -63,4 +63,22 @@ public class Proyecto {
     public Estudiante getEstudiante() {
         return estudiante;
     }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public int getIdUsuarioTutorInterno() {
+        return tutor.getId();
+    }
+
+    public int getIdUsuarioTutorExterno() {
+
+        return docenteSupervisor.getId();
+    }
+
+    public int getIdUsuarioEstudiante() {
+
+        return estudiante.getId();
+    }
 }

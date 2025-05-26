@@ -14,9 +14,24 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void registrarPropuestaDeProyecto(Proyecto proyecto) {
-        //aca implemento
-        //ahora muestro cómo hacer las pruebas sin tener la implementacion
+        String sql = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, id_usuario_tutor_interno, id_usuario_tutor_externo, id_usuario_estudiante, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            statement.setString(1, proyecto.getNombre());
+            statement.setString(2, proyecto.getDescripcion());
+            statement.setString(3, proyecto.getAreaDeInteres());
+            statement.setString(4, proyecto.getUbicacion());
+            statement.setInt(5, proyecto.getIdUsuarioTutorInterno());
+            statement.setInt(6, proyecto.getIdUsuarioTutorExterno());
+            statement.setInt(7, proyecto.getIdUsuarioEstudiante());
+            statement.setBoolean(8, proyecto.getEstado());
+
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
