@@ -19,18 +19,19 @@ public class Proyectos {
     public void asignarDocenteTutor(int idProyecto, int idDocente, int idTutor) {
         this.gestorDeProyectos.registrarAsignacionDocenteTutor(idProyecto, idDocente, idTutor);
     }
-    public void cargarInformeParcial(int idInformeParcial, String descripcionInformeParcial){
+    public void cargarInformeParcial(int idInformeParcial, String descripcionInformeParcial, String tipo){
 
-        var informeParcial = new Informe(idInformeParcial, descripcionInformeParcial);
+        var informeParcial = new Informe(idInformeParcial, descripcionInformeParcial, tipo);
         this.gestorDeProyectos.cargarInformeParcial(informeParcial);
     }
-    public void cargarInformeFinal(int idInformeParcial, int idInformeFinal,String descripcionInformeFinal){
-        if (! this.servicioDeVerificacionInformes.verificarInformeParcialAprobado(idInformeParcial)){
+    public void cargarInformeFinal(int idInformeParcial, int idInformeFinal,String descripcionInformeFinal, String tipo){
+        if (! this.servicioDeVerificacionInformes.verificarInformeParcialAprobado(idInformeParcial)){ //lista de informes parciales
             throw new RuntimeException("El informe parcial no se encuentra aprobado. Intente en otro momento.");
         }
-        var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal);
+        var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal, tipo);
         this.gestorDeProyectos.cargarInformeFinal(informeFinal);
     }
+    //HU evaluar informe parcial o final
     public void valorarInforme(int idInforme, int valorInforme){
         var informe = servicioDeVerificacionInformes.obtenerInforme(idInforme);
         this.servicioDeVerificacionInformes.valorarInforme(informe, valorInforme);

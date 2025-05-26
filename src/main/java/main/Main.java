@@ -3,6 +3,8 @@ package main;
 
 import database.ServicioDePersistenciaGestionProyectos;
 import model.Proyectos;
+import model.ServiceInformes;
+import model.ServicioVerificacionInformes;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,7 +36,17 @@ public class Main {
 
         //Pruebo metodo registrarAsignacionDocenteTutor en BD. Pruebo con los datos cargados ya en la BD
 
-        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), );
-        proyectos.asignarDocenteTutor(1, 11, 12);
+//        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), );
+//        proyectos.asignarDocenteTutor(1, 11, 12);
+//
+        //Pruebo cargarInformeParcial
+
+        ServicioVerificacionInformes servicioDeVerificacionInformes = new ServicioVerificacionInformes();
+
+        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), servicioDeVerificacionInformes);
+
+        proyectos.cargarInformeParcial(1, "Informe parcial de prueba", "parcial");
+
+
     }
 }
