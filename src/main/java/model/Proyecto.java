@@ -24,6 +24,7 @@ public class Proyecto {
         this.docenteSupervisor = docenteSupervisor;
     }
 
+
     public boolean esValido() {
         return nombre != null && !nombre.isEmpty()
                 && descripcion != null && !descripcion.isEmpty()

@@ -10,14 +10,14 @@ public class Proyectos {
     }
 
     public void propuestaDeProyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                                    Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor) {
-        var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, estudiante, tutor, docenteSupervisor);
+                                    Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
+        var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, estudiante, tutor, docenteSupervisor, ubicacion);
         this.gestorDeProyectos.registrarPropuestaDeProyecto(proyecto);
         //registra el proyecto
     }
 
-    public void asignarDocenteTutor(int idProyecto, int idDocente, int idTutor) {
-        this.gestorDeProyectos.registrarAsignacionDocenteTutor(idProyecto, idDocente, idTutor);
+    public void asignarDocenteTutor(int idProyecto, int idTutorInterno) {
+        this.gestorDeProyectos.registrarAsignacionTutorInterno(idProyecto, idTutorInterno);
     }
     public void cargarInformeParcial(int idInformeParcial, String descripcionInformeParcial, String tipo){
 

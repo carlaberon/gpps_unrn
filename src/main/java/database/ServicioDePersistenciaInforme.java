@@ -3,9 +3,11 @@ package database;
 import model.Informe;
 import model.ServiceInformes;
 
+import java.util.List;
+
 public class ServicioDePersistenciaInforme implements ServiceInformes {
     @Override
-    public boolean verificarInformeParcialAprobado(int idInformeParcial) {
+    public boolean verificarInformeParcialAprobado(List<Integer> idInformesParciales) {
         return false;
     }
 

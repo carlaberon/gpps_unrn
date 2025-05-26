@@ -1,8 +1,10 @@
 package model;
 
+import java.util.List;
+
 public class ServicioInformeFake implements ServiceInformes {
     @Override
-    public boolean verificarInformeParcialAprobado(int idInformeParcial) {
+    public boolean verificarInformeParcialAprobado(List<Integer> idInformesParciales) {
         return false;
     }
 

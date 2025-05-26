@@ -1,12 +1,14 @@
 package model;
 
+import java.util.List;
+
 public class ServicioVerificacionInformes implements ServiceInformes{
 
     public ServicioVerificacionInformes() {
         // Constructor vacío
     }
     @Override
-    public boolean verificarInformeParcialAprobado(int idInformeParcial) {
+    public boolean verificarInformeParcialAprobado(List<Integer> idInformesParciales) {
         return false;
     }
 
