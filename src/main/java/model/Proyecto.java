@@ -6,7 +6,6 @@ public class Proyecto {
     private String descripcion;
     private Boolean estado;
     private String areaDeInteres;
-    private String ubicacion;
     private Estudiante estudiante;
     private Tutor tutor;
     private Tutor docenteSupervisor;

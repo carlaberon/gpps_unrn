@@ -15,7 +15,12 @@ public class ServicioInformeFake implements ServiceInformes {
     }
 
     @Override
-    public void valorarInforme(Informe informe, int valor) {
+    public void valorarInforme(int idInforme, int valor) {
 
     }
+
+//    @Override
+//    public void valorarInforme(Informe informe, int valor) {
+//
+//    }
 }
