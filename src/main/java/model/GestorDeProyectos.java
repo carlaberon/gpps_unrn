@@ -6,7 +6,6 @@ public interface GestorDeProyectos {
 
     void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno);
 
-    void cargarInformeParcial(Informe informeParcial);
+    void cargarInforme(Informe informeParcial);
 
-    void cargarInformeFinal(Informe informeFinal);
 }

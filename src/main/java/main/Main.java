@@ -2,6 +2,7 @@ package main;
 
 
 import database.ServicioDePersistenciaGestionProyectos;
+import database.ServicioVerificacionInformes;
 import model.Proyectos;
 
 public class Main {
@@ -36,6 +37,15 @@ public class Main {
 
 //        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), );
 //        proyectos.asignarDocenteTutor(1, 11, 12);
+
+        //cargar informe final
+        ServicioVerificacionInformes servicioVerificacionInformes = new ServicioVerificacionInformes();
+        ServicioDePersistenciaGestionProyectos servicioDePersistenciaGestionProyectos = new ServicioDePersistenciaGestionProyectos();
+        Proyectos proyectos = new Proyectos(servicioDePersistenciaGestionProyectos, servicioVerificacionInformes);
+        //cargar informe final
+        proyectos.cargarInformeFinal("Informe final de prueba", "final", java.util.List.of(3,4), 5);
+
+
 
     }
 }

@@ -34,7 +34,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     }
 
     @Override
-    public void cargarInformeParcial(Informe informeParcial) {
+    public void cargarInforme(Informe informeParcial) {
 
         String sql = "INSERT INTO informes (descripcion, fecha_entrega, tipo, valoracionInforme, estado, archivo) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -54,9 +54,5 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     }
 
-    @Override
-    public void cargarInformeFinal(Informe informeFinal) {
-        //cargar informeFinal
-    }
 
 }

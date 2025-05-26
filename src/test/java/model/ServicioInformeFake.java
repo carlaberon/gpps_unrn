@@ -1,6 +1,7 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 
 public class ServicioInformeFake implements ServiceInformes {
     @Override
@@ -9,8 +10,8 @@ public class ServicioInformeFake implements ServiceInformes {
     }
 
     @Override
-    public Informe obtenerInforme(int idInforme) {
-        return null;
+    public Map<Integer, Boolean> obtenerEstadosInformes(List<Integer> idsInforme) {
+        return Map.of();
     }
 
     @Override

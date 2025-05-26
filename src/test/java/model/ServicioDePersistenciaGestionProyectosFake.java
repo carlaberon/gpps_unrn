@@ -21,14 +21,11 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
-    public void cargarInformeParcial(Informe informeParcial) {
+    public void cargarInforme(Informe informeParcial) {
 
     }
 
-    @Override
-    public void cargarInformeFinal(Informe informeFinal) {
 
-    }
 
     //este metodo es para llamar en los assert
     public Proyecto project() {
