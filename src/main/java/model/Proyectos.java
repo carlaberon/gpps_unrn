@@ -33,9 +33,14 @@ public class Proyectos {
         var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal, tipo);
         this.gestorDeProyectos.cargarInforme(informeFinal);
     }
-    //HU evaluar informe parcial o final
-    public void valorarInforme(int idInforme, int valorInforme){
-//        var informe = servicioDeVerificacionInformes.obtenerInforme(idInforme);
-//        this.servicioDeVerificacionInformes.valorarInforme(informe, valorInforme);
+
+    public void valorarInformeParcial(int idInforme, int valorInforme){
+        this.servicioDeVerificacionInformes.valorarInforme(idInforme, valorInforme);
+    }
+    public void valorarInformeFinal(int idInforme, int valorInforme, List<Integer> idInformeParciales) {
+        if (!this.servicioDeVerificacionInformes.verificarInformeParcialAprobado(idInformeParciales)) { //lista de informes parciales
+            throw new RuntimeException("Los informes parciales no se encuentran evaluados. Intente en otro momento.");
+        }
+        this.servicioDeVerificacionInformes.valorarInforme(idInforme, valorInforme);
     }
 }

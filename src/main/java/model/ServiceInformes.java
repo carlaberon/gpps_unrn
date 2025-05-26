@@ -11,7 +11,7 @@ public interface ServiceInformes {
     //obtiene los datos de un informe a partir de su id
     public Map<Integer, Boolean> obtenerEstadosInformes(List<Integer> idsInforme);
     //carga el puntaje
-    void valorarInforme(Informe informe, int valor);
+    void valorarInforme(int idInforme, int valor);
 
 
 }
