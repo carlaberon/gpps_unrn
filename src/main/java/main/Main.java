@@ -1,4 +1,4 @@
-package main;
+/*package main;
 
 
 import database.ServicioDePersistenciaGestionProyectos;
@@ -48,4 +48,8 @@ public class Main {
 
 
     }
+<<<<<<< HEAD
 }
+=======
+    }/*/
+

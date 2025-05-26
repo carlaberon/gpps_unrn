@@ -52,9 +52,9 @@ public class ServicioVerificacionInformes implements ServiceInformes {
         }
     }
 
-
-    @Override
-    public void valorarInforme(Informe informe, int valor) {
-
-    }
+	@Override
+	public void valorarInforme(int idInforme, int valor) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -25,7 +25,14 @@ public class Proyecto {
     }
 
 
-    public boolean esValido() {
+
+	public Proyecto(int id, String nombre2, String nombre3, Object object, String nombre4, Object object2,
+			Object object3, Object object4) {
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public boolean esValido() {
         return nombre != null && !nombre.isEmpty()
                 && descripcion != null && !descripcion.isEmpty()
                 && areaDeInteres != null && !areaDeInteres.isEmpty()
@@ -81,4 +88,16 @@ public class Proyecto {
 
         return estudiante.getId();
     }
+
+
+	public void setId(int id) {
+		this.id_proyecto = id;
+		
+	}
+
+
+	public void setNombre(String nombre2) {
+		this.nombre = nombre2;
+		
+	}
 }

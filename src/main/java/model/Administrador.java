@@ -1,7 +1,6 @@
 package model;
 
 import java.time.LocalDate;
-import database.ConvenioDAO;
 import database.DataBaseConnectionException;
 
 public class Administrador extends Usuario {
