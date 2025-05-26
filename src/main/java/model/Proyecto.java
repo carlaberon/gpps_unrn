@@ -6,6 +6,7 @@ public class Proyecto {
     private String descripcion;
     private Boolean estado;
     private String areaDeInteres;
+    private String ubicacion;
     private Estudiante estudiante;
     private Tutor tutor;
     private Tutor docenteSupervisor;
@@ -36,11 +37,13 @@ public class Proyecto {
         this.ubicacion = ubicacion;
     }
 
+
     public boolean esValido() {
         return nombre != null && !nombre.isEmpty()
                 && descripcion != null && !descripcion.isEmpty()
                 && areaDeInteres != null && !areaDeInteres.isEmpty()
                 && tutor != null && docenteSupervisor != null;
+
     }
 
     public int getId() {
@@ -77,5 +80,17 @@ public class Proyecto {
 
     public String getUbicacion() {
         return ubicacion;
+    }
+
+    public int getIdUsuarioTutorInterno() {
+        return tutor.getId();
+    }
+
+    public int getIdUsuarioTutorExterno() {
+        return docenteSupervisor.getId();
+    }
+
+    public int getIdUsuarioEstudiante() {
+        return estudiante.getId();
     }
 }

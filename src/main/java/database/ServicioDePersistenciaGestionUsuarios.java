@@ -1,5 +1,6 @@
 package database;
 
+import model.Director;
 import model.Estudiante;
 import model.GestorDeUsuarios;
 import model.Tutor;
@@ -75,4 +76,12 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         }
         return tutores;
     }
+
+    @Override
+    public List<Director> obtenerTodosDirector() {
+        //completar
+        return List.of();
+
+    }
 }
+

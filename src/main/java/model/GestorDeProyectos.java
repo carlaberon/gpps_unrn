@@ -7,9 +7,14 @@ public interface GestorDeProyectos {
 
     void registrarPropuestaDeProyecto(Proyecto proyecto);
 
+
     void guardar(Proyecto proyecto) throws SQLException;
 
     void guardarSinEstudiante(Proyecto proyecto) throws SQLException;
 
     List<Proyecto> obtenerProyectos() throws SQLException;
+
+    void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno);
+
+    void cargarInforme(Informe informeParcial);
 }

@@ -3,20 +3,45 @@ package model;
 import java.time.LocalDate;
 
 public class Informe {
-    public static final String PARCIAL = "Parcial";
-    public static final String FINAL = "Final";
+
     private int id;
     private String descripcion;
     private LocalDate fechaEntrega;
-    private String tipo;
-    private String archivo;
-    private boolean estado; //true: entregado || false: no entregado
     private int valoracionInforme;
+    private boolean estado; // recibido true
+    private String tipo;
 
-    public Informe(int id, String descripcion, LocalDate fechaEntrega, String tipo) {
+
+    public Informe(int id, String descripcion, String tipo){
+
         this.id = id;
         this.descripcion = descripcion;
-        this.fechaEntrega = fechaEntrega;
+        this.fechaEntrega = LocalDate.now();
+        this.valoracionInforme = -1; // -1 indica que no se ha valorado
+        this.estado = false;
         this.tipo = tipo;
+    }
+
+    public void setValoracionInforme(int valoracionInforme){
+        this.valoracionInforme = valoracionInforme;
+        this.estado = true;
+    }
+    public int id() {
+        return id;
+    }
+    public String descripcion() {
+        return descripcion;
+    }
+    public LocalDate fechaEntrega() {
+        return fechaEntrega;
+    }
+    public int valoracionInforme() {
+        return valoracionInforme;
+    }
+    public boolean estado() {
+        return estado;
+    }
+    public String tipo() {
+        return tipo;
     }
 }
