@@ -6,12 +6,13 @@ public class Proyecto {
     private String descripcion;
     private Boolean estado;
     private String areaDeInteres;
+    private String ubicacion;
     private Estudiante estudiante;
     private Tutor tutor;
     private Tutor docenteSupervisor;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                    Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor) {
+                    Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
         this.id_proyecto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -19,6 +20,7 @@ public class Proyecto {
         this.areaDeInteres = areaDeInteres;
         this.estudiante = estudiante;
         this.tutor = tutor;
+        this.ubicacion = ubicacion;
         this.docenteSupervisor = docenteSupervisor;
     }
 

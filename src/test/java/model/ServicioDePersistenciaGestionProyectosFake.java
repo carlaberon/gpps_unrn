@@ -14,10 +14,20 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
-    public void registrarAsignacionDocenteTutor(int idProyecto, int idDocente, int idTutor) {
+    public void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno) {
         this.idProyecto = idProyecto;
-        this.idDocente = idDocente;
+        this.idDocente = idTutorInterno;
         this.idTutor = idTutor;
+    }
+
+    @Override
+    public void cargarInformeParcial(Informe informeParcial) {
+
+    }
+
+    @Override
+    public void cargarInformeFinal(Informe informeFinal) {
+
     }
 
     //este metodo es para llamar en los assert

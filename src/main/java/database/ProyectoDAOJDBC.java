@@ -35,7 +35,7 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
     public List<Proyecto> obtenerProyectos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
         String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.areaDeInteres, "
-                + "p.idUsuario_estudiante, p.idUsuario_tutor, p.docenteSupervisor "
+                + "p.ubicacion, p.idUsuario_estudiante, p.idUsuario_tutor, p.docenteSupervisor "
                 + "FROM Proyecto p "
                 + "WHERE p.estado = true AND p.idUsuario_estudiante IS NULL";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
@@ -50,7 +50,8 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
                         rs.getString("areaDeInteres"),
                         null, // estudiante aún no asignado
                         null, // cargar tutor si es necesario
-                        null  // cargar docente si es necesario
+                        null,  // cargar docente si es necesario
+                        rs.getString("ubicacion")
                 );
                 proyectos.add(proyecto);
             }
