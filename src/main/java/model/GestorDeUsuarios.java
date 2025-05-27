@@ -4,8 +4,9 @@ import java.util.List;
 
 public interface GestorDeUsuarios {
 
-    List<Estudiante> obtenerTodosEstudiante();
+    List<Estudiante> obtenerTodosEstudiantes();
+
+    List<Tutor> obtenerTodosTutores();
+
     List<Director> obtenerTodosDirector();
-
-
 }

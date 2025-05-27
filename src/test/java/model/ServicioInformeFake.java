@@ -13,9 +13,16 @@ public class ServicioInformeFake implements ServiceInformes {
     public Map<Integer, Boolean> obtenerEstadosInformes(List<Integer> idsInforme) {
         return Map.of();
     }
-	@Override
-	public void valorarInforme(int idInforme, int valor) {
-		// TODO Auto-generated method stub
-		
-	}
+
+
+    @Override
+    public void valorarInforme(int idInforme, int valor) {
+
+    }
+
+//    @Override
+//    public void valorarInforme(Informe informe, int valor) {
+//
+//    }
+
 }

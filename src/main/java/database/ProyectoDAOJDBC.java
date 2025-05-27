@@ -17,7 +17,7 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
         String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, estado, docenteSupervisor, idUsuario_tutor, idUsuario_estudiante) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setInt(1, proyecto.getId());
             stmt.setString(2, proyecto.getNombre());
             stmt.setString(3, proyecto.getDescripcion());
@@ -26,8 +26,8 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
             stmt.setInt(6, proyecto.getDocenteSupervisor().getId());
             stmt.setInt(7, proyecto.getTutor().getId());
             stmt.setInt(8, proyecto.getEstudiante().getId());
-            
-            stmt.executeUpdate(); 
+
+            stmt.executeUpdate();
         }
     }
 
@@ -35,10 +35,10 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
     public List<Proyecto> obtenerProyectos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
         String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.areaDeInteres, "
-                   + "p.ubicacion, p.idUsuario_estudiante, p.idUsuario_tutor, p.docenteSupervisor "
-                   + "FROM Proyecto p "
-                   + "WHERE p.estado = false AND p.idUsuario_estudiante IS NULL "
-                   + "AND NOT EXISTS (SELECT 1 FROM Convenio c WHERE c.id_proyecto = p.id_proyecto)";
+                + "p.ubicacion, p.idUsuario_estudiante, p.idUsuario_tutor, p.docenteSupervisor "
+                + "FROM Proyecto p "
+                + "WHERE p.estado = false AND p.idUsuario_estudiante IS NULL "
+                + "AND NOT EXISTS (SELECT 1 FROM Convenio c WHERE c.id_proyecto = p.id_proyecto)";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -46,15 +46,15 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
 
             while (rs.next()) {
                 Proyecto proyecto = new Proyecto(
-                    rs.getInt("id_proyecto"),
-                    rs.getString("nombre"),
-                    rs.getString("descripcion"),
-                    rs.getBoolean("estado"),
-                    rs.getString("areaDeInteres"),
-                    null, // estudiante aún no asignado
-                    null, // tutor aún no cargado
-                    null, // docente aún no cargado
-                    rs.getString("ubicacion")
+                        rs.getInt("id_proyecto"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getBoolean("estado"),
+                        rs.getString("areaDeInteres"),
+                        null, // estudiante aún no asignado
+                        null, // tutor aún no cargado
+                        null, // docente aún no cargado
+                        rs.getString("ubicacion")
                 );
                 proyectos.add(proyecto);
             }
@@ -85,3 +85,4 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
         return proyectos;
     }
 }
+

@@ -6,10 +6,10 @@ public class Proyecto {
     private String descripcion;
     private Boolean estado;
     private String areaDeInteres;
-    private String ubicacion;
     private Estudiante estudiante;
     private Tutor tutor;
     private Tutor docenteSupervisor;
+    private String ubicacion;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
                     Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
@@ -20,8 +20,20 @@ public class Proyecto {
         this.areaDeInteres = areaDeInteres;
         this.estudiante = estudiante;
         this.tutor = tutor;
-        this.ubicacion = ubicacion;
         this.docenteSupervisor = docenteSupervisor;
+        this.ubicacion = ubicacion;
+    }
+
+    public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
+                    Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
+        this.id_proyecto = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.estado = estado;
+        this.areaDeInteres = areaDeInteres;
+        this.tutor = tutor;
+        this.docenteSupervisor = docenteSupervisor;
+        this.ubicacion = ubicacion;
     }
 
 
@@ -36,7 +48,8 @@ public class Proyecto {
         return nombre != null && !nombre.isEmpty()
                 && descripcion != null && !descripcion.isEmpty()
                 && areaDeInteres != null && !areaDeInteres.isEmpty()
-                && estudiante != null && tutor != null && docenteSupervisor != null;
+                && tutor != null && docenteSupervisor != null;
+
     }
 
     public int getId() {
@@ -80,12 +93,10 @@ public class Proyecto {
     }
 
     public int getIdUsuarioTutorExterno() {
-
         return docenteSupervisor.getId();
     }
 
     public int getIdUsuarioEstudiante() {
-
         return estudiante.getId();
     }
 

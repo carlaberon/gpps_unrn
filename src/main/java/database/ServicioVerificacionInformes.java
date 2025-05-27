@@ -11,17 +11,19 @@ import java.util.stream.Collectors;
 
 public class ServicioVerificacionInformes implements ServiceInformes {
     List<Informe> informes;
+
     public ServicioVerificacionInformes() {
         this.informes = new ArrayList<>();
     }
+
     @Override
     public boolean verificarInformeParcialAprobado(List<Integer> idInformesParciales) {
 
-            Map<Integer, Boolean> estados = obtenerEstadosInformes(idInformesParciales);
-            boolean hayInformes = !estados.isEmpty();
-            boolean todosAprobados = estados.values().stream().allMatch(estado -> estado);
-            return hayInformes && todosAprobados;
-        }
+        Map<Integer, Boolean> estados = obtenerEstadosInformes(idInformesParciales);
+        boolean hayInformes = !estados.isEmpty();
+        boolean todosAprobados = estados.values().stream().allMatch(estado -> estado);
+        return hayInformes && todosAprobados;
+    }
 
     @Override
     public Map<Integer, Boolean> obtenerEstadosInformes(List<Integer> idsInforme) {
@@ -52,9 +54,15 @@ public class ServicioVerificacionInformes implements ServiceInformes {
         }
     }
 
-	@Override
-	public void valorarInforme(int idInforme, int valor) {
-		// TODO Auto-generated method stub
-		
-	}
+
+    @Override
+    public void valorarInforme(int idInforme, int valor) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void valorarInforme(Informe informe, int valor) {
+
+    }
+
 }
