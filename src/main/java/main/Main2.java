@@ -1,3 +1,20 @@
+package main;
+
+
+import database.ConvenioDAOJDBC;
+import front.CargarConvenio;
+
+import javax.swing.*;
+
+public class Main2 {
+    public static void main(String[] args) {
+        ConvenioDAOJDBC dao = new ConvenioDAOJDBC();
+        SwingUtilities.invokeLater(() -> new CargarConvenio(dao));
+
+
+    }
+}
+
 //package main;
 //
 //import database.ServicioDePersistenciaGestionProyectos;
@@ -40,3 +57,4 @@
 //        //HAGO LA PRUEBA CON TEST UNITARIOS
 //    }
 //}
+

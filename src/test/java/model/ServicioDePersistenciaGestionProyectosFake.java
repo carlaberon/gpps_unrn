@@ -27,6 +27,16 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
 
 
 
+    @Override
+    public void cargarPlanDeTrabajo(PlanDeTrabajo plan, int idProyecto) {
+
+    }
+
+    @Override
+    public void aprobarPlanDeTrabajo(int idPlan) {
+
+    }
+
     //este metodo es para llamar en los assert
     public Proyecto project() {
         return this.propuestaDeProyecto;

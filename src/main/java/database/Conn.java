@@ -47,7 +47,7 @@ public class Conn {
     }
 
     public static Connection getConnection() throws SQLException {
-        if (conn == null) {
+        if (conn == null || conn.isClosed()) {
             connect();
         }
         return conn;

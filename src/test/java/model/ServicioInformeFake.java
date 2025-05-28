@@ -14,6 +14,7 @@ public class ServicioInformeFake implements ServiceInformes {
         return Map.of();
     }
 
+
     @Override
     public void valorarInforme(int idInforme, int valor) {
 
@@ -23,4 +24,5 @@ public class ServicioInformeFake implements ServiceInformes {
 //    public void valorarInforme(Informe informe, int valor) {
 //
 //    }
+
 }
