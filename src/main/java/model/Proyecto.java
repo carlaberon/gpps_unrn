@@ -6,9 +6,9 @@ public class Proyecto {
     private String descripcion;
     private Boolean estado;
     private String areaDeInteres;
-    private String ubicacion;
     private Tutor tutor;
     private Tutor docenteSupervisor;
+    private String ubicacion;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
                     Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
@@ -18,9 +18,16 @@ public class Proyecto {
         this.estado = estado;
         this.areaDeInteres = areaDeInteres;
         this.tutor = tutor;
-        this.ubicacion = ubicacion;
         this.docenteSupervisor = docenteSupervisor;
+        this.ubicacion = ubicacion;
     }
+
+
+    public Proyecto(int id, String nombre2, String nombre3, Object object, String nombre4, Object object2,
+                    Object object3, Object object4) {
+        // TODO Auto-generated constructor stub
+    }
+
 
     public boolean esValido() {
         return nombre != null && !nombre.isEmpty()
@@ -33,8 +40,18 @@ public class Proyecto {
         return id_proyecto;
     }
 
+    public void setId(int id) {
+        this.id_proyecto = id;
+
+    }
+
     public String getNombre() {
         return nombre;
+    }
+
+    public void setNombre(String nombre2) {
+        this.nombre = nombre2;
+
     }
 
     public String getDescripcion() {
@@ -57,4 +74,15 @@ public class Proyecto {
         return tutor;
     }
 
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public int getIdUsuarioTutorInterno() {
+        return tutor.getId();
+    }
+
+    public int getIdUsuarioTutorExterno() {
+        return docenteSupervisor.getId();
+    }
 }

@@ -21,14 +21,11 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
-    public void cargarInformeParcial(Informe informeParcial) {
+    public void cargarInforme(Informe informeParcial) {
 
     }
 
-    @Override
-    public void cargarInformeFinal(Informe informeFinal) {
 
-    }
 
     @Override
     public void cargarPlanDeTrabajo(PlanDeTrabajo plan, int idProyecto) {
