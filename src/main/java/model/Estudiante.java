@@ -5,6 +5,7 @@ public class Estudiante extends Usuario {
     private String legajo;
     private Boolean regular;
     private String direccionPostal;
+    private int id_proyecto;
     private Proyecto proyectoSeleccionado;
 
     public Estudiante(String nombreUsuario, String contrasenia, String nombre, String email,
@@ -41,5 +42,9 @@ public class Estudiante extends Usuario {
             throw new IllegalStateException("El estudiante ya seleccionó un proyecto.");
         }
         this.proyectoSeleccionado = proyecto;
+    }
+
+    public void setId_proyecto(int id_proyecto) {
+        this.id_proyecto = id_proyecto;
     }
 }

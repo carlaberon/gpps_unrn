@@ -1,20 +1,24 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class PlanDeTrabajo {
-    private Proyecto proyectoAsignado;
-    private int cantHoras;
-    private boolean aprobado; 
+    private int proyectoAsignado;
+    private boolean aprobado;
     private List<Actividad> actividades;
-    private String recursos;
-
-    public PlanDeTrabajo(Proyecto proyectoAsignado, int cantHoras, List<Actividad> actividades, String recursos) {
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    public PlanDeTrabajo(int idProyecto, List<Actividad> actividades, LocalDate fechaInicio, LocalDate fechaFin) {
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
         this.proyectoAsignado = proyectoAsignado;
-        this.cantHoras = cantHoras;
         this.actividades = actividades;
-        this.recursos = recursos;
-        this.aprobado = false; 
+        this.aprobado = false;
+    }
+
+    public List<Actividad> actividades() {
+        return actividades;
     }
 
     public void aprobar() {
@@ -28,4 +32,21 @@ public class PlanDeTrabajo {
     public boolean estaAprobado() {
         return this.aprobado;
     }
+
+    public int cantHoras() {
+        int totalHoras = 0;
+        for (Actividad actividad : actividades) {
+            totalHoras += actividad.horas();
+        }
+        return totalHoras;
+    }
+
+    public LocalDate fechaFin() {
+        return fechaFin;
+    }
+
+    public LocalDate fechaInicio() {
+        return fechaInicio;
+    }
+
 }
