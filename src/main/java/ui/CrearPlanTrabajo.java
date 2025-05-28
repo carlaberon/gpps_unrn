@@ -137,7 +137,7 @@ public class CrearPlanTrabajo extends JFrame {
         LocalDate fechaFin = fechaFinUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
 
         // Crear plan con fechas del plan
-        PlanDeTrabajo plan = new PlanDeTrabajo(idProyecto, actividades, fechaInicio, fechaFin);
+        PlanDeTrabajo plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, null);
         gestorDeProyectos.cargarPlanDeTrabajo(plan, idProyecto);
 
         JOptionPane.showMessageDialog(this, "Plan de trabajo postulado correctamente.");

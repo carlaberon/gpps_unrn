@@ -1,15 +1,16 @@
 package front;
 
+import database.ActividadDAOJDBC;
+import model.Actividad;
+import model.ActividadDAO;
+import model.PlanDeTrabajo;
+
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
-
-import database.ActividadDAOJDBC;
-
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
-import model.*; // Asegurate de tener Actividad, PlanDeTrabajo
 
 public class VentanaProgresoPlan extends JFrame {
 
@@ -68,7 +69,7 @@ public class VentanaProgresoPlan extends JFrame {
             return switch (columnIndex) {
                 case 0 -> act.getDescripcion();
                 case 1 -> act.getFechaInicio();
-                case 2 -> act.getHoras();
+                case 2 -> act.horas();
                 case 3 -> act.isEstado() ? "Completada" : "Pendiente";
                 case 4 -> "Marcar como completada";
                 default -> null;
@@ -124,7 +125,7 @@ public class VentanaProgresoPlan extends JFrame {
                 Actividad actividad = plan.getActividades().get(selectedRow);
                 actividad.setEstado(true);
                 try {
-                	actividadDAO.marcarComoCompletado(actividad.getIdActividad());
+                    actividadDAO.marcarComoCompletado(actividad.getIdActividad());
                     barraProgreso.setValue((int) plan.calcularProgreso());
                     tablaActividades.repaint();
                 } catch (SQLException ex) {

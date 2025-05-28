@@ -19,6 +19,10 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         }
     }
 
+    public ServicioDePersistenciaGestionProyectos() {
+
+    }
+
     @Override
     public void registrarPropuestaDeProyecto(Proyecto proyecto) {
         String sql = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, id_usuario_tutor_interno, id_usuario_tutor_externo, estado) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -55,9 +59,10 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     }
 
     @Override
-    public <HEAD> void cargarInformeParcial(Informe informeParcial) {
+    public void cargarInformeParcial(Informe informeParcial) {
 
     }
+
 
     @Override
     public void cargarInformeFinal(Informe informeFinal) {
