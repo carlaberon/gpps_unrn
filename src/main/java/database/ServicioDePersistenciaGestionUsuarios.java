@@ -1,11 +1,14 @@
 package database;
 
+import model.Administrador;
 import model.Director;
 import model.Estudiante;
 import model.GestorDeUsuarios;
 import model.Tutor;
+import model.Usuario;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -76,6 +79,41 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         }
         return tutores;
     }
+    @Override
+    public Usuario find(String nombreUsuario, String contrasenia) throws SQLException {
+        Usuario usuario = null;
+
+        Connection conn = Conn.getConnection();
+        String sql = "SELECT * FROM usuarios WHERE usuario = ? AND contrasena = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, nombreUsuario);
+        stmt.setString(2, contrasenia);
+
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String email = rs.getString("email");
+            String tipo = rs.getString("tipo"); // debe existir esta columna
+
+            if ("administrador".equalsIgnoreCase(tipo)) {
+                usuario = new Administrador(id, nombreUsuario, contrasenia, nombre, email);
+            } else if ("estudiante".equalsIgnoreCase(tipo)) {
+                String legajo = rs.getString("legajo");
+                boolean regular = rs.getBoolean("regular");
+                String direccionPostal = rs.getString("direccion_postal");
+
+                usuario = new Estudiante(id, nombreUsuario, contrasenia, nombre, email, legajo, regular, direccionPostal);
+            } else {
+                throw new SQLException("Tipo de usuario desconocido.");
+            }
+        } else {
+            throw new SQLException("Usuario o contraseña incorrectos.");
+        }
+
+        return usuario;
+    }
+
 
     @Override
     public List<Director> obtenerTodosDirector() {

@@ -13,7 +13,6 @@ public class Main3 {
             ConvenioDAO dao = new database.ConvenioDAOJDBC();
             new GenerarConvenio(admin, dao).setVisible(true);
         });
-
     }
 }
 

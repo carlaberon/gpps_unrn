@@ -26,7 +26,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void registrarPropuestaDeProyecto(Proyecto proyecto) {
-        String sql = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, id_usuario_tutor_interno, id_usuario_tutor_externo, id_usuario_estudiante, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO proyecto (nombre, descripcion, area_de_interes, ubicacion, id_usuario_tutor_interno, id_usuario_tutor_externo, id_usuario_estudiante, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -79,7 +79,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
-        String sql = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo) " +
+        String sql = "INSERT INTO proyecto (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -96,10 +96,10 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     public List<Proyecto> obtenerProyectos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
-        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.area_de_interes, " +
-                "p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.id_usuario_estudiante " +
-                "FROM proyectos p " +
-                "WHERE p.estado = TRUE AND p.id_usuario_estudiante IS NULL";
+        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.areaDeInteres, " +
+                "p.docenteSupervisor, p.idUsuario_director, p.idUsuario_estudiante " +
+                "FROM proyecto p " +
+                "WHERE p.estado = TRUE AND p.idUsuario_estudiante IS NULL";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
