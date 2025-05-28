@@ -1,5 +1,8 @@
 package model;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProyectos {
     private Proyecto propuestaDeProyecto;
     private int idProyecto;
@@ -27,6 +30,16 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
 
 
 
+    @Override
+    public void cargarPlanDeTrabajo(PlanDeTrabajo plan, int idProyecto) {
+
+    }
+
+    @Override
+    public void aprobarPlanDeTrabajo(int idPlan) {
+
+    }
+
     //este metodo es para llamar en los assert
     public Proyecto project() {
         return this.propuestaDeProyecto;
@@ -43,4 +56,34 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     public int idTutor() {
         return this.idTutor;
     }
+
+	@Override
+	public void guardar(Proyecto proyecto) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Proyecto> obtenerProyectos() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void cargarInformeParcial(Informe informeParcial) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cargarInformeFinal(Informe informeFinal) {
+		// TODO Auto-generated method stub
+		
+	}
 }

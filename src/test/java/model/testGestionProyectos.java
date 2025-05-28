@@ -35,11 +35,6 @@ public class testGestionProyectos {
         assertEquals(descripcion, servicioDePersistenciaFake.project().getDescripcion());
         assertEquals(estado, servicioDePersistenciaFake.project().getEstado());
         assertEquals(areaDeInteres, servicioDePersistenciaFake.project().getAreaDeInteres());
-        assertEquals(nombreEstudiante, servicioDePersistenciaFake.project().getEstudiante().getNombre());
-        assertEquals(nombreUsuarioEstudiante, servicioDePersistenciaFake.project().getEstudiante().getNombreUsuario());
-        assertEquals(emailEstudiante, servicioDePersistenciaFake.project().getEstudiante().getEmail());
-        assertEquals(legajoEstudiante, servicioDePersistenciaFake.project().getEstudiante().getLegajo());
-        assertEquals(legajoEstudiante, servicioDePersistenciaFake.project().getEstudiante().getLegajo());
 
         //aca puedo asertar los datos del director y del tutor
 
@@ -52,7 +47,7 @@ public class testGestionProyectos {
 //        var tutorExterno = new Tutor(1, "Ana123", "1234", "Ana", "ana_123@hotmail.com", "Externo");
         var registroDocenteTutorFake = new ServicioDePersistenciaGestionProyectosFake();
         var proyectos = new Proyectos(registroDocenteTutorFake, new ServicioInformeFake());
-        var proyecto = new Proyecto(1, "Proyecto1", "nada", false, "ninguna", null, null, null, "Finlandia");
+        var proyecto = new Proyecto(1, "Proyecto1", "nada", false, "ninguna", null, null, "Finlandia");
 
         proyectos.asignarDocenteTutor(1, 11);
 

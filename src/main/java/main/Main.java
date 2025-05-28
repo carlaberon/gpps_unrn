@@ -32,6 +32,10 @@ public class Main {
                 MainView mainView = new MainView(servicioProyectos, servicioUsuarios);
                 mainView.setVisible(true);
 
+
+//        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), new ServicioDePersistenciaInforme());
+                proyectos.asignarDocenteTutor(1, 6);
+
                 // Test project creation (commented out as it's for testing)
 
                 String nombreProyecto = "gpps";
@@ -54,6 +58,7 @@ public class Main {
                 System.exit(1);
             }
         });
+
     }
 }
 
