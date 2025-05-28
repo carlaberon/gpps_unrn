@@ -159,9 +159,10 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     public List<Proyecto> obtenerProyectos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
         String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.area_de_interes, " +
-                "p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.id_usuario_estudiante " +
+                "p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.ubicacion " +
                 "FROM proyectos p " +
-                "WHERE p.estado = TRUE AND p.id_usuario_estudiante IS NULL";
+                "WHERE p.estado = TRUE " +
+                "AND p.id_proyecto NOT IN (SELECT e.id_proyecto FROM estudiantes e WHERE e.id_proyecto IS NOT NULL) ";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -173,9 +174,9 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         rs.getString("descripcion"),
                         rs.getBoolean("estado"),
                         rs.getString("area_de_interes"),
-                        null, // estudiante aún no asignado
-                        null, // tutor interno (puede cargarse si querés)
-                        null  // tutor externo (igual)
+                        null, // tutor
+                        null, // docenteSupervisor
+                        rs.getString("ubicacion")  // tutor externo (igual)
                 );
                 proyectos.add(proyecto);
             }
