@@ -17,14 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
-    Connection conn;
+    private Connection conn;
 
     public ServicioDePersistenciaGestionUsuarios(Connection conn) {
-        try {
-            this.conn = Conn.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        this.conn = conn;
     }
 
     @Override
@@ -80,6 +76,7 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         }
         return tutores;
     }
+
     public Usuario buscarUsuario(String nombreUsuario, String contrasenia) throws SQLException {
         String sql = """
                 SELECT u.id_usuario, u.nombre_usuario, u.contrasenia, r.nombre AS rol
@@ -88,12 +85,9 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         JOIN roles r ON ur.codigo = r.codigo
         WHERE u.nombre_usuario = ? AND u.contrasenia = ?
     """;
-            
 
-        try (Connection conn = Conn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-        	stmt.setString(1, nombreUsuario);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nombreUsuario);
             stmt.setString(2, contrasenia);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -113,13 +107,10 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         }
     }
 
-
     @Override
     public List<Director> obtenerTodosDirector() {
         //completar
         return List.of();
-
     }
-
 }
 
