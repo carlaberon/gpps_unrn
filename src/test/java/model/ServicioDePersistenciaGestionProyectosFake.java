@@ -17,6 +17,21 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
+    public void guardar(Proyecto proyecto) throws SQLException {
+
+    }
+
+    @Override
+    public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
+
+    }
+
+    @Override
+    public List<Proyecto> obtenerProyectos() throws SQLException {
+        return List.of();
+    }
+
+    @Override
     public void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno) {
         this.idProyecto = idProyecto;
         this.idDocente = idTutorInterno;
@@ -24,10 +39,29 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
+    public void cargarInformeParcial(Informe informeParcial) {
+
+    }
+
+    @Override
+    public void cargarInformeFinal(Informe informeFinal) {
+
+    }
+
+    @Override
     public void cargarInforme(Informe informeParcial) {
 
     }
 
+    @Override
+    public Proyecto obtenerProyecto(int idProyecto) {
+        return null;
+    }
+
+    @Override
+    public PlanDeTrabajo obtenerPlan(int idProyecto) {
+        return null;
+    }
 
 
     @Override

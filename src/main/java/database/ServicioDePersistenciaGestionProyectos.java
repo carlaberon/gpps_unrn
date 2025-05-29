@@ -3,6 +3,7 @@ package database;
 import model.*;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,5 +205,93 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         }
 
     }
+
+    @Override
+    public Proyecto obtenerProyecto(int idProyecto) {
+        Proyecto proyecto = null;
+
+        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.area_de_interes, " +
+                "p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.ubicacion " +
+                "FROM proyectos p " +
+                "WHERE p.id_proyecto = ?";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idProyecto);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    proyecto = new Proyecto(
+                            rs.getInt("id_proyecto"),
+                            rs.getString("nombre"),
+                            rs.getString("descripcion"),
+                            rs.getBoolean("estado"),
+                            rs.getString("area_de_interes"),
+                            null, // estudiante aún no asignado
+                            null, // tutor interno
+                            rs.getString("ubicacion")  // tutor externo
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Problema de persistencia", e);
+        }
+
+        return proyecto;
+    }
+
+
+    @Override
+    public PlanDeTrabajo obtenerPlan(int idProyecto) {
+        PlanDeTrabajo plan = null;
+
+        String sqlPlan = "SELECT p.id_plan, p.fecha_inicio, p.fecha_fin, p.estado_aprobacion, p.recursos " +
+                "FROM planes p " +
+                "WHERE p.id_proyecto = ?";
+
+        String sqlActividades = "SELECT * FROM actividades WHERE id_plan = ?";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlPlan)) {
+
+            stmt.setInt(1, idProyecto);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int idPlan = rs.getInt("id_plan");
+                    LocalDate fechaInicio = rs.getDate("fecha_inicio").toLocalDate();
+                    LocalDate fechaFin = rs.getDate("fecha_fin").toLocalDate();
+                    String recursos = rs.getString("recursos");
+
+                    List<Actividad> actividades = new ArrayList<>();
+
+                    try (PreparedStatement stmtAct = conn.prepareStatement(sqlActividades)) {
+                        stmtAct.setInt(1, idPlan);
+                        try (ResultSet rsAct = stmtAct.executeQuery()) {
+                            while (rsAct.next()) {
+                                String descripcion = rsAct.getString("descripcion");
+                                LocalDate fechaInicioAct = rsAct.getDate("fecha_inicio").toLocalDate();
+                                int horas = rsAct.getInt("horas");
+                                boolean finalizado = rsAct.getBoolean("finalizado");
+
+                                actividades.add(new Actividad(descripcion, fechaInicioAct, horas, finalizado));
+                            }
+                        }
+                    }
+
+                    // Crear el plan con las actividades
+                    plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, recursos);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Problema de persistencia");
+        }
+
+        return plan;
+    }
+
 
 }

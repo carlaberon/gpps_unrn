@@ -31,10 +31,6 @@ public class PlanDeTrabajo {
         return id;
     }
 
-    public List<Actividad> getActividades() {
-        return actividades;
-    }
-
     public void setActividades(List<Actividad> actividades) {
         this.actividades = actividades;
     }
@@ -75,6 +71,10 @@ public class PlanDeTrabajo {
 
     public void agregarActividad(Actividad act) {
         actividades.add(act);
+    }
+
+    public String recursos() {
+        return recursos;
     }
 
 }

@@ -21,7 +21,7 @@ public class CrearPlanTrabajo extends JFrame {
     private JTable tablaActividades;
     private DefaultTableModel modeloTabla;
     private JTextField campoDescripcion;
-    private JCheckBox checkConInforme;
+    private JTextArea campoRecursos;
     private JSpinner campoFechaInicio;
     private JSpinner campoHoras;
 
@@ -58,7 +58,6 @@ public class CrearPlanTrabajo extends JFrame {
         panelActividad.setBorder(BorderFactory.createTitledBorder("Nueva Actividad"));
 
         campoDescripcion = new JTextField();
-        checkConInforme = new JCheckBox("¿Requiere informe?");
         campoFechaInicio = new JSpinner(new SpinnerDateModel());
         campoFechaInicio.setEditor(new JSpinner.DateEditor(campoFechaInicio, "yyyy-MM-dd"));
         campoHoras = new JSpinner(new SpinnerNumberModel(1, 1, 1000, 1)); // más pequeño
@@ -69,14 +68,12 @@ public class CrearPlanTrabajo extends JFrame {
         panelActividad.add(campoFechaInicio);
         panelActividad.add(new JLabel("Horas estimadas:"));
         panelActividad.add(campoHoras);
-        panelActividad.add(new JLabel("¿Con informe?:"));
-        panelActividad.add(checkConInforme);
 
         JButton btnAgregarActividad = new JButton("Agregar Actividad");
         panelActividad.add(btnAgregarActividad);
 
         // Tabla de actividades
-        modeloTabla = new DefaultTableModel(new String[]{"Descripción", "Fecha", "Horas", "Informe"}, 0);
+        modeloTabla = new DefaultTableModel(new String[]{"Descripción", "Fecha", "Horas"}, 0);
         tablaActividades = new JTable(modeloTabla);
         JScrollPane scrollTabla = new JScrollPane(tablaActividades);
 
@@ -87,7 +84,21 @@ public class CrearPlanTrabajo extends JFrame {
         btnGuardar.addActionListener(e -> guardarPlan());
 
         JPanel panelSuperior = new JPanel(new BorderLayout());
-        panelSuperior.add(panelFechasPlan, BorderLayout.NORTH);
+        // Panel para recursos
+        JPanel panelRecursos = new JPanel(new BorderLayout());
+        panelRecursos.setBorder(BorderFactory.createTitledBorder("Recursos necesarios"));
+        campoRecursos = new JTextArea(3, 20);
+        campoRecursos.setLineWrap(true);
+        campoRecursos.setWrapStyleWord(true);
+        panelRecursos.add(new JScrollPane(campoRecursos), BorderLayout.CENTER);
+
+// Panel combinado fechas + recursos
+        JPanel panelDatosPlan = new JPanel(new BorderLayout());
+        panelDatosPlan.add(panelFechasPlan, BorderLayout.NORTH);
+        panelDatosPlan.add(panelRecursos, BorderLayout.CENTER);
+
+// Agregar al panel superior
+        panelSuperior.add(panelDatosPlan, BorderLayout.NORTH);
         panelSuperior.add(panelActividad, BorderLayout.CENTER);
 
         add(panelSuperior, BorderLayout.NORTH);
@@ -99,7 +110,6 @@ public class CrearPlanTrabajo extends JFrame {
         String descripcion = campoDescripcion.getText();
         java.util.Date fecha = (java.util.Date) campoFechaInicio.getValue();
         int horas = (int) campoHoras.getValue();
-        boolean conInforme = checkConInforme.isSelected();
 
         if (descripcion.isBlank()) {
             JOptionPane.showMessageDialog(this, "La descripción no puede estar vacía.");
@@ -109,13 +119,12 @@ public class CrearPlanTrabajo extends JFrame {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate fechaLocal = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         modeloTabla.addRow(new Object[]{
-                descripcion, fechaLocal.format(formatter), horas, conInforme ? "Sí" : "No"
+                descripcion, fechaLocal.format(formatter), horas
         });
 
         // Limpiar campos
         campoDescripcion.setText("");
         campoHoras.setValue(1);
-        checkConInforme.setSelected(false);
     }
 
     private void guardarPlan() {
@@ -125,9 +134,8 @@ public class CrearPlanTrabajo extends JFrame {
             String descripcion = (String) modeloTabla.getValueAt(i, 0);
             LocalDate fecha = LocalDate.parse(modeloTabla.getValueAt(i, 1).toString());
             int horas = Integer.parseInt(modeloTabla.getValueAt(i, 2).toString());
-            boolean conInforme = modeloTabla.getValueAt(i, 3).equals("Sí");
 
-            actividades.add(new Actividad(descripcion, fecha, horas, conInforme));
+            actividades.add(new Actividad(descripcion, fecha, horas, false));
         }
 
         // Obtener fechas del plan desde los campos de fecha
@@ -137,7 +145,8 @@ public class CrearPlanTrabajo extends JFrame {
         LocalDate fechaFin = fechaFinUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
 
         // Crear plan con fechas del plan
-        PlanDeTrabajo plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, null);
+        String recursos = campoRecursos.getText();
+        PlanDeTrabajo plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, recursos);
         gestorDeProyectos.cargarPlanDeTrabajo(plan, idProyecto);
 
         JOptionPane.showMessageDialog(this, "Plan de trabajo postulado correctamente.");
