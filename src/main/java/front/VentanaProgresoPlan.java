@@ -32,7 +32,7 @@ public class VentanaProgresoPlan extends JFrame {
         barraProgreso.setValue((int) plan.calcularProgreso());
         barraProgreso.setStringPainted(true);
 
-        tablaActividades = new JTable(new ActividadesTableModel(plan.getActividades()));
+        tablaActividades = new JTable(new ActividadesTableModel(plan.actividades()));
         tablaActividades.getColumn("Acción").setCellRenderer(new ButtonRenderer());
         tablaActividades.getColumn("Acción").setCellEditor(new ButtonEditor(new JCheckBox()));
 
@@ -122,7 +122,7 @@ public class VentanaProgresoPlan extends JFrame {
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                Actividad actividad = plan.getActividades().get(selectedRow);
+                Actividad actividad = plan.actividades().get(selectedRow);
                 actividad.setEstado(true);
                 try {
                     actividadDAO.marcarComoCompletado(actividad.getIdActividad());

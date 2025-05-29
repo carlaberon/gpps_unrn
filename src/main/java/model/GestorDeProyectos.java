@@ -25,4 +25,8 @@ public interface GestorDeProyectos {
     void aprobarPlanDeTrabajo(int idPlan);
 
     void cargarInforme(Informe informeParcial);
+
+    Proyecto obtenerProyecto(int idProyecto);
+
+    PlanDeTrabajo obtenerPlan(int idProyecto);
 }
