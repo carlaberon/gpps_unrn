@@ -17,7 +17,7 @@ public class Main9 {
     public static void main(String[] args) {
     	Connection conn = null;
     	GestorDeUsuarios gestorUsuarios = new ServicioDePersistenciaGestionUsuarios(conn);
-    	GestorDeProyectos gestorProyectos = new ServicioDePersistenciaGestionProyectos(conn);
+    	GestorDeProyectos gestorProyectos = new ServicioDePersistenciaGestionProyectos();
         Administrador admin = new Administrador(0, null, null, null, null, null);
         ConvenioDAO convenioDAO = new database.ConvenioDAOJDBC();
 

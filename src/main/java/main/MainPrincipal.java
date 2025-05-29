@@ -12,7 +12,7 @@ public class MainPrincipal {
     public static void main(String[] args) {
         try {
             GestorDeUsuarios gestorDeUsuarios = new ServicioDePersistenciaGestionUsuarios(null);
-            GestorDeProyectos gestorDeProyectos = new ServicioDePersistenciaGestionProyectos(null);
+            GestorDeProyectos gestorDeProyectos = new ServicioDePersistenciaGestionProyectos();
             ConvenioDAO convenioDAO = new ConvenioDAOJDBC();
 
             javax.swing.SwingUtilities.invokeLater(() -> {

@@ -10,15 +10,7 @@ import java.util.List;
 //el import...dependencia
 
 public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos {
-    private Connection conn;
-
-    public ServicioDePersistenciaGestionProyectos(Connection conn) {
-        try {
-            this.conn = Conn.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+ 
 
     public ServicioDePersistenciaGestionProyectos() {
 
@@ -37,7 +29,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             statement.setString(4, proyecto.getUbicacion());
             statement.setInt(5, proyecto.getIdUsuarioTutorInterno());
             statement.setInt(6, proyecto.getIdUsuarioTutorExterno());
-            statement.setBoolean(8, proyecto.getEstado());
+            statement.setBoolean(7, proyecto.getEstado());
 
             statement.executeUpdate();
         } catch (SQLException ex) {
@@ -73,7 +65,8 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public void guardar(Proyecto proyecto) throws SQLException {
         String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, ubicacion, estado, idUsuario_tutorInterno, idUsuario_tutorExterno) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = Conn.getConnection();
+        	PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, proyecto.getId());
             stmt.setString(2, proyecto.getNombre());
             stmt.setString(3, proyecto.getDescripcion());
@@ -91,7 +84,8 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         String sql = "INSERT INTO proyecto (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = Conn.getConnection();
+        		PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, proyecto.getNombre());
             stmt.setString(2, proyecto.getDescripcion());
             stmt.setString(3, proyecto.getAreaDeInteres());
@@ -164,7 +158,8 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 "FROM proyecto p " +
                 "WHERE p.estado = TRUE AND p.idUsuario_estudiante IS NULL";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
+        try (Connection conn = Conn.getConnection();
+        		PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {

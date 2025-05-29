@@ -24,7 +24,6 @@ public class VentanaPrincipal extends JFrame {
     private JButton btnCrearConvenio;
     private JButton btnCrearPlan;
 
-    // Dependencias necesarias que serán compartidas con los formularios
     private final GestorDeUsuarios gestorDeUsuarios;
     private final GestorDeProyectos gestorDeProyectos;
     private final Administrador administrador;
@@ -40,8 +39,7 @@ public class VentanaPrincipal extends JFrame {
         setTitle("Gestión de Proyectos PPS");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // Centrar ventana
-
+        setLocationRelativeTo(null); 
         initComponents();
         setupLayout();
         setupListeners();
@@ -55,7 +53,7 @@ public class VentanaPrincipal extends JFrame {
 
     private void setupLayout() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 1, 10, 10)); // 3 filas, 1 columna, espacio vertical
+        panel.setLayout(new GridLayout(3, 1, 10, 10)); 
 
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.add(btnCrearProyecto);
