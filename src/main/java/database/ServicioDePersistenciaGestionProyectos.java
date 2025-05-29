@@ -51,16 +51,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     }
 
-    @Override
-    public void cargarInformeParcial(Informe informeParcial) {
-
-    }
-
-
-    @Override
-    public void cargarInformeFinal(Informe informeFinal) {
-
-    }
 
     @Override
     public void guardar(Proyecto proyecto) throws SQLException {
@@ -170,8 +160,8 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         rs.getBoolean("estado"),
                         rs.getString("area_de_interes"),
                         null, // estudiante aún no asignado
-                        null, // tutor interno (puede cargarse si querés)
-                        null  // tutor externo (igual)
+                        null // tutor interno (puede cargarse si querés)
+                        // tutor externo (igual)
                 );
                 proyectos.add(proyecto);
             }
@@ -193,7 +183,14 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             statement.setString(3, informeParcial.tipo());
             statement.setInt(4, informeParcial.valoracionInforme());
             statement.setBoolean(5, informeParcial.estado());
-            statement.setNull(6, java.sql.Types.BLOB); // Asumiendo que no se carga un archivo en este momento
+            byte[] archivo = informeParcial.archivoEntregable();
+
+            if (archivo != null) {
+                statement.setBytes(6, archivo);
+            } else {
+                statement.setNull(6, java.sql.Types.BINARY);
+            }
+
             statement.executeUpdate();
         } catch (SQLException ex) {
             throw new RuntimeException(ex);

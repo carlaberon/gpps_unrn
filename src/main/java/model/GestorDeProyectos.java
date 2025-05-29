@@ -16,10 +16,6 @@ public interface GestorDeProyectos {
 
     void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno);
 
-    void cargarInformeParcial(Informe informeParcial);
-
-    void cargarInformeFinal(Informe informeFinal);
-
     void cargarPlanDeTrabajo(PlanDeTrabajo plan, int idProyecto);
 
     void aprobarPlanDeTrabajo(int idPlan);

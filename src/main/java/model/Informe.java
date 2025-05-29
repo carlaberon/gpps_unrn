@@ -10,9 +10,10 @@ public class Informe {
     private int valoracionInforme;
     private boolean estado; // recibido true
     private String tipo;
+    private byte[] archivoEntregable;
 
 
-    public Informe(int id, String descripcion, String tipo){
+    public Informe(int id, String descripcion, String tipo, byte[] archivoEntregable) {
 
         this.id = id;
         this.descripcion = descripcion;
@@ -20,6 +21,7 @@ public class Informe {
         this.valoracionInforme = -1; // -1 indica que no se ha valorado
         this.estado = false;
         this.tipo = tipo;
+        this.archivoEntregable = archivoEntregable;
     }
 
     public void setValoracionInforme(int valoracionInforme){
@@ -43,5 +45,8 @@ public class Informe {
     }
     public String tipo() {
         return tipo;
+    }
+    public byte[] archivoEntregable() {
+        return archivoEntregable;
     }
 }
