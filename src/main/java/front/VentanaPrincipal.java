@@ -1,6 +1,9 @@
 package front;
 
 import javax.swing.*;
+
+import database.ServicioDePersistenciaGestionProyectos;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +11,7 @@ import java.awt.event.ActionListener;
 
 import front.VentanaPrincipal;
 import model.GestorDeUsuarios;
+import ui.CrearPlanTrabajo;
 import ui.ProyectoFormSwing;
 import model.Administrador;
 import model.GestorDeProyectos;
@@ -81,7 +85,11 @@ public class VentanaPrincipal extends JFrame {
         btnCrearPlan.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GenerarPlan planForm = new GenerarPlan();
+                int idProyecto = 1; 
+                CrearPlanTrabajo planForm = new CrearPlanTrabajo(
+                    new ServicioDePersistenciaGestionProyectos(), 
+                    idProyecto
+                );
                 planForm.setVisible(true);
             }
         });

@@ -31,7 +31,7 @@ public class DirectorDAOJDBC implements DirectorDAO {
                     rs.getString("nombreUsuario"),
                     "", // No obtenemos la contraseña por seguridad
                     rs.getString("nombre"),
-                    rs.getString("email")
+                    rs.getString("email"), null
                 ));
             }
         } catch (SQLException e) {
@@ -57,7 +57,7 @@ public class DirectorDAOJDBC implements DirectorDAO {
                     rs.getString("nombreUsuario"),
                     "", // No obtenemos la contraseña por seguridad
                     rs.getString("nombre"),
-                    rs.getString("email")
+                    rs.getString("email"), null
                 );
             }
         } catch (SQLException e) {

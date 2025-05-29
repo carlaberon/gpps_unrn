@@ -20,7 +20,7 @@ public class ConvenioDAOJDBC implements ConvenioDAO {
 	        try {
 	            conn = Conn.getConnection();
 	            stmt = conn.prepareStatement(
-	                "INSERT INTO convenio (id_proyecto, id_entidad_colaboradora, fecha_inicio, fecha_fin, descripcion, activo) " +
+	                "INSERT INTO convenios (id_proyecto, id_entidad, fecha_inicio, fecha_fin, descripcion, activo) " +
 	                "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 	            stmt.setInt(1, convenio.getIdProyecto());
@@ -57,7 +57,7 @@ public class ConvenioDAOJDBC implements ConvenioDAO {
             conn = Conn.getConnection();
 
             statement = conn.prepareStatement(
-                "UPDATE convenio SET archivopdf = ?, activo = ? WHERE id = ?");
+                "UPDATE convenios SET archivopdf = ?, activo = ? WHERE id = ?");
 
             statement.setBytes(1, convenio.getArchivoPdf());
             statement.setBoolean(2, convenio.isActivo());
@@ -87,7 +87,7 @@ public class ConvenioDAOJDBC implements ConvenioDAO {
 
         try {
             conn = Conn.getConnection();
-            stmt = conn.prepareStatement("SELECT * FROM convenio WHERE id = ?");
+            stmt = conn.prepareStatement("SELECT * FROM convenios WHERE id = ?");
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
 
@@ -122,7 +122,7 @@ public class ConvenioDAOJDBC implements ConvenioDAO {
         try {
             Connection conn = Conn.getConnection();
             PreparedStatement stmt = conn.prepareStatement(
-                "SELECT archivoPdf FROM convenio WHERE id = ?"
+                "SELECT archivoPdf FROM convenios WHERE id = ?"
             );
 
             stmt.setInt(1, id);

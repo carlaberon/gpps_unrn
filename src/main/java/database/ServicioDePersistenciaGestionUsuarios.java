@@ -4,6 +4,7 @@ import model.Administrador;
 import model.Director;
 import model.Estudiante;
 import model.GestorDeUsuarios;
+import model.Rol;
 import model.Tutor;
 import model.Usuario;
 
@@ -43,7 +44,7 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                         "", // No obtenemos la contraseña por seguridad
                         rs.getString("nombre"),
                         rs.getString("email"),
-                        rs.getString("legajo"),
+                        null, rs.getString("legajo"),
                         rs.getBoolean("esRegular"),
                         "" // No tenemos dirección en la nueva estructura
                 ));
@@ -71,7 +72,7 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                         "", // No obtenemos la contraseña por seguridad
                         rs.getString("nombre"),
                         rs.getString("email"),
-                        rs.getString("tipo")
+                        null, rs.getString("tipo")
                 ));
             }
         } catch (SQLException e) {
@@ -79,39 +80,37 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         }
         return tutores;
     }
-    @Override
-    public Usuario find(String nombreUsuario, String contrasenia) throws SQLException {
-        Usuario usuario = null;
+    public Usuario buscarUsuario(String nombreUsuario, String contrasenia) throws SQLException {
+        String sql = """
+                SELECT u.id_usuario, u.nombre_usuario, u.contrasenia, r.nombre AS rol
+        FROM usuarios u
+        JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+        JOIN roles r ON ur.codigo = r.codigo
+        WHERE u.nombre_usuario = ? AND u.contrasenia = ?
+    """;
+            
 
-        Connection conn = Conn.getConnection();
-        String sql = "SELECT * FROM usuarios WHERE usuario = ? AND contrasena = ?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, nombreUsuario);
-        stmt.setString(2, contrasenia);
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            int id = rs.getInt("id");
-            String nombre = rs.getString("nombre");
-            String email = rs.getString("email");
-            String tipo = rs.getString("tipo"); // debe existir esta columna
+        	stmt.setString(1, nombreUsuario);
+            stmt.setString(2, contrasenia);
 
-            if ("administrador".equalsIgnoreCase(tipo)) {
-                usuario = new Administrador(id, nombreUsuario, contrasenia, nombre, email);
-            } else if ("estudiante".equalsIgnoreCase(tipo)) {
-                String legajo = rs.getString("legajo");
-                boolean regular = rs.getBoolean("regular");
-                String direccionPostal = rs.getString("direccion_postal");
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id_usuario");
+                    String rol = rs.getString("rol");
 
-                usuario = new Estudiante(id, nombreUsuario, contrasenia, nombre, email, legajo, regular, direccionPostal);
-            } else {
-                throw new SQLException("Tipo de usuario desconocido.");
+                    return switch (rol.toLowerCase()) {
+                        case "administrador" -> new Administrador(id, nombreUsuario, rol, rol, rol, null);
+                        case "estudiante" -> new Estudiante(id, nombreUsuario, rol, rol, rol, null, rol, null, rol);
+                        default -> null; // o lanzar excepción
+                    };
+                } else {
+                    throw new SQLException("Usuario o contraseña incorrectos.");
+                }
             }
-        } else {
-            throw new SQLException("Usuario o contraseña incorrectos.");
         }
-
-        return usuario;
     }
 
 
@@ -121,5 +120,6 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         return List.of();
 
     }
+
 }
 

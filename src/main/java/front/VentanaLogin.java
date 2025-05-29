@@ -60,7 +60,7 @@ public class VentanaLogin extends JFrame {
             }
 
             try {
-                Usuario user = gestorDeUsuarios.find(usuario, contrasena);
+                Usuario user = gestorDeUsuarios.buscarUsuario(usuario, contrasena);
                 this.dispose(); 
 
                 if (user instanceof Administrador admin) {

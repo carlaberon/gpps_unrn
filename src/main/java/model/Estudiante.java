@@ -8,9 +8,9 @@ public class Estudiante extends Usuario {
     private int id_proyecto;
     private Proyecto proyectoSeleccionado;
 
-    public Estudiante(int id, String nombreUsuario, String contrasenia, String nombre, String email,
+    public Estudiante(int id, String nombreUsuario, String contrasenia, String nombre, String email,Rol rol,
                       String legajo, Boolean regular, String direccionPostal) {
-        super(id, nombreUsuario, contrasenia, nombre, email);
+    	super(id, nombreUsuario, contrasenia, nombre, email, rol);
         this.legajo = legajo;
         this.regular = regular;
         this.direccionPostal = direccionPostal;
