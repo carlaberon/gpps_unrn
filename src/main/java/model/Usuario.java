@@ -6,13 +6,15 @@ public abstract class Usuario {
     private String contrasenia;
     private String nombre;
     private String email;
+    private Rol rol;
 
-    public Usuario(int id, String nombreUsuario, String contrasenia, String nombre, String email) {
+    public Usuario(int id, String nombreUsuario, String contrasenia, String nombre, String email, Rol rol) {
         this.id = id;
         this.nombreUsuario = nombreUsuario;
         this.contrasenia = contrasenia;
         this.nombre = nombre;
         this.email = email;
+        this.rol = rol;
     }
 
     public int getId() {
@@ -33,6 +35,10 @@ public abstract class Usuario {
 
     public String getEmail() {
         return email;
+    }
+
+    public Rol getRol() {
+        return rol;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package model;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProyectos {
     private Proyecto propuestaDeProyecto;
     private int idProyecto;
@@ -14,6 +17,21 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
+    public void guardar(Proyecto proyecto) throws SQLException {
+
+    }
+
+    @Override
+    public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
+
+    }
+
+    @Override
+    public List<Proyecto> obtenerProyectos() throws SQLException {
+        return List.of();
+    }
+
+    @Override
     public void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno) {
         this.idProyecto = idProyecto;
         this.idDocente = idTutorInterno;
@@ -21,10 +39,29 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
+    public void cargarInformeParcial(Informe informeParcial) {
+
+    }
+
+    @Override
+    public void cargarInformeFinal(Informe informeFinal) {
+
+    }
+
+    @Override
     public void cargarInforme(Informe informeParcial) {
 
     }
 
+    @Override
+    public Proyecto obtenerProyecto(int idProyecto) {
+        return null;
+    }
+
+    @Override
+    public PlanDeTrabajo obtenerPlan(int idProyecto) {
+        return null;
+    }
 
 
     @Override
@@ -53,4 +90,34 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     public int idTutor() {
         return this.idTutor;
     }
+
+	@Override
+	public void guardar(Proyecto proyecto) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Proyecto> obtenerProyectos() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void cargarInformeParcial(Informe informeParcial) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cargarInformeFinal(Informe informeFinal) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface GestorDeUsuarios {
@@ -9,4 +10,5 @@ public interface GestorDeUsuarios {
     List<Tutor> obtenerTodosTutores();
 
     List<Director> obtenerTodosDirector();
+    Usuario buscarUsuario(String nombreUsuario, String contrasenia) throws SQLException;
 }

@@ -11,7 +11,7 @@ public class Main4 {
     public static void main(String[] args) throws Exception {
         Connection conn = null;
 
-        GestorDeProyectos dao = new ServicioDePersistenciaGestionProyectos(conn);
+        GestorDeProyectos dao = new ServicioDePersistenciaGestionProyectos();
         SwingUtilities.invokeLater(() -> {
             new SeleccionarProyecto(dao).setVisible(true);
         });

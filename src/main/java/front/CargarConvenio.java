@@ -43,7 +43,7 @@ public class CargarConvenio extends JFrame {
                 byte[] pdfBytes = Files.readAllBytes(archivo.toPath());
 
                 Convenio convenio = convenioDAO.buscarPorId(3);
-                Administrador admin = new Administrador(10, "admin", "123", "Administrador", "admin@email.com");
+                Administrador admin = new Administrador(10, "admin", "123", "Administrador", "admin@email.com", null);
                 admin.cargarConvenioFirmado(convenio, pdfBytes, convenioDAO);
 
                 JOptionPane.showMessageDialog(null, "Convenio actualizado correctamente.");

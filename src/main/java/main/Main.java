@@ -23,7 +23,7 @@ public class Main {
 
                 // Initialize services
                 ServicioDePersistenciaGestionProyectos servicioProyectos =
-                        new ServicioDePersistenciaGestionProyectos(conn);
+                        new ServicioDePersistenciaGestionProyectos();
                 ServicioDePersistenciaGestionUsuarios servicioUsuarios =
                         new ServicioDePersistenciaGestionUsuarios(conn);
                 Proyectos proyectos = new Proyectos(servicioProyectos);
