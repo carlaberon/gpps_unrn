@@ -11,7 +11,7 @@ public class Proyecto {
     private String ubicacion;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                    Tutor tutor, Tutor docenteSupervisor) {
+                    Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
         this.id_proyecto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;

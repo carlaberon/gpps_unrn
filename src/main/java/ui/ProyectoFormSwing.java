@@ -1,7 +1,5 @@
 package ui;
 
-//import database.*;
-
 import model.*;
 
 import javax.swing.*;
@@ -196,13 +194,21 @@ public class ProyectoFormSwing extends JFrame {
                     estadoCheck.isSelected(),
                     areaField.getText(),
                     (Tutor) tutorCombo.getSelectedItem(),
-                    (Tutor) supervisorCombo.getSelectedItem()
+                    (Tutor) supervisorCombo.getSelectedItem(),
+                    ubicacionField.getText()
             );
 
             if (proyecto.esValido()) {
-                proyectoDAO.guardarProyectoSinEstudiante(proyecto);
+                int idGenerado = proyectoDAO.guardarProyectoSinEstudiante(proyecto); // ← ¡Este método debe devolver el ID!
                 mostrarAlerta("Éxito", "Proyecto guardado correctamente");
-                limpiarCampos();
+
+                // Abrir la ventana de Plan de Trabajo
+                CrearPlanTrabajo planTrabajoWindow = new CrearPlanTrabajo(proyectoDAOPersistencia, idGenerado);
+                planTrabajoWindow.setVisible(true);
+
+                // Cerrar esta ventana si no la necesitás más:
+                dispose();
+
             } else {
                 mostrarAlerta("Error", "Los datos del proyecto no son válidos");
             }
