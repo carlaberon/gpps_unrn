@@ -1,7 +1,5 @@
 package ui;
 
-//import database.*;
-
 import model.*;
 
 import javax.swing.*;
@@ -196,7 +194,8 @@ public class ProyectoFormSwing extends JFrame {
                     estadoCheck.isSelected(),
                     areaField.getText(),
                     (Tutor) tutorCombo.getSelectedItem(),
-                    (Tutor) supervisorCombo.getSelectedItem()
+                    (Tutor) supervisorCombo.getSelectedItem(),
+                    ubicacionField.getText()
             );
 
             if (proyecto.esValido()) {

@@ -21,7 +21,6 @@ public class Proyectos {
     }
 
 
-
     public void guardarProyecto(Proyecto proyecto) throws SQLException {
         //var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, estudiante, tutor, docenteSupervisor);
         this.gestorDeProyectos.guardar(proyecto);
@@ -32,8 +31,8 @@ public class Proyectos {
     }
 
     public void propuestaDeProyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                                    Tutor tutor, Tutor docenteSupervisor) {
-        var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, tutor, docenteSupervisor);
+                                    Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
+        var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, tutor, docenteSupervisor, ubicacion);
         this.gestorDeProyectos.registrarPropuestaDeProyecto(proyecto);
         //registra el proyecto
     }
@@ -52,7 +51,7 @@ public class Proyectos {
         if (!this.servicioDeVerificacionInformes.verificarInformeParcialAprobado(idInformesParciales)) { //lista de informes parciales
             throw new RuntimeException("El informe parcial no se encuentra aprobado. Intente en otro momento.");
         }
-        var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal, tipo, archivoEntregable );
+        var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal, tipo, archivoEntregable);
         this.gestorDeProyectos.cargarInforme(informeFinal);
     }
 
