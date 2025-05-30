@@ -67,4 +67,12 @@ public class Proyectos {
         this.servicioDeVerificacionInformes.valorarInforme(idInforme, valorInforme);
     }
 
+    public List<Tutor> obtenerTutoresPorProyecto(int idProyecto) throws SQLException {
+        return this.gestorDeProyectos.obtenerTutoresPorProyecto(idProyecto);
+    }
+
+    public List<Actividad> obtenerActividadesPorPlan(int idPlan) throws SQLException {
+        return this.gestorDeProyectos.obtenerActividadesPorPlan(idPlan);
+    }
+
 }

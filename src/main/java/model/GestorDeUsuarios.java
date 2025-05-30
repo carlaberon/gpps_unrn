@@ -10,5 +10,6 @@ public interface GestorDeUsuarios {
     List<Tutor> obtenerTodosTutores();
 
     List<Director> obtenerTodosDirector();
+
     Usuario buscarUsuario(String nombreUsuario, String contrasenia) throws SQLException;
 }

@@ -10,7 +10,7 @@ import java.util.List;
 //el import...dependencia
 
 public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos {
- 
+
 
     public ServicioDePersistenciaGestionProyectos() {
 
@@ -56,7 +56,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     public void guardar(Proyecto proyecto) throws SQLException {
         String sql = "INSERT INTO Proyecto (id_proyecto, nombre, descripcion, areaDeInteres, ubicacion, estado, idUsuario_tutorInterno, idUsuario_tutorExterno) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Conn.getConnection();
-        	PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, proyecto.getId());
             stmt.setString(2, proyecto.getNombre());
             stmt.setString(3, proyecto.getDescripcion());
@@ -71,11 +71,11 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
-        String sql = "INSERT INTO proyecto (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo) " +
+        String sql = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Conn.getConnection();
-        		PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, proyecto.getNombre());
             stmt.setString(2, proyecto.getDescripcion());
             stmt.setString(3, proyecto.getAreaDeInteres());
@@ -143,13 +143,13 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     public List<Proyecto> obtenerProyectos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
-        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.areaDeInteres, " +
-                "p.docenteSupervisor, p.idUsuario_director, p.idUsuario_estudiante " +
-                "FROM proyecto p " +
-                "WHERE p.estado = TRUE AND p.idUsuario_estudiante IS NULL";
-
+        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.area_de_interes, " +
+                "p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.ubicacion " +
+                "FROM proyectos p " +
+                "WHERE p.estado = TRUE " +
+                "AND p.id_proyecto NOT IN (SELECT e.id_proyecto FROM estudiantes e WHERE e.id_proyecto IS NOT NULL) ";
         try (Connection conn = Conn.getConnection();
-        		PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
@@ -159,9 +159,9 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         rs.getString("descripcion"),
                         rs.getBoolean("estado"),
                         rs.getString("area_de_interes"),
-                        null, // estudiante aún no asignado
-                        null // tutor interno (puede cargarse si querés)
-                        // tutor externo (igual)
+                        null, // tutor
+                        null, // docenteSupervisor
+                        rs.getString("ubicacion")  // tutor externo (igual)
                 );
                 proyectos.add(proyecto);
             }
@@ -283,6 +283,64 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         }
 
         return plan;
+    }
+
+    @Override
+    public List<Tutor> obtenerTutoresPorProyecto(int idProyecto) throws SQLException {
+        List<Tutor> tutores = new ArrayList<>();
+        String sql = """
+                    SELECT u.id_usuario, u.nombre_usuario, u.nombre, u.email, t.tipo
+                    FROM usuarios u
+                    JOIN tutores t ON u.id_usuario = t.id_usuario
+                    JOIN proyectos p ON (u.id_usuario = p.id_usuario_tutor_interno OR u.id_usuario = p.id_usuario_tutor_externo)
+                    WHERE p.id_proyecto = ?
+                """;
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProyecto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    tutores.add(new Tutor(
+                            rs.getInt("id_usuario"),
+                            rs.getString("nombre_usuario"),
+                            "", // No obtenemos la contraseña por seguridad
+                            rs.getString("nombre"),
+                            rs.getString("email"),
+                            null,
+                            rs.getString("tipo")
+                    ));
+                }
+            }
+        }
+        return tutores;
+    }
+
+    @Override
+    public List<Actividad> obtenerActividadesPorPlan(int idPlan) throws SQLException {
+        List<Actividad> actividades = new ArrayList<>();
+        String sql = "SELECT id_actividad, descripcion, fecha_inicio, horas, finalizado FROM actividades WHERE id_plan = ?";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idPlan);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int idActividad = rs.getInt("id_actividad");
+                    String descripcion = rs.getString("descripcion");
+                    LocalDate fechaInicio = rs.getDate("fecha_inicio").toLocalDate();
+                    int horas = rs.getInt("horas");
+                    boolean finalizado = rs.getBoolean("finalizado");
+
+                    Actividad actividad = new Actividad(descripcion, fechaInicio, horas, finalizado);
+                    actividad.setIdActividad(idActividad);
+
+                    actividades.add(actividad);
+                }
+            }
+        }
+        return actividades;
     }
 
 

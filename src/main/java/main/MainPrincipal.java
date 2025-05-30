@@ -7,11 +7,15 @@ import model.ConvenioDAO;
 import database.ServicioDePersistenciaGestionUsuarios;
 import database.ServicioDePersistenciaGestionProyectos;
 import database.ConvenioDAOJDBC;
+import database.Conn;
 
 public class MainPrincipal {
     public static void main(String[] args) {
         try {
-            GestorDeUsuarios gestorDeUsuarios = new ServicioDePersistenciaGestionUsuarios(null);
+            // Initialize database connection
+            Conn.connect();
+            
+            GestorDeUsuarios gestorDeUsuarios = new ServicioDePersistenciaGestionUsuarios(Conn.getConnection());
             GestorDeProyectos gestorDeProyectos = new ServicioDePersistenciaGestionProyectos();
             ConvenioDAO convenioDAO = new ConvenioDAOJDBC();
 

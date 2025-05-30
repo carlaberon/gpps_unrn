@@ -1,30 +1,16 @@
 package database;
 
-import model.Administrador;
-import model.Director;
-import model.Estudiante;
-import model.GestorDeUsuarios;
-import model.Rol;
-import model.Tutor;
-import model.Usuario;
+import model.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
-    Connection conn;
+    private Connection conn;
 
     public ServicioDePersistenciaGestionUsuarios(Connection conn) {
-        try {
-            this.conn = Conn.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        this.conn = conn;
     }
 
     @Override
@@ -80,20 +66,18 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         }
         return tutores;
     }
+
     public Usuario buscarUsuario(String nombreUsuario, String contrasenia) throws SQLException {
         String sql = """
-                SELECT u.id_usuario, u.nombre_usuario, u.contrasenia, r.nombre AS rol
-        FROM usuarios u
-        JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
-        JOIN roles r ON ur.codigo = r.codigo
-        WHERE u.nombre_usuario = ? AND u.contrasenia = ?
-    """;
-            
+                            SELECT u.id_usuario, u.nombre_usuario, u.contrasenia, r.nombre AS rol
+                    FROM usuarios u
+                    JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+                    JOIN roles r ON ur.codigo = r.codigo
+                    WHERE u.nombre_usuario = ? AND u.contrasenia = ?
+                """;
 
-        try (Connection conn = Conn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-        	stmt.setString(1, nombreUsuario);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nombreUsuario);
             stmt.setString(2, contrasenia);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -113,13 +97,10 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         }
     }
 
-
     @Override
     public List<Director> obtenerTodosDirector() {
         //completar
         return List.of();
-
     }
-
 }
 
