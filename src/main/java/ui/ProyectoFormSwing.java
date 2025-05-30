@@ -196,8 +196,7 @@ public class ProyectoFormSwing extends JFrame {
                     estadoCheck.isSelected(),
                     areaField.getText(),
                     (Tutor) tutorCombo.getSelectedItem(),
-                    (Tutor) supervisorCombo.getSelectedItem(),
-                    ubicacionField.getText()
+                    (Tutor) supervisorCombo.getSelectedItem()
             );
 
             if (proyecto.esValido()) {

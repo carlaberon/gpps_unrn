@@ -11,7 +11,7 @@ public class Proyecto {
     private String ubicacion;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                    Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
+                    Tutor tutor, Tutor docenteSupervisor) {
         this.id_proyecto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -21,7 +21,6 @@ public class Proyecto {
         this.docenteSupervisor = docenteSupervisor;
         this.ubicacion = ubicacion;
     }
-
 
     public Proyecto(int id, String nombre2, String nombre3, Object object, String nombre4, Object object2,
                     Object object3, Object object4) {

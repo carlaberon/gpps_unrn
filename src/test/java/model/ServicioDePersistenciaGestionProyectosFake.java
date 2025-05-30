@@ -1,4 +1,4 @@
-package model;
+/*package model;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -15,17 +15,6 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
         this.propuestaDeProyecto = proyecto;
 
     }
-
-    @Override
-    public void guardar(Proyecto proyecto) throws SQLException {
-
-    }
-
-    @Override
-    public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
-
-    }
-
     @Override
     public List<Proyecto> obtenerProyectos() throws SQLException {
         return List.of();
@@ -37,17 +26,6 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
         this.idDocente = idTutorInterno;
         this.idTutor = idTutor;
     }
-
-    @Override
-    public void cargarInformeParcial(Informe informeParcial) {
-
-    }
-
-    @Override
-    public void cargarInformeFinal(Informe informeFinal) {
-
-    }
-
     @Override
     public void cargarInforme(Informe informeParcial) {
 
@@ -120,4 +98,16 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
 		// TODO Auto-generated method stub
 		
 	}
-}
+
+	@Override
+	public List<Tutor> obtenerTutoresPorProyecto(int idProyecto) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Actividad> obtenerActividadesPorPlan(int idPlan) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}*/
