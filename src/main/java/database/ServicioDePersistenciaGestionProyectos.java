@@ -288,5 +288,63 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         return plan;
     }
 
+    @Override
+    public List<Tutor> obtenerTutoresPorProyecto(int idProyecto) throws SQLException {
+        List<Tutor> tutores = new ArrayList<>();
+        String sql = """
+                    SELECT u.id_usuario, u.nombre_usuario, u.nombre, u.email, t.tipo
+                    FROM usuarios u
+                    JOIN tutores t ON u.id_usuario = t.id_usuario
+                    JOIN proyectos p ON (u.id_usuario = p.id_usuario_tutor_interno OR u.id_usuario = p.id_usuario_tutor_externo)
+                    WHERE p.id_proyecto = ?
+                """;
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProyecto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    tutores.add(new Tutor(
+                            rs.getInt("id_usuario"),
+                            rs.getString("nombre_usuario"),
+                            "", // No obtenemos la contraseña por seguridad
+                            rs.getString("nombre"),
+                            rs.getString("email"),
+                            null,
+                            rs.getString("tipo")
+                    ));
+                }
+            }
+        }
+        return tutores;
+    }
+
+    @Override
+    public List<Actividad> obtenerActividadesPorPlan(int idPlan) throws SQLException {
+        List<Actividad> actividades = new ArrayList<>();
+        String sql = "SELECT id_actividad, descripcion, fecha_inicio, horas, finalizado FROM actividades WHERE id_plan = ?";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idPlan);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int idActividad = rs.getInt("id_actividad");
+                    String descripcion = rs.getString("descripcion");
+                    LocalDate fechaInicio = rs.getDate("fecha_inicio").toLocalDate();
+                    int horas = rs.getInt("horas");
+                    boolean finalizado = rs.getBoolean("finalizado");
+
+                    Actividad actividad = new Actividad(descripcion, fechaInicio, horas, finalizado);
+                    actividad.setIdActividad(idActividad);
+
+                    actividades.add(actividad);
+                }
+            }
+        }
+        return actividades;
+    }
+
 
 }

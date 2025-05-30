@@ -35,7 +35,7 @@ public class SeleccionarProyecto extends JFrame {
         JScrollPane scrollPane = new JScrollPane(tableProyectos);
         add(scrollPane, BorderLayout.CENTER);
 
-        btnSeleccionar = new JButton("Seleccionar");
+        btnSeleccionar = new JButton("Ver Detalles");
         btnSeleccionar.addActionListener(e -> seleccionarProyecto());
 
         JPanel panelBoton = new JPanel();
@@ -64,13 +64,16 @@ public class SeleccionarProyecto extends JFrame {
             return;
         }
 
-        String nombreProyecto = tableProyectos.getValueAt(selectedRow, 0).toString();
-        mostrarMensaje("Proyecto seleccionado", nombreProyecto);
+        try {
+            List<Proyecto> proyectos = proyectoDAO.obtenerProyectos();
+            Proyecto proyectoSeleccionado = proyectos.get(selectedRow);
+            new DetalleProyecto(proyectoDAO, proyectoSeleccionado.getId());
+        } catch (Exception e) {
+            mostrarMensaje("Error", "Error al cargar los detalles del proyecto.\n" + e.getMessage());
+        }
     }
 
     private void mostrarMensaje(String titulo, String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, titulo, JOptionPane.INFORMATION_MESSAGE);
     }
-
-
 }

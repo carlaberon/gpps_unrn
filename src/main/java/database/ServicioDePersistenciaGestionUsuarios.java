@@ -1,18 +1,8 @@
 package database;
 
-import model.Administrador;
-import model.Director;
-import model.Estudiante;
-import model.GestorDeUsuarios;
-import model.Rol;
-import model.Tutor;
-import model.Usuario;
+import model.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,12 +69,12 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
 
     public Usuario buscarUsuario(String nombreUsuario, String contrasenia) throws SQLException {
         String sql = """
-                SELECT u.id_usuario, u.nombre_usuario, u.contrasenia, r.nombre AS rol
-        FROM usuarios u
-        JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
-        JOIN roles r ON ur.codigo = r.codigo
-        WHERE u.nombre_usuario = ? AND u.contrasenia = ?
-    """;
+                            SELECT u.id_usuario, u.nombre_usuario, u.contrasenia, r.nombre AS rol
+                    FROM usuarios u
+                    JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+                    JOIN roles r ON ur.codigo = r.codigo
+                    WHERE u.nombre_usuario = ? AND u.contrasenia = ?
+                """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nombreUsuario);
