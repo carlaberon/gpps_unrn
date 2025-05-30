@@ -1,7 +1,5 @@
 package ui;
 
-//import database.*;
-
 import model.*;
 
 import javax.swing.*;
