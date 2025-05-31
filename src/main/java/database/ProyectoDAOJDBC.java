@@ -40,26 +40,27 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
                 + "AND NOT EXISTS (SELECT 1 FROM convenios c WHERE c.id_proyecto = p.id_proyecto)";
 
         try (Connection conn = Conn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
-            while (rs.next()) {
-                Proyecto proyecto = new Proyecto(
-                    rs.getInt("id_proyecto"),
-                    rs.getString("nombre"),
-                    rs.getString("descripcion"),
-                    rs.getBoolean("estado"),
-                    rs.getString("area_de_interes"),
-                    null, // tutor aún no cargado
-                    null, // docente aún no cargado
-                    rs.getString("ubicacion")
-                );
-                proyectos.add(proyecto);
-            }
-        }
+               while (rs.next()) {
+                   Proyecto proyecto = new Proyecto(
+                           rs.getInt("id_proyecto"),
+                           rs.getString("nombre"),
+                           rs.getString("descripcion"),
+                           rs.getBoolean("estado"),
+                           rs.getString("area_de_interes"),
+                           null, // tutor
+                           null, // docenteSupervisor
+                           rs.getString("ubicacion")  // tutor externo (igual)
+                   );
+                   proyectos.add(proyecto);
+               }
+           }
 
-        return proyectos;
-    }
+           System.out.println("Proyectos cargados: " + proyectos.size());
+           return proyectos;
+       }
 
     public List<Proyecto> obtenerTodos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
@@ -73,7 +74,7 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
                 int id = rs.getInt("id_proyecto");
                 String nombre = rs.getString("nombre");
 
-                Proyecto proyecto = new Proyecto(id, nombre, nombre, null, nombre, null, null, null);
+                Proyecto proyecto = new Proyecto(id, nombre, nombre, false, nombre, conn, conn, nombre);
                 proyecto.setId(id);
                 proyecto.setNombre(nombre);
 
@@ -82,4 +83,5 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
         }
         return proyectos;
     }
+
 }

@@ -9,7 +9,7 @@ public interface GestorDeProyectos {
 
     void guardar(Proyecto proyecto) throws SQLException;
 
-    void guardarSinEstudiante(Proyecto proyecto) throws SQLException;
+    int guardarSinEstudiante(Proyecto proyecto) throws SQLException;
 
     List<Proyecto> obtenerProyectos() throws SQLException;
 

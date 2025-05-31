@@ -26,12 +26,13 @@ public class Proyectos {
         this.gestorDeProyectos.guardar(proyecto);
     }
 
-    public void guardarProyectoSinEstudiante(Proyecto proyecto) throws SQLException {
-        this.gestorDeProyectos.guardarSinEstudiante(proyecto);
+    public int guardarProyectoSinEstudiante(Proyecto proyecto) throws SQLException {
+        return this.gestorDeProyectos.guardarSinEstudiante(proyecto);
     }
 
     public void propuestaDeProyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
                                     Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
+
         var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, tutor, docenteSupervisor, ubicacion);
         this.gestorDeProyectos.registrarPropuestaDeProyecto(proyecto);
         //registra el proyecto

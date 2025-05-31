@@ -70,22 +70,33 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     }
 
     @Override
-    public void guardarSinEstudiante(Proyecto proyecto) throws SQLException {
+    public int guardarSinEstudiante(Proyecto proyecto) throws SQLException {
         String sql = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Conn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             stmt.setString(1, proyecto.getNombre());
             stmt.setString(2, proyecto.getDescripcion());
             stmt.setString(3, proyecto.getAreaDeInteres());
             stmt.setString(4, proyecto.getUbicacion());
             stmt.setBoolean(5, proyecto.getEstado());
-            stmt.setInt(6, proyecto.getDocenteSupervisor().getId()); // o getTutorInterno()
-            stmt.setInt(7, proyecto.getTutor().getId()); // o getTutorExterno()
+            stmt.setInt(6, proyecto.getDocenteSupervisor().getId()); // Tutor interno
+            stmt.setInt(7, proyecto.getTutor().getId()); // Tutor externo
+
             stmt.executeUpdate();
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1); // Devuelve el ID generado
+                } else {
+                    throw new SQLException("No se pudo obtener el ID del proyecto insertado.");
+                }
+            }
         }
     }
+
 
 
     @Override
@@ -233,7 +244,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
         return proyecto;
     }
-
 
     @Override
     public PlanDeTrabajo obtenerPlan(int idProyecto) {
