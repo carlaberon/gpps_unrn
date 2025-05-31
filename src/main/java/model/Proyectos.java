@@ -21,24 +21,18 @@ public class Proyectos {
     }
 
 
-//    public void propuestaDeProyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-//                                    Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor) {
-//        var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, estudiante, tutor, docenteSupervisor);
-//        this.gestorDeProyectos.registrarPropuestaDeProyecto(proyecto);
-//        //registra el proyecto
-//    }
-
     public void guardarProyecto(Proyecto proyecto) throws SQLException {
         //var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, estudiante, tutor, docenteSupervisor);
         this.gestorDeProyectos.guardar(proyecto);
     }
 
-    public void guardarProyectoSinEstudiante(Proyecto proyecto) throws SQLException {
-        this.gestorDeProyectos.guardarSinEstudiante(proyecto);
+    public int guardarProyectoSinEstudiante(Proyecto proyecto) throws SQLException {
+        return this.gestorDeProyectos.guardarSinEstudiante(proyecto);
     }
 
     public void propuestaDeProyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                                    Estudiante estudiante, Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
+                                    Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
+
         var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, tutor, docenteSupervisor, ubicacion);
         this.gestorDeProyectos.registrarPropuestaDeProyecto(proyecto);
         //registra el proyecto
@@ -48,17 +42,17 @@ public class Proyectos {
         this.gestorDeProyectos.registrarAsignacionTutorInterno(idProyecto, idTutorInterno);
     }
 
-    public void cargarInforme(int idInformeParcial, String descripcionInformeParcial, String tipo) {
+    public void cargarInforme(int idInformeParcial, String descripcionInformeParcial, String tipo, byte[] archivoEntregable) {
 
-        var informeParcial = new Informe(idInformeParcial, descripcionInformeParcial, tipo);
+        var informeParcial = new Informe(idInformeParcial, descripcionInformeParcial, tipo, archivoEntregable);
         this.gestorDeProyectos.cargarInforme(informeParcial);
     }
 
-    public void cargarInformeFinal(String descripcionInformeFinal, String tipo, List<Integer> idInformesParciales, int idInformeFinal) {
+    public void cargarInformeFinal(String descripcionInformeFinal, String tipo, List<Integer> idInformesParciales, int idInformeFinal, byte[] archivoEntregable) {
         if (!this.servicioDeVerificacionInformes.verificarInformeParcialAprobado(idInformesParciales)) { //lista de informes parciales
             throw new RuntimeException("El informe parcial no se encuentra aprobado. Intente en otro momento.");
         }
-        var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal, tipo);
+        var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal, tipo, archivoEntregable);
         this.gestorDeProyectos.cargarInforme(informeFinal);
     }
 

@@ -199,9 +199,16 @@ public class ProyectoFormSwing extends JFrame {
             );
 
             if (proyecto.esValido()) {
-                proyectoDAO.guardarProyectoSinEstudiante(proyecto);
+                int idGenerado = proyectoDAO.guardarProyectoSinEstudiante(proyecto); // ← ¡Este método debe devolver el ID!
                 mostrarAlerta("Éxito", "Proyecto guardado correctamente");
-                limpiarCampos();
+
+                // Abrir la ventana de Plan de Trabajo
+                CrearPlanTrabajo planTrabajoWindow = new CrearPlanTrabajo(proyectoDAOPersistencia, idGenerado);
+                planTrabajoWindow.setVisible(true);
+
+                // Cerrar esta ventana si no la necesitás más:
+                dispose();
+
             } else {
                 mostrarAlerta("Error", "Los datos del proyecto no son válidos");
             }
