@@ -12,16 +12,17 @@ public class VentanaLogin extends JFrame {
 
     private final GestorDeUsuarios gestorDeUsuarios;
     private final GestorDeProyectos gestorDeProyectos;
-    private final ConvenioDAO convenioDAO;
+    private final GestorDeConvenios gestorDeConvenios;
 
     private JTextField txtUsuario;
     private JPasswordField txtContrasena;
     private JButton btnIniciarSesion;
 
-    public VentanaLogin(GestorDeUsuarios gestorDeUsuarios, GestorDeProyectos gestorDeProyectos, ConvenioDAO convenioDAO) {
+    public VentanaLogin(GestorDeUsuarios gestorDeUsuarios, GestorDeProyectos gestorDeProyectos, GestorDeConvenios gestorDeConvenios) {
         this.gestorDeUsuarios = gestorDeUsuarios;
         this.gestorDeProyectos = gestorDeProyectos;
-        this.convenioDAO = convenioDAO;
+        this.gestorDeConvenios = gestorDeConvenios;
+
 
         setTitle("Iniciar Sesión");
         setSize(300, 200);
@@ -64,7 +65,7 @@ public class VentanaLogin extends JFrame {
                 this.dispose(); 
 
                 if (user instanceof Administrador admin) {
-                    new VentanaPrincipal(gestorDeUsuarios, gestorDeProyectos, admin, convenioDAO).setVisible(true);
+                    new VentanaPrincipal(gestorDeUsuarios, gestorDeProyectos, admin,gestorDeConvenios).setVisible(true);
                 } else if (user instanceof Estudiante) {
                     new SeleccionarProyecto(gestorDeProyectos).setVisible(true);
                 } else {

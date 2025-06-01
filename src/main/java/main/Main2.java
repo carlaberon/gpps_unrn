@@ -1,14 +1,14 @@
 package main;
 
 
-import database.ConvenioDAOJDBC;
+import database.ServicioDePersistenciaGestionConvenios;
 import front.CargarConvenio;
 
 import javax.swing.*;
 
 public class Main2 {
     public static void main(String[] args) {
-        ConvenioDAOJDBC dao = new ConvenioDAOJDBC();
+        ServicioDePersistenciaGestionConvenios dao = new ServicioDePersistenciaGestionConvenios();
         SwingUtilities.invokeLater(() -> new CargarConvenio(dao));
 
 
