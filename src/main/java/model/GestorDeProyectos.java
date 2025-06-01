@@ -28,4 +28,6 @@ public interface GestorDeProyectos {
     List<Tutor> obtenerTutoresPorProyecto(int idProyecto) throws SQLException;
 
     List<Actividad> obtenerActividadesPorPlan(int idPlan) throws SQLException;
+
+    boolean asignarEstudianteAProyecto(int idEstudiante, int idProyecto) throws SQLException;
 }

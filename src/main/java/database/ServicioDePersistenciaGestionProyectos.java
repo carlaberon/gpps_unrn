@@ -353,5 +353,31 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         return actividades;
     }
 
+    @Override
+    public boolean asignarEstudianteAProyecto(int idEstudiante, int idProyecto) throws SQLException {
+        // Primero verificar si el estudiante ya tiene un proyecto asignado
+        String checkSql = "SELECT id_proyecto FROM estudiantes WHERE id_usuario = ? AND id_proyecto IS NOT NULL";
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+            checkStmt.setInt(1, idEstudiante);
+            ResultSet rs = checkStmt.executeQuery();
+            
+            if (rs.next()) {
+                throw new SQLException("El estudiante ya tiene un proyecto asignado.");
+            }
+        }
+
+        // Si no tiene proyecto asignado, proceder con la asignación
+        String sql = "UPDATE estudiantes SET id_proyecto = ? WHERE id_usuario = ?";
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, idProyecto);
+            statement.setInt(2, idEstudiante);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new SQLException("Error al asignar estudiante al proyecto: " + e.getMessage());
+        }
+    }
 
 }

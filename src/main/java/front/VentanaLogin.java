@@ -65,8 +65,8 @@ public class VentanaLogin extends JFrame {
 
                 if (user instanceof Administrador admin) {
                     new VentanaPrincipal(gestorDeUsuarios, gestorDeProyectos, admin, convenioDAO).setVisible(true);
-                } else if (user instanceof Estudiante) {
-                    new SeleccionarProyecto(gestorDeProyectos).setVisible(true);
+                } else if (user instanceof Estudiante estudiante) {
+                    new SeleccionarProyecto(gestorDeProyectos, estudiante.getId()).setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(this, "Tipo de usuario desconocido.", "Error", JOptionPane.ERROR_MESSAGE);
                 }

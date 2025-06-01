@@ -5,7 +5,6 @@ import database.Conn;
 import database.ServicioDePersistenciaGestionProyectos;
 import database.ServicioDePersistenciaGestionUsuarios;
 import model.Proyectos;
-import ui.MainView;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -29,8 +28,8 @@ public class Main {
                 Proyectos proyectos = new Proyectos(servicioProyectos);
 
                 // Create and show main window
-                MainView mainView = new MainView(servicioProyectos, servicioUsuarios);
-                mainView.setVisible(true);
+//                MainView mainView = new MainView(servicioProyectos, servicioUsuarios);
+//                mainView.setVisible(true);
 
 
 //        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), new ServicioDePersistenciaInforme());
