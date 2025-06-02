@@ -12,11 +12,11 @@ import java.util.List;
 public class SeleccionarProyecto extends JFrame {
 
     private final GestorDeProyectos proyectoDAO;
+    private final int idEstudiante;
     private JTable tableProyectos;
     private JButton btnVerDetalles;
     private JButton btnSeleccionar;
     private Proyecto proyectoSeleccionado;
-    private final int idEstudiante; // Nuevo: ID del estudiante a asignar
 
     public SeleccionarProyecto(GestorDeProyectos proyectoDAO, int idEstudiante) {
         this.proyectoDAO = proyectoDAO;
@@ -95,7 +95,7 @@ public class SeleccionarProyecto extends JFrame {
 
             // Llamar al método del gestor para asignar el estudiante al proyecto
             boolean asignacionExitosa = proyectoDAO.asignarEstudianteAProyecto(idEstudiante, proyectoSeleccionado.getId());
-            
+
             if (asignacionExitosa) {
                 mostrarMensaje("Éxito", "Estudiante asignado correctamente al proyecto: " + proyectoSeleccionado.getNombre());
                 dispose(); // Cierra la ventana después de seleccionar

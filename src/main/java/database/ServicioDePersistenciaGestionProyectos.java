@@ -72,7 +72,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public int guardarSinEstudiante(Proyecto proyecto) throws SQLException {
         String sql = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -96,7 +96,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             }
         }
     }
-
 
 
     @Override
@@ -177,8 +176,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 proyectos.add(proyecto);
             }
         }
-
-        System.out.println("Proyectos cargados: " + proyectos.size());
         return proyectos;
     }
 
@@ -361,7 +358,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
              PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
             checkStmt.setInt(1, idEstudiante);
             ResultSet rs = checkStmt.executeQuery();
-            
+
             if (rs.next()) {
                 throw new SQLException("El estudiante ya tiene un proyecto asignado.");
             }
@@ -369,12 +366,42 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
         // Si no tiene proyecto asignado, proceder con la asignación
         String sql = "UPDATE estudiantes SET id_proyecto = ? WHERE id_usuario = ?";
-        try (Connection conn = Conn.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, idProyecto);
-            statement.setInt(2, idEstudiante);
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+        String updateProyectoSql = "UPDATE proyectos SET estado = TRUE WHERE id_proyecto = ?";
+
+        try (Connection conn = Conn.getConnection()) {
+            // Iniciar transacción
+            conn.setAutoCommit(false);
+            try {
+                // Asignar estudiante al proyecto
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setInt(1, idProyecto);
+                    statement.setInt(2, idEstudiante);
+                    int rowsAffected = statement.executeUpdate();
+                    if (rowsAffected == 0) {
+                        throw new SQLException("No se pudo asignar el estudiante al proyecto.");
+                    }
+                }
+
+                // Actualizar estado del proyecto
+                try (PreparedStatement updateProyectoStmt = conn.prepareStatement(updateProyectoSql)) {
+                    updateProyectoStmt.setInt(1, idProyecto);
+                    int rowsAffected = updateProyectoStmt.executeUpdate();
+                    if (rowsAffected == 0) {
+                        throw new SQLException("No se pudo actualizar el estado del proyecto.");
+                    }
+                }
+
+                // Si todo salió bien, confirmar la transacción
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                // Si algo salió mal, revertir los cambios
+                conn.rollback();
+                throw e;
+            } finally {
+                // Restaurar el modo de autocommit
+                conn.setAutoCommit(true);
+            }
         } catch (SQLException e) {
             throw new SQLException("Error al asignar estudiante al proyecto: " + e.getMessage());
         }
