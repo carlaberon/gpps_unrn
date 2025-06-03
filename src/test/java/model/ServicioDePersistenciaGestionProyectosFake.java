@@ -32,6 +32,11 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     }
 
     @Override
+    public List<Proyecto> listarProyectosRelacionados(int idUsuario) {
+        return List.of();
+    }
+
+    @Override
     public void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno) {
         this.idProyecto = idProyecto;
         this.idDocente = idTutorInterno;
@@ -61,6 +66,16 @@ public class ServicioDePersistenciaGestionProyectosFake implements GestorDeProye
     @Override
     public PlanDeTrabajo obtenerPlan(int idProyecto) {
         return null;
+    }
+
+    @Override
+    public List<Proyecto> obtenerProyectosSinAprobar() {
+        return List.of();
+    }
+
+    @Override
+    public void notificarComentarioDenegacion(String comentario) {
+
     }
 
 

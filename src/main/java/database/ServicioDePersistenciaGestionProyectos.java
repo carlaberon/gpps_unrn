@@ -186,6 +186,40 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         return proyectos;
     }
 
+    @Override
+    public List<Proyecto> listarProyectosRelacionados(int idUsuario) {
+        List<Proyecto> proyectos = new ArrayList<>();
+
+        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado " +
+                "FROM proyectos p " +
+                "WHERE (p.id_usuario_tutor_interno = ? OR p.id_usuario_tutor_externo = ?) AND p.estado = true";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idUsuario);
+            stmt.setInt(2, idUsuario);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Proyecto resumen = new Proyecto(
+                            rs.getInt("id_proyecto"),
+                            rs.getString("nombre"),
+                            rs.getString("descripcion"),
+                            rs.getBoolean("estado"), null, null, null, null
+                    );
+                    proyectos.add(resumen);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Problema de persistencia", e);
+        }
+
+        return proyectos;
+    }
+
+
     public void cargarInforme(Informe informeParcial) {
 
         String sql = "INSERT INTO informes (descripcion, fecha_entrega, tipo, valoracionInforme, estado, archivo) VALUES (?, ?, ?, ?, ?, ?)";
@@ -291,6 +325,39 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         }
 
         return plan;
+    }
+
+    @Override
+    public List<Proyecto> obtenerProyectosSinAprobar() {
+        List<Proyecto> proyectos = new ArrayList<>();
+
+        String sql = "SELECT id_proyecto, nombre, descripcion, estado FROM proyectos WHERE estado = 0";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Proyecto resumen = new Proyecto(
+                        rs.getInt("id_proyecto"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getBoolean("estado"), // será false porque estado = 0
+                        null, null, null, null
+                );
+                proyectos.add(resumen);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Problema de persistencia al obtener proyectos sin aprobar", e);
+        }
+
+        return proyectos;
+    }
+
+    @Override
+    public void notificarComentarioDenegacion(String comentario) {
+        //Aca podriamos crear una tabla que almacene esto y notificar luego. O solamente notificar.
     }
 
 

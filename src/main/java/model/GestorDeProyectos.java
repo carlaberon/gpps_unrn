@@ -14,6 +14,8 @@ public interface GestorDeProyectos {
 
     List<Proyecto> obtenerProyectos() throws SQLException;
 
+    List<Proyecto> listarProyectosRelacionados(int idUsuario);
+
     void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno);
 
     void cargarInformeParcial(Informe informeParcial);
@@ -29,4 +31,8 @@ public interface GestorDeProyectos {
     Proyecto obtenerProyecto(int idProyecto);
 
     PlanDeTrabajo obtenerPlan(int idProyecto);
+
+    List<Proyecto> obtenerProyectosSinAprobar();
+
+    void notificarComentarioDenegacion(String comentario);
 }
