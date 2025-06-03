@@ -276,7 +276,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                                 String descripcion = rsAct.getString("descripcion");
                                 LocalDate fechaInicioAct = rsAct.getDate("fecha_inicio").toLocalDate();
                                 int horas = rsAct.getInt("horas");
-                                boolean finalizado = rsAct.getBoolean("finalizado");
+                                boolean finalizado = rsAct.getBoolean("estado");
 
                                 actividades.add(new Actividad(descripcion, fechaInicioAct, horas, finalizado));
                             }
@@ -289,6 +289,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             }
 
         } catch (SQLException e) {
+        	 e.printStackTrace();
             throw new RuntimeException("Problema de persistencia");
         }
 

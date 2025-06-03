@@ -70,7 +70,7 @@ public class VentanaLogin extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(this, "Tipo de usuario desconocido.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-
+                
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
             }
