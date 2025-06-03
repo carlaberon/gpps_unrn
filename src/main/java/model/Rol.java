@@ -22,4 +22,5 @@ public class Rol {
     public String toString() {
         return nombre;
     }
+
 }

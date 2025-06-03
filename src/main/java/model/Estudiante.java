@@ -9,11 +9,12 @@ public class Estudiante extends Usuario {
     private Proyecto proyectoSeleccionado;
 
     public Estudiante(int id, String nombreUsuario, String contrasenia, String nombre, String email,Rol rol,
-                      String legajo, Boolean regular, String direccionPostal) {
+                      String legajo, Boolean regular, String direccionPostal, int id_proyecto) {
     	super(id, nombreUsuario, contrasenia, nombre, email, rol);
         this.legajo = legajo;
         this.regular = regular;
         this.direccionPostal = direccionPostal;
+        this.id_proyecto = id_proyecto;
     }
 
     public String getLegajo() {

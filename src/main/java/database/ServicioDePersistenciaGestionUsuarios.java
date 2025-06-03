@@ -33,6 +33,7 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                         null, rs.getString("legajo"),
                         rs.getBoolean("esRegular"),
                         "" // No tenemos dirección en la nueva estructura
+, 0
                 ));
             }
         } catch (SQLException e) {
@@ -67,34 +68,58 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         return tutores;
     }
 
-    public Usuario buscarUsuario(String nombreUsuario, String contrasenia) throws SQLException {
+    public Usuario buscarUsuario(String nombreUsuario, String contrasena) throws SQLException {
         String sql = """
-                            SELECT u.id_usuario, u.nombre_usuario, u.contrasenia, r.nombre AS rol
-                    FROM usuarios u
-                    JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
-                    JOIN roles r ON ur.codigo = r.codigo
-                    WHERE u.nombre_usuario = ? AND u.contrasenia = ?
-                """;
+            SELECT u.id_usuario, u.nombre_usuario, u.contrasenia,
+                   u.nombre, u.email,
+                   r.codigo AS rol_codigo, r.nombre AS rol_nombre
+            FROM usuarios u
+            JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+            JOIN roles r ON ur.codigo = r.codigo
+            WHERE u.nombre_usuario = ? AND u.contrasenia = ?
+        """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nombreUsuario);
-            stmt.setString(2, contrasenia);
+            stmt.setString(2, contrasena);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     int id = rs.getInt("id_usuario");
-                    String rol = rs.getString("rol");
+                    String nombre = rs.getString("nombre");
+                    String email = rs.getString("email");
+                    int codigoRol = rs.getInt("rol_codigo");
+                    String nombreRol = rs.getString("rol_nombre");
+                    Rol rol = new Rol(codigoRol, nombreRol);
 
-                    return switch (rol.toLowerCase()) {
-                        case "administrador" -> new Administrador(id, nombreUsuario, rol, rol, rol, null);
-                        case "estudiante" -> new Estudiante(id, nombreUsuario, rol, rol, rol, null, rol, null, rol);
-                        default -> null; // o lanzar excepción
+                    return switch (nombreRol.toLowerCase()) {
+                        case "administrador" -> new Administrador(id, nombreUsuario, contrasena, nombre, email, rol);
+                        case "estudiante" -> new Estudiante(id, nombreUsuario, contrasena, nombre, email, rol, null, null, null, codigoRol);
+                        case "director" -> new Director(id, nombreUsuario, contrasena, nombre, email, rol);
+                        case "tutor" -> new Tutor(id, nombreUsuario, contrasena, nombre, email, rol, null);
+                        default -> throw new SQLException("Rol desconocido: " + nombreRol);
                     };
                 } else {
                     throw new SQLException("Usuario o contraseña incorrectos.");
                 }
             }
         }
+    }
+
+    public Integer obtenerIdProyectoEstudiante(int idEstudiante) throws SQLException {
+        String sql = "SELECT id_proyecto FROM estudiantes WHERE id_usuario = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idEstudiante);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int idProyecto = rs.getInt("id_proyecto");
+                    return rs.wasNull() ? null : idProyecto;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

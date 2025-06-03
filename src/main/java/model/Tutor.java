@@ -11,4 +11,7 @@ public class Tutor extends Usuario {
     public String getTipo() {
         return tipo;
     }
+    public int getId() {
+        return id;
+    }
 }

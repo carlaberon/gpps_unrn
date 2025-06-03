@@ -1,7 +1,10 @@
 package front;
 
 import model.*;
+import ui.AprobacionDeProyectos;
+import ui.ProyectosACargo;
 import ui.SeleccionarProyecto;
+import ui.VerProyecto;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,8 +69,21 @@ public class VentanaLogin extends JFrame {
 
                 if (user instanceof Administrador admin) {
                     new VentanaPrincipal(gestorDeUsuarios, gestorDeProyectos, admin, gestorDeConvenios).setVisible(true);
+
                 } else if (user instanceof Estudiante estudiante) {
-                    new SeleccionarProyecto(gestorDeProyectos, estudiante.getId()).setVisible(true);
+                	Integer idProyecto = gestorDeUsuarios.obtenerIdProyectoEstudiante(estudiante.getId());;
+                        if (idProyecto == null) {
+                        	
+                            new SeleccionarProyecto(gestorDeProyectos, estudiante.getId()).setVisible(true);
+                        } else {
+                        	new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
+                        }
+                } else if (user instanceof Director director) {
+                    new AprobacionDeProyectos(gestorDeProyectos).setVisible(true);
+
+                } else if (user instanceof Tutor tutor) {
+                    new ProyectosACargo(gestorDeProyectos, tutor.getId()).setVisible(true);
+
                 } else {
                     JOptionPane.showMessageDialog(this, "Tipo de usuario desconocido.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
