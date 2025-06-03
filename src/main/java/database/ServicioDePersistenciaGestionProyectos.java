@@ -352,10 +352,11 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public boolean asignarEstudianteAProyecto(int idEstudiante, int idProyecto) throws SQLException {
-        // Primero verificar si el estudiante ya tiene un proyecto asignado
+        // Verificar si el estudiante ya tiene un proyecto asignado
         String checkSql = "SELECT id_proyecto FROM estudiantes WHERE id_usuario = ? AND id_proyecto IS NOT NULL";
         try (Connection conn = Conn.getConnection();
              PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+
             checkStmt.setInt(1, idEstudiante);
             ResultSet rs = checkStmt.executeQuery();
 
@@ -364,47 +365,18 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             }
         }
 
-        // Si no tiene proyecto asignado, proceder con la asignación
+        // Asignar estudiante al proyecto
         String sql = "UPDATE estudiantes SET id_proyecto = ? WHERE id_usuario = ?";
-        String updateProyectoSql = "UPDATE proyectos SET estado = TRUE WHERE id_proyecto = ?";
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        try (Connection conn = Conn.getConnection()) {
-            // Iniciar transacción
-            conn.setAutoCommit(false);
-            try {
-                // Asignar estudiante al proyecto
-                try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                    statement.setInt(1, idProyecto);
-                    statement.setInt(2, idEstudiante);
-                    int rowsAffected = statement.executeUpdate();
-                    if (rowsAffected == 0) {
-                        throw new SQLException("No se pudo asignar el estudiante al proyecto.");
-                    }
-                }
+            stmt.setInt(1, idProyecto);
+            stmt.setInt(2, idEstudiante);
 
-                // Actualizar estado del proyecto
-                try (PreparedStatement updateProyectoStmt = conn.prepareStatement(updateProyectoSql)) {
-                    updateProyectoStmt.setInt(1, idProyecto);
-                    int rowsAffected = updateProyectoStmt.executeUpdate();
-                    if (rowsAffected == 0) {
-                        throw new SQLException("No se pudo actualizar el estado del proyecto.");
-                    }
-                }
-
-                // Si todo salió bien, confirmar la transacción
-                conn.commit();
-                return true;
-            } catch (SQLException e) {
-                // Si algo salió mal, revertir los cambios
-                conn.rollback();
-                throw e;
-            } finally {
-                // Restaurar el modo de autocommit
-                conn.setAutoCommit(true);
-            }
-        } catch (SQLException e) {
-            throw new SQLException("Error al asignar estudiante al proyecto: " + e.getMessage());
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
         }
     }
+
 
 }
