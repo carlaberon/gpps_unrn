@@ -9,10 +9,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import model.Administrador;
-import model.ConvenioDAO;
-import model.EntidadColaboradora;
-import model.Proyecto;
+import model.*;
 import database.EntidadColaboradoraJDBC;
 import database.ProyectoDAOJDBC;
 
@@ -26,11 +23,11 @@ public class GenerarConvenio extends JFrame {
     private JButton btnGenerar;
 
     private final Administrador admin;
-    private final ConvenioDAO convenioDAO;
+    private final GestorDeConvenios gestorDeConvenios;
 
-    public GenerarConvenio(Administrador admin, ConvenioDAO convenioDAO) {
+    public GenerarConvenio(Administrador admin, GestorDeConvenios gestorDeConvenios) {
         this.admin = admin;
-        this.convenioDAO = convenioDAO;
+        this.gestorDeConvenios = gestorDeConvenios;
 
         setTitle("Generar Convenio");
         setSize(500, 400);
@@ -114,7 +111,7 @@ public class GenerarConvenio extends JFrame {
             LocalDate fechaInicio = convertirFecha((Date) spinnerFechaInicio.getValue());
             LocalDate fechaFin = convertirFecha((Date) spinnerFechaFin.getValue());
 
-            admin.generarConvenio(entidad.getId(), proyecto.getId(), descripcion, fechaInicio, fechaFin, convenioDAO);
+            admin.generarConvenio(entidad.getId(), proyecto.getId(), descripcion, fechaInicio, fechaFin, gestorDeConvenios);
             this.dispose();
         } catch (Exception ex) {
             mostrarError("Error al generar convenio: " + ex.getMessage());

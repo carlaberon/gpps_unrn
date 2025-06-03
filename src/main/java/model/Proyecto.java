@@ -84,6 +84,7 @@ public class Proyecto {
     public int getIdUsuarioTutorExterno() {
         return docenteSupervisor.getId();
     }
+
     @Override
     public String toString() {
         return nombre;

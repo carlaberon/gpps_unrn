@@ -7,10 +7,7 @@ import java.awt.event.ActionListener;
 
 import database.ServicioDePersistenciaGestionProyectos;
 import front.VentanaPrincipal;
-import model.GestorDeUsuarios;
-import model.Administrador;
-import model.GestorDeProyectos;
-import model.ConvenioDAO;
+import model.*;
 import ui.ProyectoFormSwing;
 
 public class VentanaPrincipal extends JFrame {
@@ -21,14 +18,15 @@ public class VentanaPrincipal extends JFrame {
     private final GestorDeUsuarios gestorDeUsuarios;
     private final GestorDeProyectos gestorDeProyectos;
     private final Administrador administrador;
-    private final ConvenioDAO convenioDAO;
+    private final GestorDeConvenios gestorDeConvenios;
 
     public VentanaPrincipal(GestorDeUsuarios gestorDeUsuarios, GestorDeProyectos gestorDeProyectos,
-                            Administrador administrador, ConvenioDAO convenioDAO) {
+                            Administrador administrador, GestorDeConvenios gestorDeConvenios) {
         this.gestorDeUsuarios = gestorDeUsuarios;
         this.gestorDeProyectos = gestorDeProyectos;
         this.administrador = administrador;
-        this.convenioDAO = convenioDAO;
+        this.gestorDeConvenios = gestorDeConvenios;
+
 
         setTitle("Gestión de Proyectos PPS");
         setSize(400, 150);
@@ -67,7 +65,7 @@ public class VentanaPrincipal extends JFrame {
         btnCrearConvenio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GenerarConvenio convenioForm = new GenerarConvenio(administrador, convenioDAO);
+                GenerarConvenio convenioForm = new GenerarConvenio(administrador, gestorDeConvenios);
                 convenioForm.setVisible(true);
             }
         });

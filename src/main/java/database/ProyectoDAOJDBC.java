@@ -17,7 +17,7 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
         String sql = "INSERT INTO proyectos (id_proyecto, nombre, descripcion, areaDeInteres, estado, docenteSupervisor, idUsuario_tutor) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setInt(1, proyecto.getId());
             stmt.setString(2, proyecto.getNombre());
             stmt.setString(3, proyecto.getDescripcion());
@@ -25,8 +25,8 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
             stmt.setBoolean(5, proyecto.getEstado());
             stmt.setInt(6, proyecto.getDocenteSupervisor().getId());
             stmt.setInt(7, proyecto.getTutor().getId());
-            
-            stmt.executeUpdate(); 
+
+            stmt.executeUpdate();
         }
     }
 
@@ -36,31 +36,31 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
         String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.area_de_interes, "
                 + "p.ubicacion, p.id_usuario_tutor_interno, p.id_usuario_tutor_externo , p.estado "
                 + "FROM proyectos p "
-                + "WHERE p.estado = false "
+                + "WHERE p.estado = true "
                 + "AND NOT EXISTS (SELECT 1 FROM convenios c WHERE c.id_proyecto = p.id_proyecto)";
 
         try (Connection conn = Conn.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
-               while (rs.next()) {
-                   Proyecto proyecto = new Proyecto(
-                           rs.getInt("id_proyecto"),
-                           rs.getString("nombre"),
-                           rs.getString("descripcion"),
-                           rs.getBoolean("estado"),
-                           rs.getString("area_de_interes"),
-                           null, // tutor
-                           null, // docenteSupervisor
-                           rs.getString("ubicacion")  // tutor externo (igual)
-                   );
-                   proyectos.add(proyecto);
-               }
-           }
+            while (rs.next()) {
+                Proyecto proyecto = new Proyecto(
+                        rs.getInt("id_proyecto"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getBoolean("estado"),
+                        rs.getString("area_de_interes"),
+                        null, // tutor
+                        null, // docenteSupervisor
+                        rs.getString("ubicacion")  // tutor externo (igual)
+                );
+                proyectos.add(proyecto);
+            }
+        }
 
-           System.out.println("Proyectos cargados: " + proyectos.size());
-           return proyectos;
-       }
+        System.out.println("Proyectos cargados: " + proyectos.size());
+        return proyectos;
+    }
 
     public List<Proyecto> obtenerTodos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();

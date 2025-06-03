@@ -13,7 +13,7 @@ public class Main4 {
 
         GestorDeProyectos dao = new ServicioDePersistenciaGestionProyectos();
         SwingUtilities.invokeLater(() -> {
-            new SeleccionarProyecto(dao).setVisible(true);
+            new SeleccionarProyecto(dao, 1).setVisible(true);
         });
 
     }

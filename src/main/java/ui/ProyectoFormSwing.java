@@ -13,7 +13,6 @@ public class ProyectoFormSwing extends JFrame {
     private JTextField ubicacionField;
     private JComboBox<Tutor> tutorCombo;
     private JComboBox<Tutor> supervisorCombo;
-    private JCheckBox estadoCheck;
     private JButton guardarButton;
     private JButton limpiarButton;
 
@@ -45,7 +44,6 @@ public class ProyectoFormSwing extends JFrame {
         ubicacionField = new JTextField(20);
         tutorCombo = new JComboBox<>();
         supervisorCombo = new JComboBox<>();
-        estadoCheck = new JCheckBox("Activo");
         guardarButton = new JButton("Guardar");
         limpiarButton = new JButton("Limpiar");
 
@@ -104,12 +102,6 @@ public class ProyectoFormSwing extends JFrame {
         mainPanel.add(new JLabel("Tutor Externo:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(supervisorCombo, gbc);
-
-        // Estado
-        gbc.gridx = 0;
-        gbc.gridy = 7;
-        gbc.gridwidth = 2;
-        mainPanel.add(estadoCheck, gbc);
 
         // Botones
         JPanel buttonPanel = new JPanel();
@@ -191,7 +183,7 @@ public class ProyectoFormSwing extends JFrame {
                     0,
                     nombreField.getText(),
                     descripcionField.getText(),
-                    estadoCheck.isSelected(),
+                    false,
                     areaField.getText(),
                     (Tutor) tutorCombo.getSelectedItem(),
                     (Tutor) supervisorCombo.getSelectedItem(),
@@ -257,6 +249,5 @@ public class ProyectoFormSwing extends JFrame {
         ubicacionField.setText("");
         tutorCombo.setSelectedItem(null);
         supervisorCombo.setSelectedItem(null);
-        estadoCheck.setSelected(false);
     }
 } 
