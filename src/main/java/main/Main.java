@@ -5,7 +5,6 @@ import database.Conn;
 import database.ServicioDePersistenciaGestionProyectos;
 import database.ServicioDePersistenciaGestionUsuarios;
 import model.Proyectos;
-import ui.MainView;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -23,18 +22,18 @@ public class Main {
 
                 // Initialize services
                 ServicioDePersistenciaGestionProyectos servicioProyectos =
-                        new ServicioDePersistenciaGestionProyectos(conn);
+                        new ServicioDePersistenciaGestionProyectos();
                 ServicioDePersistenciaGestionUsuarios servicioUsuarios =
                         new ServicioDePersistenciaGestionUsuarios(conn);
                 Proyectos proyectos = new Proyectos(servicioProyectos);
 
                 // Create and show main window
-                MainView mainView = new MainView(servicioProyectos, servicioUsuarios);
-                mainView.setVisible(true);
+//                MainView mainView = new MainView(servicioProyectos, servicioUsuarios);
+//                mainView.setVisible(true);
 
 
 //        Proyectos proyectos = new Proyectos(new ServicioDePersistenciaGestionProyectos(), new ServicioDePersistenciaInforme());
-                proyectos.asignarDocenteTutor(1, 6);
+                //proyectos.asignarDocenteTutor(1, 6);
 
                 // Test project creation (commented out as it's for testing)
 

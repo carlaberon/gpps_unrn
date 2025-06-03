@@ -22,7 +22,6 @@ public class Proyecto {
         this.ubicacion = ubicacion;
     }
 
-
     public Proyecto(int id, String nombre2, String nombre3, Object object, String nombre4, Object object2,
                     Object object3, Object object4) {
         // TODO Auto-generated constructor stub
@@ -84,5 +83,10 @@ public class Proyecto {
 
     public int getIdUsuarioTutorExterno() {
         return docenteSupervisor.getId();
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
     }
 }

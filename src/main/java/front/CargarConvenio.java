@@ -1,7 +1,9 @@
 package front;
 import model.Administrador;
 import model.Convenio;
-import model.ConvenioDAO;
+
+import model.GestorDeConvenios;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
@@ -10,10 +12,11 @@ import java.nio.file.Files;
 
 public class CargarConvenio extends JFrame {
 
-    private final ConvenioDAO convenioDAO;
+    private final GestorDeConvenios gestorDeConvenios;
 
-    public CargarConvenio(ConvenioDAO convenioDAO) {
-        this.convenioDAO = convenioDAO;
+    public CargarConvenio(GestorDeConvenios gestorDeConvenios) {
+        this.gestorDeConvenios = gestorDeConvenios;
+
         initUI();
     }
 
@@ -42,9 +45,9 @@ public class CargarConvenio extends JFrame {
             try {
                 byte[] pdfBytes = Files.readAllBytes(archivo.toPath());
 
-                Convenio convenio = convenioDAO.buscarPorId(3);
-                Administrador admin = new Administrador(10, "admin", "123", "Administrador", "admin@email.com");
-                admin.cargarConvenioFirmado(convenio, pdfBytes, convenioDAO);
+                Convenio convenio = gestorDeConvenios.buscarPorId(3);
+                Administrador admin = new Administrador(10, "admin", "123", "Administrador", "admin@email.com", null);
+                admin.cargarConvenioFirmado(convenio, pdfBytes, gestorDeConvenios);
 
                 JOptionPane.showMessageDialog(null, "Convenio actualizado correctamente.");
 

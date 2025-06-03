@@ -1,21 +1,20 @@
 package main;
 
-//import front.GenerarConvenio;
-//import model.Administrador;
-//import model.ConvenioDAO;
-//
-//import javax.swing.*;
+import database.ServicioDePersistenciaGestionConvenios;
+import front.GenerarConvenio;
+import model.Administrador;
 
-//public class Main3 {
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            Administrador admin = new Administrador(0, null, null, null, null);
-//            ConvenioDAO dao = new database.ConvenioDAOJDBC();
-//            new GenerarConvenio(admin, dao).setVisible(true);
-//        });
-//
-//    }
-//}
+import javax.swing.*;
+
+public class Main3 {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Administrador admin = new Administrador(0, null, null, null, null, null);
+            var dao = new ServicioDePersistenciaGestionConvenios();
+            new GenerarConvenio(admin, dao).setVisible(true);
+        });
+    }
+}
 
 //package main;
 //

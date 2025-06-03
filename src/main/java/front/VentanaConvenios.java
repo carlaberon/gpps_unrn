@@ -1,11 +1,12 @@
 package front;
 
 import model.Convenio;
-import model.ConvenioDAO;
+
 
 import javax.swing.*;
 
 import database.DataBaseConnectionException; // TENGOESTO X AHORA CUANDO CREEMOS UN PAQUETE DONDE ESTE LAS EXCEPTION YA NO TENDRE NADA DE DATABASE
+import model.GestorDeConvenios;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,10 +24,10 @@ public class VentanaConvenios extends JFrame {
     private final JLabel lblFechaFin;
     private final JButton btnVerConvenioFirmado;
 
-    private final ConvenioDAO convenioDAO;
+    private final GestorDeConvenios gestorDeConvenios;
 
-    public VentanaConvenios(ConvenioDAO convenioDAO) {
-        this.convenioDAO = convenioDAO;
+    public VentanaConvenios(GestorDeConvenios gestorDeConvenios) {
+        this.gestorDeConvenios = gestorDeConvenios;
 
         setTitle("Detalle del Convenio");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,7 +77,7 @@ public class VentanaConvenios extends JFrame {
 
     private void verPdfConvenioFirmado(int idConvenio) throws DataBaseConnectionException {
         try {
-            byte[] archivoPdf = convenioDAO.obtenerArchivoPdfPorId(idConvenio);
+            byte[] archivoPdf = gestorDeConvenios.obtenerArchivoPdfPorId(idConvenio);
 
             if (archivoPdf == null || archivoPdf.length == 0) {
                 throw new IOException("El archivo firmado está vacío o no se encuentra.");

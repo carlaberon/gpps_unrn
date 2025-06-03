@@ -12,14 +12,14 @@ public class EntidadColaboradoraJDBC implements EntidadDAO {
 
 	public List<EntidadColaboradora> obtenerTodas() throws SQLException {
 	    List<EntidadColaboradora> entidades = new ArrayList<>();
-	    String sql = "SELECT id_entidad_colaboradora, nombre FROM Entidad_Colaboradora";
+	    String sql = "SELECT id_entidad, nombre FROM entidades";
 
 	    try (Connection conn = Conn.getConnection();
 	         PreparedStatement stmt = conn.prepareStatement(sql);
 	         ResultSet rs = stmt.executeQuery()) {
 
 	        while (rs.next()) {
-	            int id = rs.getInt("id_entidad_colaboradora");
+	            int id = rs.getInt("id_entidad");
 	            String nombre = rs.getString("nombre");
 
 	            EntidadColaboradora entidad = new EntidadColaboradora(id, nombre, nombre, nombre, nombre, nombre);
