@@ -71,13 +71,15 @@ public class VentanaLogin extends JFrame {
                     new VentanaPrincipal(gestorDeUsuarios, gestorDeProyectos, admin, gestorDeConvenios).setVisible(true);
 
                 } else if (user instanceof Estudiante estudiante) {
-                	Integer idProyecto = gestorDeUsuarios.obtenerIdProyectoEstudiante(estudiante.getId());;
-                        if (idProyecto == null) {
-                        	
-                            new SeleccionarProyecto(gestorDeProyectos, estudiante.getId()).setVisible(true);
-                        } else {
-                        	new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
-                        }
+                    Integer idProyecto = gestorDeUsuarios.obtenerIdProyectoEstudiante(estudiante.getId());
+                    System.out.println(idProyecto);
+                    if (idProyecto == null) {
+                        
+                        new SeleccionarProyecto(gestorDeProyectos, estudiante.getId()).setVisible(true);
+                    } else {
+
+                        new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
+                    }
                 } else if (user instanceof Director director) {
                     new AprobacionDeProyectos(gestorDeProyectos).setVisible(true);
 
@@ -87,7 +89,7 @@ public class VentanaLogin extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(this, "Tipo de usuario desconocido.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                
+
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
             }
