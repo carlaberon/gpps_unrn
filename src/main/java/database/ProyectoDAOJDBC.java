@@ -31,13 +31,15 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
     }
 
 
-    public List<Proyecto> obtenerProyectos() throws SQLException {
+    public List<Proyecto> obtenerProyectosConEstudiante() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
-        String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.area_de_interes, "
-                + "p.ubicacion, p.id_usuario_tutor_interno, p.id_usuario_tutor_externo , p.estado "
-                + "FROM proyectos p "
-                + "WHERE p.estado = true "
-                + "AND NOT EXISTS (SELECT 1 FROM convenios c WHERE c.id_proyecto = p.id_proyecto)";
+
+        String sql = "SELECT DISTINCT p.id_proyecto, p.nombre, p.descripcion, p.area_de_interes, " +
+                     "p.ubicacion, p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.estado " +
+                     "FROM proyectos p " +
+                     "JOIN estudiantes e ON p.id_proyecto = e.id_proyecto " +
+                     "WHERE p.estado = TRUE " +
+                     "AND NOT EXISTS (SELECT 1 FROM convenios c WHERE c.id_proyecto = p.id_proyecto)";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -52,7 +54,7 @@ public class ProyectoDAOJDBC implements ProyectoDAO {
                         rs.getString("area_de_interes"),
                         null, // tutor
                         null, // docenteSupervisor
-                        rs.getString("ubicacion")  // tutor externo (igual)
+                        rs.getString("ubicacion")
                 );
                 proyectos.add(proyecto);
             }

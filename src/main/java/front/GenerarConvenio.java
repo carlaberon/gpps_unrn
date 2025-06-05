@@ -92,7 +92,7 @@ public class GenerarConvenio extends JFrame {
     private void cargarProyectos() {
         try {
             ProyectoDAOJDBC dao = new ProyectoDAOJDBC();
-            List<Proyecto> proyectos = dao.obtenerProyectos();
+            List<Proyecto> proyectos = dao.obtenerProyectosConEstudiante();
             for (Proyecto p : proyectos) {
                 comboProyectos.addItem(p);
             }
