@@ -7,14 +7,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class VentanaCargarInforme extends JFrame {
 
-    private JTextField txtIdInforme;
     private JTextField txtDescripcion;
     private JTextField txtTipo;
     private JLabel lblArchivo;
     private File archivoSeleccionado;
+    private static final AtomicInteger idCounter = new AtomicInteger(1);
 
     private Proyectos proyectos;
 
@@ -35,18 +36,9 @@ public class VentanaCargarInforme extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // ID
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(new JLabel("ID Informe:"), gbc);
-
-        gbc.gridx = 1;
-        txtIdInforme = new JTextField();
-        panel.add(txtIdInforme, gbc);
-
         // Descripción
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         panel.add(new JLabel("Descripción:"), gbc);
 
         gbc.gridx = 1;
@@ -55,7 +47,7 @@ public class VentanaCargarInforme extends JFrame {
 
         // Tipo
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         panel.add(new JLabel("Tipo:"), gbc);
 
         gbc.gridx = 1;
@@ -64,7 +56,7 @@ public class VentanaCargarInforme extends JFrame {
 
         // Archivo
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         panel.add(new JLabel("Archivo PDF:"), gbc);
 
         gbc.gridx = 1;
@@ -73,13 +65,13 @@ public class VentanaCargarInforme extends JFrame {
 
         // Nombre del archivo
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         lblArchivo = new JLabel("Ningún archivo seleccionado");
         panel.add(lblArchivo, gbc);
 
         // Botón Cargar
         gbc.gridx = 1;
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         JButton btnCargar = new JButton("Cargar Informe");
         panel.add(btnCargar, gbc);
@@ -103,18 +95,17 @@ public class VentanaCargarInforme extends JFrame {
 
     private void cargarInforme() {
         try {
-            int id = Integer.parseInt(txtIdInforme.getText());
             String descripcion = txtDescripcion.getText();
             String tipo = txtTipo.getText();
+            int idInforme = idCounter.getAndIncrement();
 
             byte[] archivoBytes = archivoSeleccionado != null ? Files.readAllBytes(archivoSeleccionado.toPath()) : null;
 
-            proyectos.cargarInforme(id, descripcion, tipo, archivoBytes);
+            proyectos.cargarInforme(idInforme, descripcion, tipo, archivoBytes);
 
             JOptionPane.showMessageDialog(this, "Informe cargado correctamente.");
+            dispose(); // Cerrar la ventana después de cargar exitosamente
 
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "El ID debe ser un número entero.");
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error al leer el archivo.");
         } catch (Exception ex) {
@@ -125,7 +116,7 @@ public class VentanaCargarInforme extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             ServicioDePersistenciaGestionProyectos servicio = new ServicioDePersistenciaGestionProyectos();
-            Proyectos proyectos = new Proyectos(servicio); // Reemplaza por tu instancia real
+            Proyectos proyectos = new Proyectos(servicio);
             new VentanaCargarInforme(proyectos).setVisible(true);
         });
     }
