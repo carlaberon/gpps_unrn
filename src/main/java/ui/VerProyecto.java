@@ -8,6 +8,7 @@ import model.Proyectos;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.List;
 
@@ -61,8 +62,26 @@ public class VerProyecto extends JFrame {
         };
 
         JTable tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(30);
+        tabla.setRowHeight(100); // Aumentamos la altura de las filas para mostrar más texto
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(400); // Ancho para la descripción
+        
+        // Configurar el renderizador para la columna de descripción
+        tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JTextArea textArea = new JTextArea(value.toString());
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                textArea.setRows(3);
+                textArea.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                textArea.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                return textArea;
+            }
+        });
+
         JScrollPane scroll = new JScrollPane(tabla);
+        scroll.setPreferredSize(new Dimension(700, 300)); // Ajustamos el tamaño del scroll pane
         add(scroll, BorderLayout.CENTER);
         // Panel para Detalles del Plan
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
