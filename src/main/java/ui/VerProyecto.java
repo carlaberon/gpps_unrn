@@ -4,9 +4,11 @@ import model.Actividad;
 import model.GestorDeProyectos;
 import model.PlanDeTrabajo;
 import model.Proyecto;
+import model.Proyectos;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.List;
 
@@ -60,8 +62,26 @@ public class VerProyecto extends JFrame {
         };
 
         JTable tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(30);
+        tabla.setRowHeight(100); // Aumentamos la altura de las filas para mostrar más texto
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(400); // Ancho para la descripción
+        
+        // Configurar el renderizador para la columna de descripción
+        tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JTextArea textArea = new JTextArea(value.toString());
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                textArea.setRows(3);
+                textArea.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                textArea.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                return textArea;
+            }
+        });
+
         JScrollPane scroll = new JScrollPane(tabla);
+        scroll.setPreferredSize(new Dimension(700, 300)); // Ajustamos el tamaño del scroll pane
         add(scroll, BorderLayout.CENTER);
         // Panel para Detalles del Plan
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
@@ -125,7 +145,7 @@ public class VerProyecto extends JFrame {
 
         // Agregar renderizador y editor de botón
         tabla.getColumn("Acciones").setCellRenderer(new ButtonRenderer());
-        tabla.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), actividades));
+        tabla.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos));
 
         setVisible(true);
     }
@@ -149,16 +169,18 @@ public class VerProyecto extends JFrame {
         private JButton button;
         private List<Actividad> actividades;
         private int currentRow;
+        private GestorDeProyectos gestorDeProyectos;
 
-        public ButtonEditor(JCheckBox checkBox, List<Actividad> actividades) {
+        public ButtonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestorDeProyectos) {
             super(checkBox);
             this.actividades = actividades;
+            this.gestorDeProyectos = gestorDeProyectos;
             this.button = new JButton("Cargar Informe");
             this.button.addActionListener(e -> {
                 Actividad act = actividades.get(currentRow);
-                JOptionPane.showMessageDialog(button,
-                        "Cargar informe para actividad: " + act.getDescripcion());
-                // Aquí podrías abrir un nuevo frame para cargar el informe
+                Proyectos proyectos = new Proyectos(gestorDeProyectos);
+                VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos);
+                ventana.setVisible(true);
             });
         }
 
