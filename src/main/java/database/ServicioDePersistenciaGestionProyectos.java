@@ -475,15 +475,13 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     }
 
     @Override
-    public Informe obtenerInforme(int idActividad) {
-        System.out.println(idActividad);
-        String sql = "SELECT i.* FROM informes i " +
-                "INNER JOIN actividades a ON i.id_informe = a.id_informe " +
-                "WHERE a.id_actividad = ?";
+    public Informe obtenerInforme(int idInforme) {
+        String sql = "SELECT * FROM informes WHERE id_informe = ?";
+        
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, idActividad);
+            stmt.setInt(1, idInforme);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new Informe(
