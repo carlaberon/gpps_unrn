@@ -68,7 +68,7 @@ public class ProyectosACargo extends JFrame {
             int fila = tabla.getSelectedRow();
             if (fila != -1) {
                 int idProyecto = (int) modelo.getValueAt(fila, 0);
-                new VerProyecto(gestorDeProyectos, idProyecto);
+                new VerProyectoInformes(gestorDeProyectos, idProyecto);
             }
         });
 

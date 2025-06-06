@@ -42,10 +42,8 @@ public class Proyectos {
         this.gestorDeProyectos.registrarAsignacionTutorInterno(idProyecto, idTutorInterno);
     }
 
-    public void cargarInforme(int idInformeParcial, String descripcionInformeParcial, String tipo, byte[] archivoEntregable) {
-
-        var informeParcial = new Informe(idInformeParcial, descripcionInformeParcial, tipo, archivoEntregable);
-        this.gestorDeProyectos.cargarInforme(informeParcial);
+    public void cargarInforme(Informe informe) {
+        this.gestorDeProyectos.cargarInforme(informe);
     }
 
     public void cargarInformeFinal(String descripcionInformeFinal, String tipo, List<Integer> idInformesParciales, int idInformeFinal, byte[] archivoEntregable) {

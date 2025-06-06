@@ -9,6 +9,7 @@ public class Actividad {
     private LocalDate fechaInicio;
     private int horas;
     private boolean finalizado;
+    private int idInforme;
 
     public Actividad(String descripcion, LocalDate fechaInicio, int horas, boolean finalizado) {
         this.descripcion = descripcion;
@@ -67,8 +68,25 @@ public class Actividad {
 
     public void setIdActividad(int int1) {
         this.idActividad = int1;
-
     }
 
+    public int getIdInforme() {
+        return idInforme;
+    }
 
+    public void setIdInforme(int idInforme) {
+        this.idInforme = idInforme;
+    }
+
+    @Override
+    public String toString() {
+        return "Actividad{" +
+                "idActividad=" + idActividad +
+                ", descripcion='" + descripcion + '\'' +
+                ", fechaInicio=" + fechaInicio +
+                ", horas=" + horas +
+                ", finalizado=" + finalizado +
+                ", idInforme=" + idInforme +
+                '}';
+    }
 }

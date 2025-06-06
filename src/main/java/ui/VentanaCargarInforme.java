@@ -1,32 +1,44 @@
 package ui;
+
 import database.ServicioDePersistenciaGestionProyectos;
+import model.Actividad;
+import model.Informe;
 import model.Proyectos;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class VentanaCargarInforme extends JFrame {
 
+    private static final AtomicInteger idCounter = new AtomicInteger(1);
     private JTextField txtDescripcion;
     private JTextField txtTipo;
     private JLabel lblArchivo;
     private File archivoSeleccionado;
-    private static final AtomicInteger idCounter = new AtomicInteger(1);
-
     private Proyectos proyectos;
+    private Actividad actividad;
 
-    public VentanaCargarInforme(Proyectos proyectos) {
+    public VentanaCargarInforme(Proyectos proyectos, Actividad actividad) {
         this.proyectos = proyectos;
+        this.actividad = actividad;
         setTitle("Cargar Informe Parcial");
         setSize(450, 300);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         initComponents();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            ServicioDePersistenciaGestionProyectos servicio = new ServicioDePersistenciaGestionProyectos();
+            Proyectos proyectos = new Proyectos(servicio);
+            new VentanaCargarInforme(proyectos, null).setVisible(true);
+        });
     }
 
     private void initComponents() {
@@ -101,7 +113,9 @@ public class VentanaCargarInforme extends JFrame {
 
             byte[] archivoBytes = archivoSeleccionado != null ? Files.readAllBytes(archivoSeleccionado.toPath()) : null;
 
-            proyectos.cargarInforme(idInforme, descripcion, tipo, archivoBytes);
+            // Crear el informe con el ID de la actividad
+            Informe informe = new Informe(actividad.getIdActividad(), descripcion, tipo, archivoBytes);
+            proyectos.cargarInforme(informe);
 
             JOptionPane.showMessageDialog(this, "Informe cargado correctamente.");
             dispose(); // Cerrar la ventana después de cargar exitosamente
@@ -111,13 +125,5 @@ public class VentanaCargarInforme extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar el informe: " + ex.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ServicioDePersistenciaGestionProyectos servicio = new ServicioDePersistenciaGestionProyectos();
-            Proyectos proyectos = new Proyectos(servicio);
-            new VentanaCargarInforme(proyectos).setVisible(true);
-        });
     }
 }

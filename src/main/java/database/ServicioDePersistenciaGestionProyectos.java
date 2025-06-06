@@ -213,31 +213,39 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     }
 
 
+    @Override
     public void cargarInforme(Informe informeParcial) {
-
         String sql = "INSERT INTO informes (descripcion, fecha_entrega, tipo, valoracionInforme, estado, archivo) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlUpdateActividad = "UPDATE actividades SET id_informe = ? WHERE id_actividad = ?";
 
         try (Connection conn = Conn.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            statement.setString(1, informeParcial.descripcion());
-            statement.setDate(2, java.sql.Date.valueOf(informeParcial.fechaEntrega()));
-            statement.setString(3, informeParcial.tipo());
-            statement.setInt(4, informeParcial.valoracionInforme());
-            statement.setBoolean(5, informeParcial.estado());
-            byte[] archivo = informeParcial.archivoEntregable();
+            stmt.setString(1, informeParcial.descripcion());
+            stmt.setDate(2, Date.valueOf(informeParcial.fechaEntrega()));
+            stmt.setString(3, informeParcial.tipo());
+            stmt.setInt(4, informeParcial.valoracionInforme());
+            stmt.setBoolean(5, informeParcial.estado());
+            stmt.setBytes(6, informeParcial.archivoEntregable());
 
-            if (archivo != null) {
-                statement.setBytes(6, archivo);
-            } else {
-                statement.setNull(6, java.sql.Types.BINARY);
+            stmt.executeUpdate();
+
+            // Obtener el ID generado del informe
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int idInforme = generatedKeys.getInt(1);
+
+                // Actualizar la actividad con el ID del informe
+                try (PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdateActividad)) {
+                    stmtUpdate.setInt(1, idInforme);
+                    stmtUpdate.setInt(2, informeParcial.id());
+                    stmtUpdate.executeUpdate();
+                }
             }
 
-            statement.executeUpdate();
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al cargar el informe", e);
         }
-
     }
 
     @Override
@@ -304,12 +312,17 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         stmtAct.setInt(1, idPlan);
                         try (ResultSet rsAct = stmtAct.executeQuery()) {
                             while (rsAct.next()) {
+                                int idActividad = rsAct.getInt("id_actividad");
                                 String descripcion = rsAct.getString("descripcion");
                                 LocalDate fechaInicioAct = rsAct.getDate("fecha_inicio").toLocalDate();
                                 int horas = rsAct.getInt("horas");
                                 boolean finalizado = rsAct.getBoolean("finalizado");
+                                int idInforme = rsAct.getInt("id_informe");
 
-                                actividades.add(new Actividad(descripcion, fechaInicioAct, horas, finalizado));
+                                Actividad actividad = new Actividad(descripcion, fechaInicioAct, horas, finalizado);
+                                actividad.setIdActividad(idActividad);
+                                actividad.setIdInforme(idInforme);
+                                actividades.add(actividad);
                             }
                         }
                     }
@@ -447,5 +460,30 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     }
 
+    @Override
+    public Informe obtenerInforme(int idActividad) {
+        System.out.println(idActividad);
+        String sql = "SELECT i.* FROM informes i " +
+                "INNER JOIN actividades a ON i.id_informe = a.id_informe " +
+                "WHERE a.id_actividad = ?";
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idActividad);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Informe(
+                            rs.getInt("id_informe"),
+                            rs.getString("descripcion"),
+                            rs.getString("tipo"),
+                            rs.getBytes("archivo")
+                    );
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error al obtener el informe: " + ex.getMessage());
+        }
+        return null;
+    }
 
 }

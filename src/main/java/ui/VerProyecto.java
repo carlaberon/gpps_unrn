@@ -179,7 +179,7 @@ public class VerProyecto extends JFrame {
             this.button.addActionListener(e -> {
                 Actividad act = actividades.get(currentRow);
                 Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos);
+                VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos, act);
                 ventana.setVisible(true);
             });
         }
