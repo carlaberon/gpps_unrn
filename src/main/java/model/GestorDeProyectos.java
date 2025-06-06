@@ -37,4 +37,6 @@ public interface GestorDeProyectos {
 
     boolean asignarEstudianteAProyecto(int idEstudiante, int idProyecto) throws SQLException;
 
+    Informe obtenerInforme(int idInforme);
+
 }

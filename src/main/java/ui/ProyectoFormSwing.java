@@ -125,7 +125,7 @@ public class ProyectoFormSwing extends JFrame {
         DefaultComboBoxModel<Tutor> model = new DefaultComboBoxModel<>();
 
         for (Tutor t : tutores) {
-            if ("Interno".equalsIgnoreCase(t.getTipo().trim())) {
+            if ("interno".equalsIgnoreCase(t.getTipo().trim())) {
                 model.addElement(t);
             }
         }
@@ -149,7 +149,7 @@ public class ProyectoFormSwing extends JFrame {
         DefaultComboBoxModel<Tutor> model = new DefaultComboBoxModel<>();
 
         for (Tutor t : tutores) {
-            if ("Externo".equalsIgnoreCase(t.getTipo())) {
+            if ("externo".equalsIgnoreCase(t.getTipo())) {
                 model.addElement(t);
             }
         }
