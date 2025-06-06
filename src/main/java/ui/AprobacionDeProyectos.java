@@ -69,7 +69,7 @@ public class AprobacionDeProyectos extends JFrame {
             int fila = tabla.getSelectedRow();
             if (fila != -1) {
                 int id = (int) modelo.getValueAt(fila, 0);
-                new VerProyecto(gestorDeProyectos, id);
+                new VerProyectoDirector(gestorDeProyectos, id);
             }
         });
 

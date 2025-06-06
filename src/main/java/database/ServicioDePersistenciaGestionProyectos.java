@@ -140,16 +140,30 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void aprobarPlanDeTrabajo(int idPlan) {
-        String sql = "UPDATE planes SET estado_aprobacion = ? WHERE id_plan = ?";
-        try (Connection conn = Conn.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setBoolean(1, true);
-            statement.setInt(2, idPlan);
-            statement.executeUpdate();
+        String sqlPlan = "UPDATE planes SET estado_aprobacion = ? WHERE id_plan = ?";
+        String sqlProyecto = "UPDATE proyectos SET estado = 1 WHERE id_proyecto = " +
+                "(SELECT id_proyecto FROM planes WHERE id_plan = ?)";
+
+        try (Connection conn = Conn.getConnection()) {
+
+            // Actualiza el estado del plan
+            try (PreparedStatement stmtPlan = conn.prepareStatement(sqlPlan)) {
+                stmtPlan.setBoolean(1, true);
+                stmtPlan.setInt(2, idPlan);
+                stmtPlan.executeUpdate();
+            }
+
+            // Actualiza el estado del proyecto relacionado
+            try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto)) {
+                stmtProyecto.setInt(1, idPlan);
+                stmtProyecto.executeUpdate();
+            }
+
         } catch (Exception e) {
-            throw new RuntimeException("Problema con la persistencia");
+            throw new RuntimeException("Problema con la persistencia", e);
         }
     }
+
 
     public List<Proyecto> obtenerProyectos() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
