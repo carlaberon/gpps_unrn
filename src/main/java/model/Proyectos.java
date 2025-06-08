@@ -73,4 +73,8 @@ public class Proyectos {
         return this.gestorDeProyectos.obtenerActividadesPorPlan(idPlan);
     }
 
+    public void valorarInforme(int idInforme, int valoracion) {
+        this.gestorDeProyectos.valorarInforme(idInforme, valoracion);
+    }
+
 }

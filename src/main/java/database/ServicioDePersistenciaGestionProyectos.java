@@ -230,7 +230,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public void cargarInforme(Informe informeParcial) {
         String sql = "INSERT INTO informes (descripcion, fecha_entrega, tipo, valoracionInforme, estado, archivo) VALUES (?, ?, ?, ?, ?, ?)";
-        String sqlUpdateActividad = "UPDATE actividades SET id_informe = ? WHERE id_actividad = ?";
+        String sqlUpdateActividad = "UPDATE actividades SET id_informe = ?, estado = TRUE WHERE id_actividad = ?";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -249,7 +249,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             if (generatedKeys.next()) {
                 int idInforme = generatedKeys.getInt(1);
 
-                // Actualizar la actividad con el ID del informe
+                // Actualizar la actividad con el ID del informe y marcar como finalizada
                 try (PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdateActividad)) {
                     stmtUpdate.setInt(1, idInforme);
                     stmtUpdate.setInt(2, informeParcial.id());
@@ -421,7 +421,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public List<Actividad> obtenerActividadesPorPlan(int idPlan) throws SQLException {
         List<Actividad> actividades = new ArrayList<>();
-        String sql = "SELECT id_actividad, descripcion, fecha_inicio, horas, finalizado FROM actividades WHERE id_plan = ?";
+        String sql = "SELECT id_actividad, descripcion, fecha_inicio, horas, estado, id_informe FROM actividades WHERE id_plan = ?";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -433,11 +433,12 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     String descripcion = rs.getString("descripcion");
                     LocalDate fechaInicio = rs.getDate("fecha_inicio").toLocalDate();
                     int horas = rs.getInt("horas");
-                    boolean finalizado = rs.getBoolean("finalizado");
+                    boolean finalizado = rs.getBoolean("estado");
+                    int idInforme = rs.getInt("id_informe");
 
                     Actividad actividad = new Actividad(descripcion, fechaInicio, horas, finalizado);
                     actividad.setIdActividad(idActividad);
-
+                    actividad.setIdInforme(idInforme);
                     actividades.add(actividad);
                 }
             }
@@ -477,25 +478,47 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public Informe obtenerInforme(int idInforme) {
         String sql = "SELECT * FROM informes WHERE id_informe = ?";
-        
+
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, idInforme);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Informe(
+                    Informe informe = new Informe(
                             rs.getInt("id_informe"),
                             rs.getString("descripcion"),
                             rs.getString("tipo"),
                             rs.getBytes("archivo")
                     );
+                    // Establecer los valores adicionales
+                    informe.setValoracionInforme(rs.getInt("valoracionInforme"));
+                    return informe;
                 }
             }
         } catch (SQLException ex) {
             throw new RuntimeException("Error al obtener el informe: " + ex.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public void valorarInforme(int idInforme, int valoracion) {
+        String sql = "UPDATE informes SET valoracionInforme = ? WHERE id_informe = ?";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, valoracion);
+            stmt.setInt(2, idInforme);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new RuntimeException("No se encontró el informe con ID: " + idInforme);
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error al valorar el informe: " + ex.getMessage());
+        }
     }
 
 }

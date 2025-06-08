@@ -1,14 +1,10 @@
 package ui;
 
-import model.Actividad;
-import model.GestorDeProyectos;
-import model.PlanDeTrabajo;
-import model.Proyecto;
-import model.Proyectos;
+import model.*;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
@@ -64,12 +60,12 @@ public class VerProyecto extends JFrame {
         JTable tabla = new JTable(modeloTabla);
         tabla.setRowHeight(100); // Aumentamos la altura de las filas para mostrar más texto
         tabla.getColumnModel().getColumn(0).setPreferredWidth(400); // Ancho para la descripción
-        
+
         // Configurar el renderizador para la columna de descripción
         tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
                 JTextArea textArea = new JTextArea(value.toString());
                 textArea.setLineWrap(true);
                 textArea.setWrapStyleWord(true);
@@ -144,7 +140,7 @@ public class VerProyecto extends JFrame {
         }
 
         // Agregar renderizador y editor de botón
-        tabla.getColumn("Acciones").setCellRenderer(new ButtonRenderer());
+        tabla.getColumn("Acciones").setCellRenderer(new ButtonRenderer(actividades));
         tabla.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos));
 
         setVisible(true);
@@ -152,14 +148,33 @@ public class VerProyecto extends JFrame {
 
     // Renderizador para el botón
     static class ButtonRenderer extends JButton implements javax.swing.table.TableCellRenderer {
-        public ButtonRenderer() {
-            setText("Cargar Informe");
+        private List<Actividad> actividades;
+
+        public ButtonRenderer(List<Actividad> actividades) {
+            this.actividades = actividades;
+            setOpaque(true);
         }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
+            Actividad actividad = actividades.get(row);
+
+            if (actividad.getIdInforme() > 0) {
+                setText("Ver Informe");
+            } else {
+                setText("Cargar Informe");
+            }
+
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                setBackground(table.getSelectionBackground());
+            } else {
+                setForeground(table.getForeground());
+                setBackground(table.getBackground());
+            }
+
             return this;
         }
     }
@@ -175,12 +190,23 @@ public class VerProyecto extends JFrame {
             super(checkBox);
             this.actividades = actividades;
             this.gestorDeProyectos = gestorDeProyectos;
-            this.button = new JButton("Cargar Informe");
+            this.button = new JButton();
+            this.button.setOpaque(true);
             this.button.addActionListener(e -> {
                 Actividad act = actividades.get(currentRow);
                 Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos, act);
-                ventana.setVisible(true);
+
+                if (act.getIdInforme() > 0) {
+                    // Si ya tiene informe, mostrar el informe
+                    Informe informe = gestorDeProyectos.obtenerInforme(act.getIdInforme());
+                    if (informe != null) {
+                        new VerInformeEstudiante(proyectos, informe).setVisible(true);
+                    }
+                } else {
+                    // Si no tiene informe, mostrar la ventana para cargar
+                    VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos, act);
+                    ventana.setVisible(true);
+                }
             });
         }
 
@@ -188,12 +214,28 @@ public class VerProyecto extends JFrame {
         public Component getTableCellEditorComponent(JTable table, Object value,
                                                      boolean isSelected, int row, int column) {
             this.currentRow = row;
+            Actividad act = actividades.get(row);
+
+            if (act.getIdInforme() > 0) {
+                button.setText("Ver Informe");
+            } else {
+                button.setText("Cargar Informe");
+            }
+
+            if (isSelected) {
+                button.setForeground(table.getSelectionForeground());
+                button.setBackground(table.getSelectionBackground());
+            } else {
+                button.setForeground(table.getForeground());
+                button.setBackground(table.getBackground());
+            }
+
             return button;
         }
 
         @Override
         public Object getCellEditorValue() {
-            return "Cargar Informe";
+            return button.getText();
         }
     }
 }
