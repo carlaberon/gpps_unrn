@@ -166,9 +166,10 @@ public class VerProyectoInformes extends JFrame {
                         JOptionPane.showMessageDialog(null, "No se encontró el informe asociado.");
                     }
                 } else {
-                    Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                    VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos, act);
-                    ventana.setVisible(true);
+                    System.out.println("no tiene que entrar aca");
+                    //Proyectos proyectos = new Proyectos(gestorDeProyectos);
+                    //VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos, act);
+                    //ventana.setVisible(true);
                 }
             });
         }

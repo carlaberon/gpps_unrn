@@ -10,17 +10,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
-public class VerInforme extends JFrame {
+public class VerInformeEstudiante extends JFrame {
     private final Informe informe;
     private final Proyectos proyectos;
-    private JTextField txtValoracion;
 
-    public VerInforme(Proyectos proyectos, Informe informe) {
+    public VerInformeEstudiante(Proyectos proyectos, Informe informe) {
         this.proyectos = proyectos;
         this.informe = informe;
 
         setTitle("Detalles del Informe");
-        setSize(600, 450);
+        setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -45,27 +44,9 @@ public class VerInforme extends JFrame {
         panelInfo.add(new JLabel(informe.valoracionInforme() == -1 ? "No valorado" : String.valueOf(informe.valoracionInforme())));
 
         panelInfo.add(new JLabel("Estado:"));
-        panelInfo.add(new JLabel(informe.estado() ? "Recibido" : "Pendiente"));
+        panelInfo.add(new JLabel(informe.estado() ? "Finalizado" : "Pendiente"));
 
         add(panelInfo, BorderLayout.NORTH);
-
-        // Panel de valoración - solo se muestra si el informe no tiene valoración
-        if (informe.valoracionInforme() == -1) {
-            JPanel panelValoracion = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            panelValoracion.setBorder(BorderFactory.createTitledBorder("Valorar Informe"));
-            
-            JLabel lblValoracion = new JLabel("Ingrese valoración (0-10):");
-            txtValoracion = new JTextField(5);
-            JButton btnGuardarValoracion = new JButton("Guardar Valoración");
-            
-            btnGuardarValoracion.addActionListener(e -> guardarValoracion());
-            
-            panelValoracion.add(lblValoracion);
-            panelValoracion.add(txtValoracion);
-            panelValoracion.add(btnGuardarValoracion);
-            
-            add(panelValoracion, BorderLayout.CENTER);
-        }
 
         // Panel de botones
         JPanel panelBotones = new JPanel();
@@ -78,32 +59,9 @@ public class VerInforme extends JFrame {
         panelBotones.add(btnVerArchivo);
         panelBotones.add(btnDescargarArchivo);
 
-        add(panelBotones, BorderLayout.SOUTH);
+        add(panelBotones, BorderLayout.CENTER);
 
         setVisible(true);
-    }
-
-    private void guardarValoracion() {
-        try {
-            int valoracion = Integer.parseInt(txtValoracion.getText().trim());
-            if (valoracion < 0 || valoracion > 10) {
-                JOptionPane.showMessageDialog(this, "La valoración debe estar entre 0 y 10",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            try {
-                proyectos.valorarInforme(informe.id(), valoracion);
-                JOptionPane.showMessageDialog(this, "Valoración guardada correctamente");
-                dispose(); // Cierra la ventana después de guardar
-            } catch (RuntimeException ex) {
-                JOptionPane.showMessageDialog(this, "Error al guardar la valoración: " + ex.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Por favor ingrese un número válido",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     private void verArchivo() {
@@ -138,7 +96,7 @@ public class VerInforme extends JFrame {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setSelectedFile(new File("informe_" + informe.id() + ".pdf"));
-        
+
         if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try (FileOutputStream fos = new FileOutputStream(file)) {

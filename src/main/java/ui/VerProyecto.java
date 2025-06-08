@@ -55,7 +55,7 @@ public class VerProyecto extends JFrame {
         };
 
         JTable tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(50);
+        tabla.setRowHeight(100);
         tabla.getColumnModel().getColumn(0).setPreferredWidth(400);
 
         tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
@@ -76,7 +76,6 @@ public class VerProyecto extends JFrame {
 
         JScrollPane scroll = new JScrollPane(tabla);
         scroll.setPreferredSize(new Dimension(700, 300));
-        add(scroll, BorderLayout.CENTER);
 
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
         panelDetallesPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
@@ -125,7 +124,8 @@ public class VerProyecto extends JFrame {
             modeloTabla.addRow(new Object[]{
                     a.getDescripcion(),
                     a.finalizado() ? "Sí" : "No",
-                    a.requiereInforme() ? "Cargar Informe" : "Esta actividad no requiere informe"
+                    a.requiereInforme() ? (a.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe")
+                            : "Esta actividad no requiere informe"
             });
         }
 
@@ -140,19 +140,30 @@ public class VerProyecto extends JFrame {
 
         public ButtonRenderer(List<Actividad> actividades) {
             this.actividades = actividades;
+            setOpaque(true);
         }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
-            Actividad act = actividades.get(row);
-            if (act.requiereInforme()) {
-                setText("Cargar Informe");
-                return this;
-            } else {
+            Actividad actividad = actividades.get(row);
+
+            if (!actividad.requiereInforme()) {
                 return new JLabel("Esta actividad no requiere informe");
             }
+
+            setText(actividad.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
+
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                setBackground(table.getSelectionBackground());
+            } else {
+                setForeground(table.getForeground());
+                setBackground(table.getBackground());
+            }
+
+            return this;
         }
     }
 
@@ -166,13 +177,24 @@ public class VerProyecto extends JFrame {
             super(checkBox);
             this.actividades = actividades;
             this.gestorDeProyectos = gestorDeProyectos;
-            this.button = new JButton("Cargar Informe");
+            this.button = new JButton();
+            this.button.setOpaque(true);
             this.button.addActionListener(e -> {
                 Actividad act = actividades.get(currentRow);
-                if (act.requiereInforme()) {
-                    Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                    VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos, act);
-                    ventana.setVisible(true);
+                Proyectos proyectos = new Proyectos(gestorDeProyectos);
+
+                if (!act.requiereInforme()) {
+                    JOptionPane.showMessageDialog(button, "Esta actividad no requiere informe.");
+                    return;
+                }
+
+                if (act.getIdInforme() > 0) {
+                    Informe informe = gestorDeProyectos.obtenerInforme(act.getIdInforme());
+                    if (informe != null) {
+                        new VerInformeEstudiante(proyectos, informe).setVisible(true);
+                    }
+                } else {
+                    new VentanaCargarInforme(proyectos, act).setVisible(true);
                 }
             });
         }
@@ -182,12 +204,28 @@ public class VerProyecto extends JFrame {
                                                      boolean isSelected, int row, int column) {
             this.currentRow = row;
             Actividad act = actividades.get(row);
-            return act.requiereInforme() ? button : new JLabel("Esta actividad no requiere informe");
+
+            if (!act.requiereInforme()) {
+                return new JLabel("Esta actividad no requiere informe");
+            }
+
+            button.setText(act.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
+
+            if (isSelected) {
+                button.setForeground(table.getSelectionForeground());
+                button.setBackground(table.getSelectionBackground());
+            } else {
+                button.setForeground(table.getForeground());
+                button.setBackground(table.getBackground());
+            }
+
+            return button;
         }
 
         @Override
         public Object getCellEditorValue() {
-            return "Cargar Informe";
+            return button.getText();
         }
     }
 }
+

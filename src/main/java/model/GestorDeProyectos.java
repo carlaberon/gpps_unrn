@@ -39,4 +39,6 @@ public interface GestorDeProyectos {
 
     Informe obtenerInforme(int idInforme);
 
+    void valorarInforme(int idInforme, int valoracion);
+
 }
