@@ -21,12 +21,10 @@ public class VerProyectoInformes extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Obtener datos del proyecto
         Proyecto proyecto = gestorDeProyectos.obtenerProyecto(idProyecto);
         PlanDeTrabajo plan = gestorDeProyectos.obtenerPlan(idProyecto);
         List<Actividad> actividades = plan.actividades();
 
-        // Panel de información del proyecto
         JPanel panelProyecto = new JPanel(new GridLayout(5, 2, 5, 5));
         panelProyecto.setBorder(BorderFactory.createTitledBorder("Información del Proyecto"));
 
@@ -47,44 +45,85 @@ public class VerProyectoInformes extends JFrame {
 
         add(panelProyecto, BorderLayout.NORTH);
 
+        // Detalles del plan
+        JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
+        panelDetallesPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
+
+        int totalHoras = actividades.stream().mapToInt(Actividad::horas).sum();
+
+        panelDetallesPlan.add(new JLabel("Fecha de Inicio:"));
+        panelDetallesPlan.add(new JLabel(plan.fechaInicio().toString()));
+
+        panelDetallesPlan.add(new JLabel("Fecha de Fin:"));
+        panelDetallesPlan.add(new JLabel(plan.fechaFin().toString()));
+
+        panelDetallesPlan.add(new JLabel("Recursos:"));
+        panelDetallesPlan.add(new JLabel(plan.recursos()));
+
+        panelDetallesPlan.add(new JLabel("Total de Horas:"));
+        panelDetallesPlan.add(new JLabel(String.valueOf(totalHoras)));
+
+        // Subtítulo "Actividades:" y barra de progreso
+        JPanel panelActividadesTop = new JPanel(new BorderLayout());
+        panelActividadesTop.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
+
+        JLabel lblActividades = new JLabel("Actividades:");
+        lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
+        panelActividadesTop.add(lblActividades, BorderLayout.WEST);
+
+        int totalActividades = actividades.size();
+        long finalizadas = actividades.stream().filter(Actividad::finalizado).count();
+        int porcentaje = totalActividades == 0 ? 0 : (int) ((finalizadas * 100.0) / totalActividades);
+
+        JProgressBar barraProgreso = new JProgressBar(0, 100);
+        barraProgreso.setValue(porcentaje);
+        barraProgreso.setStringPainted(true);
+        barraProgreso.setPreferredSize(new Dimension(200, 20));
+        panelActividadesTop.add(barraProgreso, BorderLayout.EAST);
+
         // Tabla de actividades con columna para ver informes
         String[] columnas = {"ID", "Descripción", "Estado", "Ver Informe"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3; // Solo la columna "Ver Informe" es editable
+                return column == 3 && "Ver Informe".equals(getValueAt(row, column));
             }
         };
 
         for (Actividad actividad : actividades) {
+            boolean requiere = actividad.requiereInforme();
             modelo.addRow(new Object[]{
                     actividad.getIdActividad(),
                     actividad.descripcion(),
                     actividad.finalizado() ? "Finalizada" : "En progreso",
-                    "Ver Informe"
+                    requiere ? "Ver Informe" : "Esta actividad no requiere informe"
             });
         }
 
         JTable tabla = new JTable(modelo);
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tabla.setRowHeight(25);
+        tabla.setRowHeight(60);
 
-        // Ocultar columna de ID
         tabla.getColumnModel().getColumn(0).setMinWidth(0);
         tabla.getColumnModel().getColumn(0).setMaxWidth(0);
         tabla.getColumnModel().getColumn(0).setWidth(0);
 
-        // Configurar el renderer para la columna "Ver Informe"
         tabla.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
         tabla.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos));
 
         JScrollPane scroll = new JScrollPane(tabla);
-        add(scroll, BorderLayout.CENTER);
+
+        JPanel centro = new JPanel();
+        centro.setLayout(new BoxLayout(centro, BoxLayout.Y_AXIS));
+        centro.add(panelDetallesPlan);
+        centro.add(panelActividadesTop);
+        centro.add(scroll);
+
+        add(centro, BorderLayout.CENTER);
 
         setVisible(true);
     }
 
-    // Clase para renderizar el botón en la tabla
     class ButtonRenderer extends JButton implements javax.swing.table.TableCellRenderer {
         public ButtonRenderer() {
             setOpaque(true);
@@ -94,12 +133,17 @@ public class VerProyectoInformes extends JFrame {
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
-            setText((value == null) ? "" : value.toString());
-            return this;
+            if ("Ver Informe".equals(value)) {
+                setText("Ver Informe");
+                return this;
+            } else {
+                JLabel label = new JLabel(value.toString());
+                label.setOpaque(true);
+                return label;
+            }
         }
     }
 
-    // Clase para manejar el evento del botón
     class ButtonEditor extends DefaultCellEditor {
         private JButton button;
         private List<Actividad> actividades;
@@ -142,4 +186,5 @@ public class VerProyectoInformes extends JFrame {
             return "Ver Informe";
         }
     }
-} 
+}
+

@@ -101,7 +101,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public void cargarPlanDeTrabajo(PlanDeTrabajo plan, int idProyecto) {
         String sqlPlan = "INSERT INTO planes (id_proyecto, cant_horas, fecha_inicio, fecha_fin, estado_aprobacion) VALUES (?, ?, ?, ?, ?)";
-        String sqlActividad = "INSERT INTO actividades (descripcion, fecha_inicio, horas, finalizado, id_plan) VALUES (?, ?, ?, ?, ?)";
+        String sqlActividad = "INSERT INTO actividades (descripcion, fecha_inicio, horas, estado, requiere_informe, id_plan) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmtPlan = conn.prepareStatement(sqlPlan, Statement.RETURN_GENERATED_KEYS);
@@ -128,7 +128,8 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 stmtActividad.setDate(2, Date.valueOf(act.fechaInicio()));
                 stmtActividad.setInt(3, act.horas());
                 stmtActividad.setBoolean(4, false); // siempre false al crear
-                stmtActividad.setInt(5, idPlan);
+                stmtActividad.setBoolean(5, act.requiereInforme());
+                stmtActividad.setInt(6, idPlan);
                 stmtActividad.addBatch();
             }
             stmtActividad.executeBatch();
@@ -332,8 +333,9 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                                 int horas = rsAct.getInt("horas");
                                 boolean finalizado = rsAct.getBoolean("estado");
                                 int idInforme = rsAct.getInt("id_informe");
+                                boolean requiereInforme = rsAct.getBoolean("requiere_informe");
 
-                                Actividad actividad = new Actividad(descripcion, fechaInicioAct, horas, finalizado);
+                                Actividad actividad = new Actividad(descripcion, fechaInicioAct, horas, finalizado, requiereInforme);
                                 actividad.setIdActividad(idActividad);
                                 actividad.setIdInforme(idInforme);
                                 actividades.add(actividad);
@@ -435,8 +437,10 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     int horas = rs.getInt("horas");
                     boolean finalizado = rs.getBoolean("estado");
                     int idInforme = rs.getInt("id_informe");
+                    boolean requiereInforme = rs.getBoolean("requiere_informe");
 
-                    Actividad actividad = new Actividad(descripcion, fechaInicio, horas, finalizado);
+
+                    Actividad actividad = new Actividad(descripcion, fechaInicio, horas, finalizado, requiereInforme);
                     actividad.setIdActividad(idActividad);
                     actividad.setIdInforme(idInforme);
                     actividades.add(actividad);
