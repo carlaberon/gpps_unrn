@@ -10,12 +10,14 @@ public class Actividad {
     private int horas;
     private boolean finalizado;
     private int idInforme;
+    private boolean requiereInforme;
 
-    public Actividad(String descripcion, LocalDate fechaInicio, int horas, boolean finalizado) {
+    public Actividad(String descripcion, LocalDate fechaInicio, int horas, boolean finalizado, boolean requiereInforme) {
         this.descripcion = descripcion;
         this.fechaInicio = fechaInicio;
         this.horas = horas;
         this.finalizado = finalizado;
+        this.requiereInforme = requiereInforme;
     }
 
     public LocalDate fechaInicio() {
@@ -88,5 +90,9 @@ public class Actividad {
                 ", finalizado=" + finalizado +
                 ", idInforme=" + idInforme +
                 '}';
+    }
+
+    public boolean requiereInforme() {
+        return requiereInforme;
     }
 }

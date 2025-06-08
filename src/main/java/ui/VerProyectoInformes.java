@@ -52,16 +52,17 @@ public class VerProyectoInformes extends JFrame {
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3; // Solo la columna "Ver Informe" es editable
+                return column == 3 && "Ver Informe".equals(getValueAt(row, column));
             }
         };
 
         for (Actividad actividad : actividades) {
+            boolean requiere = actividad.requiereInforme();
             modelo.addRow(new Object[]{
                     actividad.getIdActividad(),
                     actividad.descripcion(),
                     actividad.finalizado() ? "Finalizada" : "En progreso",
-                    "Ver Informe"
+                    requiere ? "Ver Informe" : "Esta actividad no requiere informe"
             });
         }
 
@@ -94,8 +95,14 @@ public class VerProyectoInformes extends JFrame {
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
-            setText((value == null) ? "" : value.toString());
-            return this;
+            if ("Ver Informe".equals(value)) {
+                setText("Ver Informe");
+                return this;
+            } else {
+                JLabel label = new JLabel(value.toString());
+                label.setOpaque(true);
+                return label;
+            }
         }
     }
 
@@ -141,4 +148,4 @@ public class VerProyectoInformes extends JFrame {
             return "Ver Informe";
         }
     }
-} 
+}

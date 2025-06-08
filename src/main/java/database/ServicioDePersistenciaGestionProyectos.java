@@ -332,8 +332,9 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                                 int horas = rsAct.getInt("horas");
                                 boolean finalizado = rsAct.getBoolean("estado");
                                 int idInforme = rsAct.getInt("id_informe");
+                                boolean requiereInforme = rsAct.getBoolean("requiere_informe");
 
-                                Actividad actividad = new Actividad(descripcion, fechaInicioAct, horas, finalizado);
+                                Actividad actividad = new Actividad(descripcion, fechaInicioAct, horas, finalizado, requiereInforme);
                                 actividad.setIdActividad(idActividad);
                                 actividad.setIdInforme(idInforme);
                                 actividades.add(actividad);
@@ -434,8 +435,10 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     LocalDate fechaInicio = rs.getDate("fecha_inicio").toLocalDate();
                     int horas = rs.getInt("horas");
                     boolean finalizado = rs.getBoolean("finalizado");
+                    boolean requiereInforme = rs.getBoolean("requiere_informe");
 
-                    Actividad actividad = new Actividad(descripcion, fechaInicio, horas, finalizado);
+
+                    Actividad actividad = new Actividad(descripcion, fechaInicio, horas, finalizado, requiereInforme);
                     actividad.setIdActividad(idActividad);
 
                     actividades.add(actividad);
@@ -477,7 +480,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public Informe obtenerInforme(int idInforme) {
         String sql = "SELECT * FROM informes WHERE id_informe = ?";
-        
+
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 

@@ -13,18 +13,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CrearPlanTrabajo extends JFrame {
     private GestorDeProyectos gestorDeProyectos;
     private int idProyecto;
-
     private JTable tablaActividades;
     private DefaultTableModel modeloTabla;
     private JTextField campoDescripcion;
     private JTextArea campoRecursos;
+    private JCheckBox checkRequiereInforme;
     private JSpinner campoFechaInicio;
     private JSpinner campoHoras;
-
     private JSpinner campoFechaInicioPlan;
     private JSpinner campoFechaFinPlan;
 
@@ -38,9 +36,15 @@ public class CrearPlanTrabajo extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+        // Colores
+        Color fondo = Color.decode("#1E2019");
+        Color panelColor = Color.decode("#394032");
+        Color textoColor = Color.decode("#CFEE9E");
+
         // Panel de fechas del plan
         JPanel panelFechasPlan = new JPanel(new GridLayout(1, 4, 5, 5));
         panelFechasPlan.setBorder(BorderFactory.createTitledBorder("Fechas del Plan"));
+        panelFechasPlan.setBackground(panelColor);
 
         campoFechaInicioPlan = new JSpinner(new SpinnerDateModel());
         campoFechaInicioPlan.setEditor(new JSpinner.DateEditor(campoFechaInicioPlan, "yyyy-MM-dd"));
@@ -54,13 +58,17 @@ public class CrearPlanTrabajo extends JFrame {
         panelFechasPlan.add(campoFechaFinPlan);
 
         // Panel de entrada de actividad
-        JPanel panelActividad = new JPanel(new GridLayout(6, 2, 5, 5));
+        JPanel panelActividad = new JPanel(new GridLayout(7, 2, 5, 5));
         panelActividad.setBorder(BorderFactory.createTitledBorder("Nueva Actividad"));
+        panelActividad.setBackground(panelColor);
 
         campoDescripcion = new JTextField();
         campoFechaInicio = new JSpinner(new SpinnerDateModel());
         campoFechaInicio.setEditor(new JSpinner.DateEditor(campoFechaInicio, "yyyy-MM-dd"));
-        campoHoras = new JSpinner(new SpinnerNumberModel(1, 1, 1000, 1)); // más pequeño
+        campoHoras = new JSpinner(new SpinnerNumberModel(1, 1, 1000, 1));
+        checkRequiereInforme = new JCheckBox("¿Requiere informe?");
+        checkRequiereInforme.setBackground(panelColor);
+        checkRequiereInforme.setForeground(textoColor);
 
         panelActividad.add(new JLabel("Descripción:"));
         panelActividad.add(campoDescripcion);
@@ -68,12 +76,14 @@ public class CrearPlanTrabajo extends JFrame {
         panelActividad.add(campoFechaInicio);
         panelActividad.add(new JLabel("Horas estimadas:"));
         panelActividad.add(campoHoras);
+        panelActividad.add(new JLabel(""));
+        panelActividad.add(checkRequiereInforme);
 
         JButton btnAgregarActividad = new JButton("Agregar Actividad");
         panelActividad.add(btnAgregarActividad);
 
         // Tabla de actividades
-        modeloTabla = new DefaultTableModel(new String[]{"Descripción", "Fecha", "Horas"}, 0);
+        modeloTabla = new DefaultTableModel(new String[]{"Descripción", "Fecha", "Horas", "Informe"}, 0);
         tablaActividades = new JTable(modeloTabla);
         JScrollPane scrollTabla = new JScrollPane(tablaActividades);
 
@@ -84,32 +94,36 @@ public class CrearPlanTrabajo extends JFrame {
         btnGuardar.addActionListener(e -> guardarPlan());
 
         JPanel panelSuperior = new JPanel(new BorderLayout());
-        // Panel para recursos
+
         JPanel panelRecursos = new JPanel(new BorderLayout());
         panelRecursos.setBorder(BorderFactory.createTitledBorder("Recursos necesarios"));
+        panelRecursos.setBackground(panelColor);
         campoRecursos = new JTextArea(3, 20);
         campoRecursos.setLineWrap(true);
         campoRecursos.setWrapStyleWord(true);
         panelRecursos.add(new JScrollPane(campoRecursos), BorderLayout.CENTER);
 
-// Panel combinado fechas + recursos
         JPanel panelDatosPlan = new JPanel(new BorderLayout());
         panelDatosPlan.add(panelFechasPlan, BorderLayout.NORTH);
         panelDatosPlan.add(panelRecursos, BorderLayout.CENTER);
 
-// Agregar al panel superior
         panelSuperior.add(panelDatosPlan, BorderLayout.NORTH);
         panelSuperior.add(panelActividad, BorderLayout.CENTER);
 
         add(panelSuperior, BorderLayout.NORTH);
         add(scrollTabla, BorderLayout.CENTER);
         add(btnGuardar, BorderLayout.SOUTH);
+
+        // Aplicar estilo visual
+        applyTheme(this.getContentPane(), fondo, textoColor);
+        setVisible(true);
     }
 
     private void agregarActividad() {
         String descripcion = campoDescripcion.getText();
         java.util.Date fecha = (java.util.Date) campoFechaInicio.getValue();
         int horas = (int) campoHoras.getValue();
+        boolean requiereInforme = checkRequiereInforme.isSelected();
 
         if (descripcion.isBlank()) {
             JOptionPane.showMessageDialog(this, "La descripción no puede estar vacía.");
@@ -119,12 +133,12 @@ public class CrearPlanTrabajo extends JFrame {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate fechaLocal = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         modeloTabla.addRow(new Object[]{
-                descripcion, fechaLocal.format(formatter), horas
+                descripcion, fechaLocal.format(formatter), horas, requiereInforme ? "Sí" : "No"
         });
 
-        // Limpiar campos
         campoDescripcion.setText("");
         campoHoras.setValue(1);
+        checkRequiereInforme.setSelected(false);
     }
 
     private void guardarPlan() {
@@ -134,17 +148,16 @@ public class CrearPlanTrabajo extends JFrame {
             String descripcion = (String) modeloTabla.getValueAt(i, 0);
             LocalDate fecha = LocalDate.parse(modeloTabla.getValueAt(i, 1).toString());
             int horas = Integer.parseInt(modeloTabla.getValueAt(i, 2).toString());
+            boolean requiereInforme = modeloTabla.getValueAt(i, 3).equals("Sí");
 
-            actividades.add(new Actividad(descripcion, fecha, horas, false));
+            actividades.add(new Actividad(descripcion, fecha, horas, false, requiereInforme));
         }
 
-        // Obtener fechas del plan desde los campos de fecha
         java.util.Date fechaInicioUtil = (java.util.Date) campoFechaInicioPlan.getValue();
         java.util.Date fechaFinUtil = (java.util.Date) campoFechaFinPlan.getValue();
         LocalDate fechaInicio = fechaInicioUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
         LocalDate fechaFin = fechaFinUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
 
-        // Crear plan con fechas del plan
         String recursos = campoRecursos.getText();
         PlanDeTrabajo plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, recursos);
         gestorDeProyectos.cargarPlanDeTrabajo(plan, idProyecto);
@@ -152,7 +165,39 @@ public class CrearPlanTrabajo extends JFrame {
         JOptionPane.showMessageDialog(this, "Plan de trabajo postulado correctamente.");
         dispose();
     }
+
+    private void applyTheme(Container container, Color fondo, Color texto) {
+        for (Component comp : container.getComponents()) {
+            comp.setBackground(fondo);
+            comp.setForeground(texto);
+            styleComponent(comp, texto);
+            if (comp instanceof Container) {
+                applyTheme((Container) comp, fondo, texto);
+            }
+        }
+    }
+
+    private void styleComponent(Component c, Color textoColor) {
+        if (c instanceof JLabel label) {
+            label.setForeground(textoColor);
+            label.setFont(label.getFont().deriveFont(Font.BOLD));
+        } else if (c instanceof JTextArea ta) {
+            ta.setForeground(textoColor);
+            ta.setBackground(Color.decode("#587B7F"));
+            ta.setFont(ta.getFont().deriveFont(Font.BOLD));
+        } else if (c instanceof JTextField tf) {
+            tf.setForeground(textoColor);
+            tf.setBackground(Color.decode("#587B7F"));
+            tf.setFont(tf.getFont().deriveFont(Font.BOLD));
+        } else if (c instanceof JSpinner sp) {
+            Component editor = sp.getEditor();
+            if (editor instanceof JSpinner.DefaultEditor defEditor) {
+                defEditor.getTextField().setForeground(textoColor);
+                defEditor.getTextField().setBackground(Color.decode("#587B7F"));
+                defEditor.getTextField().setFont(defEditor.getTextField().getFont().deriveFont(Font.BOLD));
+            }
+        } else if (c instanceof JCheckBox cb) {
+            cb.setFont(cb.getFont().deriveFont(Font.BOLD));
+        }
+    }
 }
-
-
-
