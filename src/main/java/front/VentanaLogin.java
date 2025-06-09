@@ -72,15 +72,13 @@ public class VentanaLogin extends JFrame {
 
                 } else if (user instanceof Estudiante estudiante) {
                     Integer idProyecto = gestorDeUsuarios.obtenerIdProyectoEstudiante(estudiante.getId());
-                    System.out.println(idProyecto);
-                    if (idProyecto == null) {
-                        
+                    if (idProyecto == null) {                        
                         new SeleccionarProyecto(gestorDeProyectos, estudiante.getId()).setVisible(true);
                     } else {
 
                         new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
                     }
-                } else if (user instanceof Director director) {
+                } else if (user instanceof Director ) {
                     new AprobacionDeProyectos(gestorDeProyectos).setVisible(true);
 
                 } else if (user instanceof Tutor tutor) {
