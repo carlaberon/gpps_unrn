@@ -49,7 +49,7 @@ public class VerProyectoInformes extends JFrame {
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
         panelDetallesPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
 
-        int totalHoras = actividades.stream().mapToInt(Actividad::horas).sum();
+        int totalHoras = plan.cantHoras();
 
         panelDetallesPlan.add(new JLabel("Fecha de Inicio:"));
         panelDetallesPlan.add(new JLabel(plan.fechaInicio().toString()));
@@ -92,11 +92,20 @@ public class VerProyectoInformes extends JFrame {
 
         for (Actividad actividad : actividades) {
             boolean requiere = actividad.requiereInforme();
+            String celdaInforme;
+            if (!requiere) {
+                celdaInforme = "Esta actividad no requiere informe";
+            } else if (actividad.getIdInforme() > 0) {
+                celdaInforme = "Ver Informe";
+            } else {
+                celdaInforme = "Aún no se cargó un informe";
+            }
+
             modelo.addRow(new Object[]{
                     actividad.getIdActividad(),
                     actividad.descripcion(),
                     actividad.finalizado() ? "Finalizada" : "En progreso",
-                    requiere ? "Ver Informe" : "Esta actividad no requiere informe"
+                    celdaInforme
             });
         }
 
@@ -163,13 +172,8 @@ public class VerProyectoInformes extends JFrame {
                         Proyectos proyectos = new Proyectos(gestorDeProyectos);
                         new VerInforme(proyectos, informe).setVisible(true);
                     } else {
-                        JOptionPane.showMessageDialog(null, "No se encontró el informe asociado.");
+                        JOptionPane.showMessageDialog(button, "No se encontró el informe asociado.");
                     }
-                } else {
-                    System.out.println("no tiene que entrar aca");
-                    //Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                    //VentanaCargarInforme ventana = new VentanaCargarInforme(proyectos, act);
-                    //ventana.setVisible(true);
                 }
             });
         }
@@ -187,4 +191,3 @@ public class VerProyectoInformes extends JFrame {
         }
     }
 }
-

@@ -5,7 +5,9 @@ import model.GestorDeProyectos;
 import model.PlanDeTrabajo;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -37,9 +39,9 @@ public class CrearPlanTrabajo extends JFrame {
         setLayout(new BorderLayout());
 
         // Colores
-        Color fondo = Color.decode("#1E2019");
+        Color fondo = Color.decode("#A5E6BA");
         Color panelColor = Color.decode("#394032");
-        Color textoColor = Color.decode("#CFEE9E");
+        Color textoColor = Color.decode("#000000");
 
         // Panel de fechas del plan
         JPanel panelFechasPlan = new JPanel(new GridLayout(1, 4, 5, 5));
@@ -80,15 +82,57 @@ public class CrearPlanTrabajo extends JFrame {
         panelActividad.add(checkRequiereInforme);
 
         JButton btnAgregarActividad = new JButton("Agregar Actividad");
+        btnAgregarActividad.setBorder(BorderFactory.createLineBorder(Color.decode("#000000"), 3));
+
         panelActividad.add(btnAgregarActividad);
 
         // Tabla de actividades
         modeloTabla = new DefaultTableModel(new String[]{"Descripción", "Fecha", "Horas", "Informe"}, 0);
         tablaActividades = new JTable(modeloTabla);
+
+// Estilo para encabezado
+        JTableHeader header = tablaActividades.getTableHeader();
+        tablaActividades.setRowHeight(30); // por ejemplo, 30px
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK)); // grosor de línea derecha
+                label.setBackground(Color.decode("#FFE3E3"));
+                label.setForeground(Color.decode("#000000"));
+                label.setFont(label.getFont().deriveFont(Font.BOLD));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setOpaque(true);
+                return label;
+            }
+        });
+
+// Estilo para las celdas para simular líneas verticales más gruesas
+        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK)); // grosor de línea derecha
+                return label;
+            }
+        };
+
+// Aplicar a todas las columnas
+        for (int i = 0; i < tablaActividades.getColumnCount(); i++) {
+            tablaActividades.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
+        }
+
+
         JScrollPane scrollTabla = new JScrollPane(tablaActividades);
 
         // Botón guardar
         JButton btnGuardar = new JButton("Postular plan de trabajo");
+        btnGuardar.setBorder(BorderFactory.createLineBorder(Color.decode("#000000"), 3));
+
 
         btnAgregarActividad.addActionListener(e -> agregarActividad());
         btnGuardar.addActionListener(e -> guardarPlan());
@@ -183,11 +227,11 @@ public class CrearPlanTrabajo extends JFrame {
             label.setFont(label.getFont().deriveFont(Font.BOLD));
         } else if (c instanceof JTextArea ta) {
             ta.setForeground(textoColor);
-            ta.setBackground(Color.decode("#587B7F"));
+            ta.setBackground(Color.decode("#FFE3E3"));
             ta.setFont(ta.getFont().deriveFont(Font.BOLD));
         } else if (c instanceof JTextField tf) {
             tf.setForeground(textoColor);
-            tf.setBackground(Color.decode("#587B7F"));
+            tf.setBackground(Color.decode("#FFE3E3"));
             tf.setFont(tf.getFont().deriveFont(Font.BOLD));
         } else if (c instanceof JSpinner sp) {
             Component editor = sp.getEditor();
