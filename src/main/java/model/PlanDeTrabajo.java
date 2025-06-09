@@ -10,7 +10,7 @@ public class PlanDeTrabajo {
     private int cantHoras;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private List<Actividad> actividades;
+    private List<Actividad> actividades = new ArrayList<>();
     private String recursos;
     private boolean aprobado;
 
@@ -18,9 +18,6 @@ public class PlanDeTrabajo {
         this.idProyecto = proyectoAsignado;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
-        if (actividades == null) {
-            actividades = new ArrayList<>();
-        }
         this.actividades = actividades;
         this.aprobado = false;
         this.recursos = recursos;
