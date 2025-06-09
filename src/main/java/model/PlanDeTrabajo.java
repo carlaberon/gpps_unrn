@@ -15,6 +15,8 @@ public class PlanDeTrabajo {
     private boolean aprobado;
 
     public PlanDeTrabajo(int proyectoAsignado, LocalDate fechaInicio, LocalDate fechaFin, List<Actividad> actividades, String recursos) {
+        if (!fechaInicio.isBefore(fechaFin))
+            throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio");
         this.idProyecto = proyectoAsignado;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
@@ -76,5 +78,18 @@ public class PlanDeTrabajo {
     public String recursos() {
         return recursos;
     }
+
+    private boolean esDatoVacio(String dato) {
+        return dato.equals("");
+    }
+
+    private boolean esDatoNulo(String dato) {
+        return dato == null;
+    }
+
+    private boolean esFechaNula(LocalDate dato) {
+        return dato == null;
+    }
+
 
 }

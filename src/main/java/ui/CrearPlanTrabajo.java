@@ -203,8 +203,13 @@ public class CrearPlanTrabajo extends JFrame {
         LocalDate fechaFin = fechaFinUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
 
         String recursos = campoRecursos.getText();
-        PlanDeTrabajo plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, recursos);
-        gestorDeProyectos.cargarPlanDeTrabajo(plan, idProyecto);
+        try {
+            PlanDeTrabajo plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, recursos);
+            gestorDeProyectos.cargarPlanDeTrabajo(plan, idProyecto);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
 
         JOptionPane.showMessageDialog(this, "Plan de trabajo postulado correctamente.");
         dispose();
