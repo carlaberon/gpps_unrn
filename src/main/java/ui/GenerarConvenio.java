@@ -1,4 +1,4 @@
-package front;
+package ui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import model.*;
-import database.EntidadColaboradoraJDBC;
-import database.ProyectoDAOJDBC;
 
 public class GenerarConvenio extends JFrame {
 
@@ -79,8 +77,7 @@ public class GenerarConvenio extends JFrame {
 
     private void cargarEntidades() {
         try {
-            EntidadColaboradoraJDBC dao = new EntidadColaboradoraJDBC();
-            List<EntidadColaboradora> entidades = dao.obtenerTodas();
+            List<EntidadColaboradora> entidades = gestorDeConvenios.obtenerTodas();
             for (EntidadColaboradora e : entidades) {
                 comboEntidades.addItem(e);
             }
@@ -91,17 +88,15 @@ public class GenerarConvenio extends JFrame {
 
     private void cargarProyectos() {
         try {
-            ProyectoDAOJDBC dao = new ProyectoDAOJDBC();
-            List<Proyecto> proyectos = dao.obtenerProyectosConEstudiante();
+            List<Proyecto> proyectos = gestorDeConvenios.obtenerProyectosConEstudiante();
             for (Proyecto p : proyectos) {
                 comboProyectos.addItem(p);
             }
         } catch (SQLException e) {
-        	e.printStackTrace();
             mostrarError("Error al cargar proyectos: " + e.getMessage());
         }
     }
-
+    
     private void generarConvenio(ActionEvent event) {
         try {
             EntidadColaboradora entidad = (EntidadColaboradora) comboEntidades.getSelectedItem();

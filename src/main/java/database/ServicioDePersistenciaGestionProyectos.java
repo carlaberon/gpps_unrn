@@ -505,7 +505,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         }
         return null;
     }
-
+  
     @Override
     public void valorarInforme(int idInforme, int valoracion) {
         String sql = "UPDATE informes SET valoracionInforme = ? WHERE id_informe = ?";

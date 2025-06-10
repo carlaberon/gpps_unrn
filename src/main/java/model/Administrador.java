@@ -15,10 +15,4 @@ public class Administrador extends Usuario {
     	gestorDeConvenios.create(convenio);
     	return convenio;
 }
-
-public void cargarConvenioFirmado(Convenio convenio, byte[] archivoPdf, GestorDeConvenios gestorDeConvenios) {
-	convenio.setArchivoPdf(archivoPdf);
-	convenio.activar(); 
-	gestorDeConvenios.updateArchivo(convenio);
-	}
 }
