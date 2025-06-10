@@ -194,7 +194,12 @@ public class CrearPlanTrabajo extends JFrame {
             int horas = Integer.parseInt(modeloTabla.getValueAt(i, 2).toString());
             boolean requiereInforme = modeloTabla.getValueAt(i, 3).equals("Sí");
 
-            actividades.add(new Actividad(descripcion, fecha, horas, false, requiereInforme));
+            try {
+                actividades.add(new Actividad(descripcion, fecha, horas, false, requiereInforme));
+            }catch (Exception e){
+                JOptionPane.showMessageDialog(this, "Error al crear la actividad: " + e.getMessage());
+                return;
+            }
         }
 
         java.util.Date fechaInicioUtil = (java.util.Date) campoFechaInicioPlan.getValue();

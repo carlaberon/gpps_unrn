@@ -17,6 +17,19 @@ public class PlanDeTrabajo {
     public PlanDeTrabajo(int proyectoAsignado, LocalDate fechaInicio, LocalDate fechaFin, List<Actividad> actividades, String recursos) {
         if (!fechaInicio.isBefore(fechaFin))
             throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio");
+
+        if (esFechaNula(fechaInicio) || esFechaNula(fechaFin)) {
+            throw new RuntimeException("Las fechas de inicio y fin no pueden ser nulas");
+        }
+
+        if (actividades == null || actividades.isEmpty()) {
+            throw new RuntimeException("Debe haber al menos una actividad en el plan de trabajo");
+        }
+
+        if (esDatoNulo(recursos) || esDatoVacio(recursos)) {
+            throw new RuntimeException("Los recursos no pueden ser nulos o vacíos");
+        }
+
         this.idProyecto = proyectoAsignado;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
