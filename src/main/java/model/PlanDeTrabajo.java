@@ -15,7 +15,7 @@ public class PlanDeTrabajo {
     private boolean aprobado;
 
     public PlanDeTrabajo(int proyectoAsignado, LocalDate fechaInicio, LocalDate fechaFin, List<Actividad> actividades, String recursos) {
-        if (!fechaInicio.isBefore(fechaFin))
+        if (fechaInicio.isAfter(fechaFin))
             throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio");
 
         if (esFechaNula(fechaInicio) || esFechaNula(fechaFin)) {

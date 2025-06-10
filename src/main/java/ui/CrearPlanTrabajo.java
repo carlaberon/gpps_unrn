@@ -1,5 +1,6 @@
 package ui;
 
+import com.toedter.calendar.JDateChooser;
 import model.Actividad;
 import model.GestorDeProyectos;
 import model.PlanDeTrabajo;
@@ -23,10 +24,10 @@ public class CrearPlanTrabajo extends JFrame {
     private JTextField campoDescripcion;
     private JTextArea campoRecursos;
     private JCheckBox checkRequiereInforme;
-    private JSpinner campoFechaInicio;
+    private JDateChooser campoFechaInicio;
     private JSpinner campoHoras;
-    private JSpinner campoFechaInicioPlan;
-    private JSpinner campoFechaFinPlan;
+    private JDateChooser campoFechaInicioPlan;
+    private JDateChooser campoFechaFinPlan;
 
     public CrearPlanTrabajo(GestorDeProyectos gestor, int idProyecto) {
         this.gestorDeProyectos = gestor;
@@ -38,35 +39,32 @@ public class CrearPlanTrabajo extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Colores
         Color fondo = Color.decode("#A5E6BA");
         Color panelColor = Color.decode("#394032");
         Color textoColor = Color.decode("#000000");
 
-        // Panel de fechas del plan
         JPanel panelFechasPlan = new JPanel(new GridLayout(1, 4, 5, 5));
         panelFechasPlan.setBorder(BorderFactory.createTitledBorder("Fechas del Plan"));
         panelFechasPlan.setBackground(panelColor);
 
-        campoFechaInicioPlan = new JSpinner(new SpinnerDateModel());
-        campoFechaInicioPlan.setEditor(new JSpinner.DateEditor(campoFechaInicioPlan, "yyyy-MM-dd"));
+        campoFechaInicioPlan = new JDateChooser();
+        campoFechaInicioPlan.setDateFormatString("yyyy-MM-dd");
 
-        campoFechaFinPlan = new JSpinner(new SpinnerDateModel());
-        campoFechaFinPlan.setEditor(new JSpinner.DateEditor(campoFechaFinPlan, "yyyy-MM-dd"));
+        campoFechaFinPlan = new JDateChooser();
+        campoFechaFinPlan.setDateFormatString("yyyy-MM-dd");
 
         panelFechasPlan.add(new JLabel("Inicio del Plan:"));
         panelFechasPlan.add(campoFechaInicioPlan);
         panelFechasPlan.add(new JLabel("Fin del Plan:"));
         panelFechasPlan.add(campoFechaFinPlan);
 
-        // Panel de entrada de actividad
         JPanel panelActividad = new JPanel(new GridLayout(7, 2, 5, 5));
         panelActividad.setBorder(BorderFactory.createTitledBorder("Nueva Actividad"));
         panelActividad.setBackground(panelColor);
 
         campoDescripcion = new JTextField();
-        campoFechaInicio = new JSpinner(new SpinnerDateModel());
-        campoFechaInicio.setEditor(new JSpinner.DateEditor(campoFechaInicio, "yyyy-MM-dd"));
+        campoFechaInicio = new JDateChooser();
+        campoFechaInicio.setDateFormatString("yyyy-MM-dd");
         campoHoras = new JSpinner(new SpinnerNumberModel(1, 1, 1000, 1));
         checkRequiereInforme = new JCheckBox("¿Requiere informe?");
         checkRequiereInforme.setBackground(panelColor);
@@ -83,23 +81,20 @@ public class CrearPlanTrabajo extends JFrame {
 
         JButton btnAgregarActividad = new JButton("Agregar Actividad");
         btnAgregarActividad.setBorder(BorderFactory.createLineBorder(Color.decode("#000000"), 3));
-
         panelActividad.add(btnAgregarActividad);
 
-        // Tabla de actividades
         modeloTabla = new DefaultTableModel(new String[]{"Descripción", "Fecha", "Horas", "Informe"}, 0);
         tablaActividades = new JTable(modeloTabla);
 
-// Estilo para encabezado
         JTableHeader header = tablaActividades.getTableHeader();
-        tablaActividades.setRowHeight(30); // por ejemplo, 30px
+        tablaActividades.setRowHeight(30);
         header.setDefaultRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                                                            boolean isSelected, boolean hasFocus,
                                                            int row, int column) {
                 JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK)); // grosor de línea derecha
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
                 label.setBackground(Color.decode("#FFE3E3"));
                 label.setForeground(Color.decode("#000000"));
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
@@ -109,30 +104,25 @@ public class CrearPlanTrabajo extends JFrame {
             }
         });
 
-// Estilo para las celdas para simular líneas verticales más gruesas
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                                                            boolean isSelected, boolean hasFocus,
                                                            int row, int column) {
                 JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK)); // grosor de línea derecha
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
                 return label;
             }
         };
 
-// Aplicar a todas las columnas
         for (int i = 0; i < tablaActividades.getColumnCount(); i++) {
             tablaActividades.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
         }
 
-
         JScrollPane scrollTabla = new JScrollPane(tablaActividades);
 
-        // Botón guardar
         JButton btnGuardar = new JButton("Postular plan de trabajo");
         btnGuardar.setBorder(BorderFactory.createLineBorder(Color.decode("#000000"), 3));
-
 
         btnAgregarActividad.addActionListener(e -> agregarActividad());
         btnGuardar.addActionListener(e -> guardarPlan());
@@ -158,14 +148,13 @@ public class CrearPlanTrabajo extends JFrame {
         add(scrollTabla, BorderLayout.CENTER);
         add(btnGuardar, BorderLayout.SOUTH);
 
-        // Aplicar estilo visual
         applyTheme(this.getContentPane(), fondo, textoColor);
         setVisible(true);
     }
 
     private void agregarActividad() {
         String descripcion = campoDescripcion.getText();
-        java.util.Date fecha = (java.util.Date) campoFechaInicio.getValue();
+        java.util.Date fecha = campoFechaInicio.getDate();
         int horas = (int) campoHoras.getValue();
         boolean requiereInforme = checkRequiereInforme.isSelected();
 
@@ -196,14 +185,14 @@ public class CrearPlanTrabajo extends JFrame {
 
             try {
                 actividades.add(new Actividad(descripcion, fecha, horas, false, requiereInforme));
-            }catch (Exception e){
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Error al crear la actividad: " + e.getMessage());
                 return;
             }
         }
 
-        java.util.Date fechaInicioUtil = (java.util.Date) campoFechaInicioPlan.getValue();
-        java.util.Date fechaFinUtil = (java.util.Date) campoFechaFinPlan.getValue();
+        java.util.Date fechaInicioUtil = campoFechaInicioPlan.getDate();
+        java.util.Date fechaFinUtil = campoFechaFinPlan.getDate();
         LocalDate fechaInicio = fechaInicioUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
         LocalDate fechaFin = fechaFinUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
 
@@ -211,7 +200,6 @@ public class CrearPlanTrabajo extends JFrame {
         try {
             PlanDeTrabajo plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, recursos);
             gestorDeProyectos.cargarPlanDeTrabajo(plan, idProyecto);
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
