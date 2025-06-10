@@ -107,6 +107,7 @@ public class GenerarConvenio extends JFrame {
             LocalDate fechaFin = convertirFecha((Date) spinnerFechaFin.getValue());
 
             admin.generarConvenio(entidad.getId(), proyecto.getId(), descripcion, fechaInicio, fechaFin, gestorDeConvenios);
+            JOptionPane.showMessageDialog(this, "Convenio generado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
         } catch (Exception ex) {
             mostrarError("Error al generar convenio: " + ex.getMessage());
