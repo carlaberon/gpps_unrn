@@ -29,7 +29,7 @@ public abstract class Usuario {
         return contrasenia;
     }
 
-    public String getNombre() {
+    public String nombre() {
         return nombre;
     }
 

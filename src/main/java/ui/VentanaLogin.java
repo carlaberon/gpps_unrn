@@ -101,7 +101,7 @@ public class VentanaLogin extends JFrame {
                     }
 
                 } else if (user instanceof Director) {
-                    new AprobacionDeProyectos(gestorDeProyectos).setVisible(true);
+                    new MenuPrincipalDirector(gestorDeProyectos).setVisible(true);
 
                 } else if (user instanceof Tutor tutor) {
                     new ProyectosACargo(gestorDeProyectos, tutor.getId()).setVisible(true);

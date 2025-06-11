@@ -63,8 +63,8 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             stmt.setString(4, proyecto.getAreaDeInteres());
             stmt.setString(5, proyecto.getUbicacion());
             stmt.setBoolean(6, proyecto.getEstado());
-            stmt.setInt(7, proyecto.getDocenteSupervisor().getId());
-            stmt.setInt(8, proyecto.getTutor().getId());
+            stmt.setInt(7, proyecto.tutorInterno().getId());
+            stmt.setInt(8, proyecto.tutorExterno().getId());
             stmt.executeUpdate();
         }
     }
@@ -82,8 +82,8 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             stmt.setString(3, proyecto.getAreaDeInteres());
             stmt.setString(4, proyecto.getUbicacion());
             stmt.setBoolean(5, proyecto.getEstado());
-            stmt.setInt(6, proyecto.getDocenteSupervisor().getId()); // Tutor interno
-            stmt.setInt(7, proyecto.getTutor().getId()); // Tutor externo
+            stmt.setInt(6, proyecto.tutorInterno().getId()); // Tutor interno
+            stmt.setInt(7, proyecto.tutorExterno().getId()); // Tutor externo
 
             stmt.executeUpdate();
 
@@ -166,7 +166,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     }
 
 
-    public List<Proyecto> obtenerProyectos() throws SQLException {
+    public List<Proyecto> obtenerProyectosAprobados() throws SQLException {
         List<Proyecto> proyectos = new ArrayList<>();
         String sql = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.estado, p.area_de_interes, " +
                 "p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.ubicacion " +
@@ -453,7 +453,11 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public boolean asignarEstudianteAProyecto(int idEstudiante, int idProyecto) throws SQLException {
         // Verificar si el estudiante ya tiene un proyecto asignado
-        String checkSql = "SELECT id_proyecto FROM estudiantes WHERE id_usuario = ? AND id_proyecto IS NOT NULL";
+        String checkSql =
+                "SELECT id_proyecto " +
+                        "FROM estudiantes " +
+                        "WHERE id_usuario = ? AND id_proyecto IS NOT NULL";
+
         try (Connection conn = Conn.getConnection();
              PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
 
@@ -465,19 +469,51 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             }
         }
 
-        // Asignar estudiante al proyecto
-        String sql = "UPDATE estudiantes SET id_proyecto = ? WHERE id_usuario = ?";
-        try (Connection conn = Conn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        // Asignar el estudiante al proyecto
+        String updateEstudianteSql =
+                "UPDATE estudiantes " +
+                        "SET id_proyecto = ? " +
+                        "WHERE id_usuario = ?";
 
-            stmt.setInt(1, idProyecto);
-            stmt.setInt(2, idEstudiante);
+        // Actualizar el estado del proyecto a "EN CURSO"
+        String updateProyectoEstadoSql =
+                "UPDATE proyectos " +
+                        "SET estado_proyecto = 'EN CURSO' " +
+                        "WHERE id_proyecto = ?";
 
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+        try (Connection conn = Conn.getConnection()) {
+            conn.setAutoCommit(false); // Iniciar transacción
+
+            try (
+                    PreparedStatement stmt1 = conn.prepareStatement(updateEstudianteSql);
+                    PreparedStatement stmt2 = conn.prepareStatement(updateProyectoEstadoSql)
+            ) {
+                // Actualizar estudiante
+                stmt1.setInt(1, idProyecto);
+                stmt1.setInt(2, idEstudiante);
+                int rows1 = stmt1.executeUpdate();
+
+                // Actualizar proyecto
+                stmt2.setInt(1, idProyecto);
+                int rows2 = stmt2.executeUpdate();
+
+                if (rows1 > 0 && rows2 > 0) {
+                    conn.commit();
+                    return true;
+                } else {
+                    conn.rollback();
+                    return false;
+                }
+
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true); // Restaurar auto-commit
+            }
         }
-
     }
+
 
     @Override
     public Informe obtenerInforme(int idInforme) {
@@ -547,5 +583,61 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             throw new RuntimeException("Error al finalizar la actividad");
         }
     }
+
+    @Override
+    public List<Proyecto> obtenerProyectos() {
+        List<Proyecto> proyectos = new ArrayList<>();
+
+        String sql =
+                "SELECT p.id_proyecto, p.nombre, p.descripcion, p.area_de_interes, p.ubicacion, " +
+                        "p.estado, p.estado_proyecto, p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, " +
+                        "ui.nombre AS nombre_tutor_interno, ue.nombre AS nombre_tutor_externo " +
+                        "FROM proyectos p " +
+                        "JOIN usuarios ui ON p.id_usuario_tutor_interno = ui.id_usuario " +
+                        "JOIN usuarios ue ON p.id_usuario_tutor_externo = ue.id_usuario";
+
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Proyecto resumen = new Proyecto(
+                        rs.getInt("p.id_proyecto"),
+                        rs.getString("p.nombre"),
+                        rs.getString("p.descripcion"),
+                        rs.getBoolean("p.estado"), // será false porque estado = 0
+                        rs.getString("p.area_de_interes"),
+                        new Tutor(rs.getInt("id_usuario_tutor_externo"), null, null, rs.getString("nombre_tutor_externo"), null, null, null),
+                        new Tutor(rs.getInt("id_usuario_tutor_interno"), null, null, rs.getString("nombre_tutor_interno"), null, null, null), rs.getString("ubicacion")
+                );
+                resumen.setEstadoProyecto(rs.getString("p.estado_proyecto"));
+                proyectos.add(resumen);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Problema de persistencia al obtener proyectos");
+        }
+
+        return proyectos;
+    }
+
+    @Override
+    public void denegarProyecto(int idProyecto) {
+        
+        String sql = "UPDATE proyectos SET estado_proyecto = 'DENEGADO' WHERE id_proyecto = ?";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idProyecto);
+            stmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error al denegar proyecto");
+        }
+
+    }
+
 
 }

@@ -57,7 +57,7 @@ public class SeleccionarProyecto extends JFrame {
         model.setRowCount(0);
 
         try {
-            List<Proyecto> proyectos = proyectoDAO.obtenerProyectos();
+            List<Proyecto> proyectos = proyectoDAO.obtenerProyectosAprobados();
             for (Proyecto p : proyectos) {
                 model.addRow(new Object[]{p.getNombre(), p.getDescripcion()});
             }
@@ -74,7 +74,7 @@ public class SeleccionarProyecto extends JFrame {
         }
 
         try {
-            List<Proyecto> proyectos = proyectoDAO.obtenerProyectos();
+            List<Proyecto> proyectos = proyectoDAO.obtenerProyectosAprobados();
             Proyecto p = proyectos.get(selectedRow);
             new DetalleProyecto(proyectoDAO, p.getId());
         } catch (Exception e) {
@@ -90,7 +90,7 @@ public class SeleccionarProyecto extends JFrame {
         }
 
         try {
-            List<Proyecto> proyectos = proyectoDAO.obtenerProyectos();
+            List<Proyecto> proyectos = proyectoDAO.obtenerProyectosAprobados();
             proyectoSeleccionado = proyectos.get(selectedRow);
 
             // Llamar al método del gestor para asignar el estudiante al proyecto

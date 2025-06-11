@@ -3,8 +3,8 @@ package ui;
 import model.*;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
@@ -65,7 +65,7 @@ public class DetalleProyecto extends JFrame {
                 if (tutor.getTipo().equalsIgnoreCase("interno")) {
                     panelTutores.add(new JLabel("Tutor Interno:"), gbc);
                     gbc.gridx = 1;
-                    panelTutores.add(new JLabel(tutor.getNombre()), gbc);
+                    panelTutores.add(new JLabel(tutor.nombre()), gbc);
 
                     gbc.gridx = 0;
                     gbc.gridy++;
@@ -78,7 +78,7 @@ public class DetalleProyecto extends JFrame {
                     gbc.gridx = 0;
                     panelTutores.add(new JLabel("Tutor Externo:"), gbc);
                     gbc.gridx = 1;
-                    panelTutores.add(new JLabel(tutor.getNombre()), gbc);
+                    panelTutores.add(new JLabel(tutor.nombre()), gbc);
 
                     gbc.gridx = 0;
                     gbc.gridy++;
@@ -110,19 +110,19 @@ public class DetalleProyecto extends JFrame {
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
 
         PlanDeTrabajo plan = gestorDeProyectos.obtenerPlan(idProyecto);
-        
+
         if (plan == null) {
-            JOptionPane.showMessageDialog(this, 
-                "Este proyecto aún no tiene un plan de trabajo creado.", 
-                "Información", 
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Este proyecto aún no tiene un plan de trabajo creado.",
+                    "Información",
+                    JOptionPane.INFORMATION_MESSAGE);
             dispose();
             return;
         }
-        
+
         List<Actividad> actividades = plan.actividades();
 
-        int totalHoras = actividades.stream().mapToInt(a -> a.horas()).sum();
+        int totalHoras = plan.cantHoras();
 
         panelDetallesPlan.add(new JLabel("Fecha de Inicio:"));
         panelDetallesPlan.add(new JLabel(plan.fechaInicio().toString()));
@@ -146,6 +146,14 @@ public class DetalleProyecto extends JFrame {
         lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
         panelActividadesTop.add(lblActividades, BorderLayout.WEST);
 
+        int porcentaje = plan.porcentajeDeFinalizado();
+
+        JProgressBar barraProgreso = new JProgressBar(0, 100);
+        barraProgreso.setValue(porcentaje);
+        barraProgreso.setStringPainted(true);
+        barraProgreso.setPreferredSize(new Dimension(200, 20));
+        panelActividadesTop.add(barraProgreso, BorderLayout.EAST);
+
         panelPlanTrabajo.add(panelActividadesTop);
 
         // Tabla de actividades simplificada
@@ -166,12 +174,12 @@ public class DetalleProyecto extends JFrame {
 
         JTable tabla = new JTable(modeloTabla);
         tabla.setRowHeight(60); // Aumentamos la altura de las filas para mostrar más texto
-        
+
         // Configurar el renderizador para la columna de descripción
         tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
                 JTextArea textArea = new JTextArea();
                 textArea.setText(value.toString());
                 textArea.setLineWrap(true);

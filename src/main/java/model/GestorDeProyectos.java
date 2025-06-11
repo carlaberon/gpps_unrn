@@ -11,7 +11,7 @@ public interface GestorDeProyectos {
 
     int guardarSinEstudiante(Proyecto proyecto) throws SQLException;
 
-    List<Proyecto> obtenerProyectos() throws SQLException;
+    List<Proyecto> obtenerProyectosAprobados() throws SQLException;
 
     List<Proyecto> listarProyectosRelacionados(int idUsuario);
 
@@ -42,4 +42,8 @@ public interface GestorDeProyectos {
     void valorarInforme(int idInforme, int valoracion);
 
     void finalizarActividad(int idActividad);
+
+    List<Proyecto> obtenerProyectos();
+
+    void denegarProyecto(int idProyecto);
 }

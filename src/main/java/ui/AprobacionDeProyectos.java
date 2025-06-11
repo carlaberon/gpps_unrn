@@ -125,6 +125,7 @@ public class AprobacionDeProyectos extends JFrame {
                             gestorDeProyectos.notificarComentarioDenegacion(comentario);
                             modelo.removeRow(fila);
                             comentarioFrame.dispose();
+                            gestorDeProyectos.denegarProyecto(id);
                             JOptionPane.showMessageDialog(this, "Proyecto denegado con comentario: " + comentario);
                         } else {
                             JOptionPane.showMessageDialog(comentarioFrame, "Debe ingresar un comentario.");

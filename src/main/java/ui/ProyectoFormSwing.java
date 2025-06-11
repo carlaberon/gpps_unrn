@@ -137,7 +137,7 @@ public class ProyectoFormSwing extends JFrame {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof Tutor) {
                     Tutor t = (Tutor) value;
-                    setText(t.getNombre() + " (" + t.getTipo() + ")");
+                    setText(t.nombre() + " (" + t.getTipo() + ")");
                 }
                 return this;
             }
@@ -161,7 +161,7 @@ public class ProyectoFormSwing extends JFrame {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof Tutor) {
                     Tutor t = (Tutor) value;
-                    setText(t.getNombre() + " (" + t.getTipo() + ")");
+                    setText(t.nombre() + " (" + t.getTipo() + ")");
                 }
                 return this;
             }
@@ -193,7 +193,7 @@ public class ProyectoFormSwing extends JFrame {
             if (proyecto.esValido()) {
 
                 int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea continuar con el registro del Plan de Trabajo?", "Continuar", JOptionPane.YES_NO_OPTION);
-                if (respuesta == JOptionPane.YES_OPTION){
+                if (respuesta == JOptionPane.YES_OPTION) {
                     // Guardar el proyecto
                     int idGenerado = proyectoDAO.guardarProyectoSinEstudiante(proyecto); // ← ¡Este método debe devolver el ID!
                     mostrarAlerta("Éxito", "Proyecto registrado correctamente");
@@ -208,7 +208,6 @@ public class ProyectoFormSwing extends JFrame {
                 }
 
 
-
             } else {
                 mostrarAlerta("Error", "Los datos del proyecto no son válidos");
             }
@@ -216,7 +215,6 @@ public class ProyectoFormSwing extends JFrame {
             mostrarAlerta("Error", "Error al guardar el proyecto: " + e.getMessage());
         }
     }
-
 
 
     private boolean validarCampos() {
