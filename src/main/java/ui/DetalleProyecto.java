@@ -4,6 +4,7 @@ import model.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
@@ -26,11 +27,12 @@ public class DetalleProyecto extends JFrame {
         Proyecto proyecto = gestorDeProyectos.obtenerProyecto(idProyecto);
 
         // Panel de información del proyecto
-        JPanel panelProyecto = new JPanel(new GridLayout(6, 2, 5, 5));
+        JPanel panelProyecto = new JPanel(new GridLayout(4, 2, 5, 5));
         panelProyecto.setBorder(BorderFactory.createTitledBorder("Información del Proyecto"));
 
-        panelProyecto.add(new JLabel("ID:"));
-        panelProyecto.add(new JLabel(String.valueOf(proyecto.getId())));
+        // Extraer ID y estado del proyecto
+        int proyectoId = proyecto.getId();
+        boolean proyectoEstado = proyecto.getEstado();
 
         panelProyecto.add(new JLabel("Nombre:"));
         panelProyecto.add(new JLabel(proyecto.getNombre()));
@@ -43,9 +45,6 @@ public class DetalleProyecto extends JFrame {
 
         panelProyecto.add(new JLabel("Ubicación:"));
         panelProyecto.add(new JLabel(proyecto.getUbicacion()));
-
-        panelProyecto.add(new JLabel("Estado:"));
-        panelProyecto.add(new JLabel(proyecto.getEstado() ? "Aprobado" : "Pendiente"));
 
         add(panelProyecto, BorderLayout.NORTH);
 
@@ -147,37 +146,49 @@ public class DetalleProyecto extends JFrame {
         lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
         panelActividadesTop.add(lblActividades, BorderLayout.WEST);
 
-        int totalActividades = actividades.size();
-        long finalizadas = actividades.stream().filter(a -> a.finalizado()).count();
-        int porcentaje = totalActividades == 0 ? 0 : (int) ((finalizadas * 100.0) / totalActividades);
-
-        JProgressBar barraProgreso = new JProgressBar(0, 100);
-        barraProgreso.setValue(porcentaje);
-        barraProgreso.setStringPainted(true);
-        barraProgreso.setPreferredSize(new Dimension(200, 20));
-        panelActividadesTop.add(barraProgreso, BorderLayout.EAST);
-
         panelPlanTrabajo.add(panelActividadesTop);
 
-        // Tabla de actividades
-        String[] columnas = {"Descripción", "Finalizado", "Acciones"};
+        // Tabla de actividades simplificada
+        String[] columnas = {"Descripción", "Horas"};
         DefaultTableModel modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 2; // Solo la columna de acciones
+                return false; // Ninguna celda es editable
             }
         };
 
         for (var actividad : actividades) {
             modeloTabla.addRow(new Object[]{
                     actividad.descripcion(),
-                    actividad.finalizado() ? "Sí" : "No",
-                    "Ver" // Botón o texto temporal
+                    actividad.horas()
             });
         }
 
         JTable tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(30);
+        tabla.setRowHeight(60); // Aumentamos la altura de las filas para mostrar más texto
+        
+        // Configurar el renderizador para la columna de descripción
+        tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JTextArea textArea = new JTextArea();
+                textArea.setText(value.toString());
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                textArea.setRows(3);
+                textArea.setFont(table.getFont());
+                textArea.setMargin(new Insets(2, 2, 2, 2));
+                textArea.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                textArea.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                return textArea;
+            }
+        });
+
+        // Configurar el ancho de las columnas
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(300); // Descripción
+        tabla.getColumnModel().getColumn(1).setPreferredWidth(50);  // Horas
+
         JScrollPane scroll = new JScrollPane(tabla);
         scroll.setPreferredSize(new Dimension(350, 200));
         panelPlanTrabajo.add(scroll);

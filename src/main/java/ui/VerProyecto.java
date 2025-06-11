@@ -17,7 +17,7 @@ public class VerProyecto extends JFrame {
         this.idProyecto = idProyecto;
 
         setTitle("Detalles del Proyecto");
-        setSize(800, 600);
+        setSize(700, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -55,8 +55,8 @@ public class VerProyecto extends JFrame {
         };
 
         JTable tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(100);
-        tabla.getColumnModel().getColumn(0).setPreferredWidth(400);
+        tabla.setRowHeight(80);
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(300);
 
         tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
@@ -65,7 +65,7 @@ public class VerProyecto extends JFrame {
                 JTextArea textArea = new JTextArea(value.toString());
                 textArea.setLineWrap(true);
                 textArea.setWrapStyleWord(true);
-                textArea.setRows(2);
+                textArea.setRows(3);
                 textArea.setFont(table.getFont());
                 textArea.setMargin(new Insets(2, 2, 2, 2));
                 textArea.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
@@ -75,7 +75,7 @@ public class VerProyecto extends JFrame {
         });
 
         JScrollPane scroll = new JScrollPane(tabla);
-        scroll.setPreferredSize(new Dimension(700, 300));
+        scroll.setPreferredSize(new Dimension(600, 300));
 
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
         panelDetallesPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
@@ -125,12 +125,12 @@ public class VerProyecto extends JFrame {
                     a.getDescripcion(),
                     a.finalizado() ? "Sí" : "No",
                     a.requiereInforme() ? (a.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe")
-                            : "Esta actividad no requiere informe"
+                            : (a.finalizado() ? "Actividad Finalizada" : "Finalizar Actividad")
             });
         }
 
         tabla.getColumn("Acciones").setCellRenderer(new ButtonRenderer(actividades));
-        tabla.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos));
+        tabla.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos, idProyecto));
 
         setVisible(true);
     }
@@ -150,10 +150,13 @@ public class VerProyecto extends JFrame {
             Actividad actividad = actividades.get(row);
 
             if (!actividad.requiereInforme()) {
-                return new JLabel("Esta actividad no requiere informe");
+                if (actividad.finalizado()) {
+                    return new JLabel("Actividad Finalizada");
+                }
+                setText("Finalizar Actividad");
+            } else {
+                setText(actividad.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
             }
-
-            setText(actividad.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
 
             if (isSelected) {
                 setForeground(table.getSelectionForeground());
@@ -172,11 +175,14 @@ public class VerProyecto extends JFrame {
         private List<Actividad> actividades;
         private int currentRow;
         private GestorDeProyectos gestorDeProyectos;
+        private JFrame parentFrame;
+        private int idProyecto;
 
-        public ButtonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestorDeProyectos) {
+        public ButtonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestorDeProyectos, int idProyecto) {
             super(checkBox);
             this.actividades = actividades;
             this.gestorDeProyectos = gestorDeProyectos;
+            this.idProyecto = idProyecto;
             this.button = new JButton();
             this.button.setOpaque(true);
             this.button.addActionListener(e -> {
@@ -184,7 +190,34 @@ public class VerProyecto extends JFrame {
                 Proyectos proyectos = new Proyectos(gestorDeProyectos);
 
                 if (!act.requiereInforme()) {
-                    JOptionPane.showMessageDialog(button, "Esta actividad no requiere informe.");
+                    if (!act.finalizado()) {
+                        int confirmacion = JOptionPane.showConfirmDialog(
+                            button,
+                            "¿Está seguro que desea finalizar esta actividad?",
+                            "Confirmar finalización",
+                            JOptionPane.YES_NO_OPTION
+                        );
+                        
+                        if (confirmacion == JOptionPane.YES_OPTION) {
+                            try {
+                                gestorDeProyectos.finalizarActividad(act.getIdActividad());
+                                JOptionPane.showMessageDialog(button, "Actividad finalizada correctamente.");
+                                
+                                // Refresh the window
+                                Component parent = button.getParent();
+                                while (parent != null && !(parent instanceof JFrame)) {
+                                    parent = parent.getParent();
+                                }
+                                if (parent instanceof JFrame) {
+                                    parentFrame = (JFrame) parent;
+                                    parentFrame.dispose();
+                                    new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
+                                }
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(button, "Error al finalizar la actividad: " + ex.getMessage());
+                            }
+                        }
+                    }
                     return;
                 }
 
@@ -194,7 +227,22 @@ public class VerProyecto extends JFrame {
                         new VerInformeEstudiante(proyectos, informe).setVisible(true);
                     }
                 } else {
-                    new VentanaCargarInforme(proyectos, act).setVisible(true);
+                    // Get the parent frame
+                    Component parent = button.getParent();
+                    while (parent != null && !(parent instanceof JFrame)) {
+                        parent = parent.getParent();
+                    }
+                    if (parent instanceof JFrame) {
+                        parentFrame = (JFrame) parent;
+                    }
+                    
+                    // Create new window with callback to refresh parent
+                    new VentanaCargarInforme(proyectos, act, v -> {
+                        if (parentFrame != null) {
+                            parentFrame.dispose();
+                            new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
+                        }
+                    }).setVisible(true);
                 }
             });
         }
@@ -206,10 +254,13 @@ public class VerProyecto extends JFrame {
             Actividad act = actividades.get(row);
 
             if (!act.requiereInforme()) {
-                return new JLabel("Esta actividad no requiere informe");
+                if (act.finalizado()) {
+                    return new JLabel("Actividad Finalizada");
+                }
+                button.setText("Finalizar Actividad");
+            } else {
+                button.setText(act.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
             }
-
-            button.setText(act.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
 
             if (isSelected) {
                 button.setForeground(table.getSelectionForeground());

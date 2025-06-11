@@ -231,7 +231,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public void cargarInforme(Informe informeParcial) {
         String sql = "INSERT INTO informes (descripcion, fecha_entrega, tipo, valoracionInforme, estado, archivo) VALUES (?, ?, ?, ?, ?, ?)";
-        String sqlUpdateActividad = "UPDATE actividades SET id_informe = ?, estado = TRUE WHERE id_actividad = ?";
+        String sqlUpdateActividad = "UPDATE actividades SET id_informe = ? WHERE id_actividad = ?";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -509,19 +509,45 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     @Override
     public void valorarInforme(int idInforme, int valoracion) {
         String sql = "UPDATE informes SET valoracionInforme = ? WHERE id_informe = ?";
+        String sqlUpdateActividad = "UPDATE actividades SET estado = TRUE WHERE id_informe = ?";
 
-        try (Connection conn = Conn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = Conn.getConnection()) {
+            // Update informe valoracion
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, valoracion);
+                stmt.setInt(2, idInforme);
 
-            stmt.setInt(1, valoracion);
-            stmt.setInt(2, idInforme);
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new RuntimeException("No se encontró el informe con ID: " + idInforme);
+                }
+            }
 
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new RuntimeException("No se encontró el informe con ID: " + idInforme);
+            // Update activity state
+            try (PreparedStatement stmtActividad = conn.prepareStatement(sqlUpdateActividad)) {
+                stmtActividad.setInt(1, idInforme);
+                stmtActividad.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new RuntimeException("Error al valorar el informe: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public void finalizarActividad(int idActividad) {
+        String sql = "UPDATE actividades SET estado = TRUE WHERE id_actividad = ?";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, idActividad);
+            
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new RuntimeException("No se encontró la actividad con ID: " + idActividad);
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error al finalizar la actividad: " + ex.getMessage());
         }
     }
 
