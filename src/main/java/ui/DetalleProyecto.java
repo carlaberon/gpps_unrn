@@ -66,7 +66,7 @@ public class DetalleProyecto extends JFrame {
                 if (tutor.getTipo().equalsIgnoreCase("interno")) {
                     panelTutores.add(new JLabel("Tutor Interno:"), gbc);
                     gbc.gridx = 1;
-                    panelTutores.add(new JLabel(tutor.getNombre()), gbc);
+                    panelTutores.add(new JLabel(tutor.nombre()), gbc);
 
                     gbc.gridx = 0;
                     gbc.gridy++;
@@ -79,7 +79,7 @@ public class DetalleProyecto extends JFrame {
                     gbc.gridx = 0;
                     panelTutores.add(new JLabel("Tutor Externo:"), gbc);
                     gbc.gridx = 1;
-                    panelTutores.add(new JLabel(tutor.getNombre()), gbc);
+                    panelTutores.add(new JLabel(tutor.nombre()), gbc);
 
                     gbc.gridx = 0;
                     gbc.gridy++;
@@ -111,19 +111,19 @@ public class DetalleProyecto extends JFrame {
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
 
         PlanDeTrabajo plan = gestorDeProyectos.obtenerPlan(idProyecto);
-        
+
         if (plan == null) {
-            JOptionPane.showMessageDialog(this, 
-                "Este proyecto aún no tiene un plan de trabajo creado.", 
-                "Información", 
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Este proyecto aún no tiene un plan de trabajo creado.",
+                    "Información",
+                    JOptionPane.INFORMATION_MESSAGE);
             dispose();
             return;
         }
-        
+
         List<Actividad> actividades = plan.actividades();
 
-        int totalHoras = actividades.stream().mapToInt(a -> a.horas()).sum();
+        int totalHoras = plan.cantHoras();
 
         panelDetallesPlan.add(new JLabel("Fecha de Inicio:"));
         panelDetallesPlan.add(new JLabel(plan.fechaInicio().toString()));
@@ -147,9 +147,7 @@ public class DetalleProyecto extends JFrame {
         lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
         panelActividadesTop.add(lblActividades, BorderLayout.WEST);
 
-        int totalActividades = actividades.size();
-        long finalizadas = actividades.stream().filter(a -> a.finalizado()).count();
-        int porcentaje = totalActividades == 0 ? 0 : (int) ((finalizadas * 100.0) / totalActividades);
+        int porcentaje = plan.porcentajeDeFinalizado();
 
         JProgressBar barraProgreso = new JProgressBar(0, 100);
         barraProgreso.setValue(porcentaje);
