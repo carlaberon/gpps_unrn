@@ -191,6 +191,15 @@ public class VerProyecto extends JFrame {
             Actividad act = actividades.get(currentRow);
             String accionActual = model.getValueAt(currentRow, 2).toString();
 
+            // Obtener la ventana padre
+            Component parent = button.getParent();
+            while (parent != null && !(parent instanceof JFrame)) {
+                parent = parent.getParent();
+            }
+            if (parent instanceof JFrame) {
+                parentFrame = (JFrame) parent;
+            }
+
             if (accionActual.equals("Finalizar")) {
                 int confirmacion = JOptionPane.showConfirmDialog(
                     button,
@@ -202,34 +211,20 @@ public class VerProyecto extends JFrame {
                 if (confirmacion == JOptionPane.YES_OPTION) {
                     try {
                         gestor.finalizarActividad(act.getIdActividad());
-                        model.setValueAt("—", currentRow, 2);
-                        model.setValueAt("Sí", currentRow, 1);
-                        
-                        // Actualizar barra de progreso
-                        long finalizadas = actividades.stream().filter(Actividad::finalizado).count();
-                        int porcentaje = (int) ((finalizadas * 100.0) / actividades.size());
-                        barra.setValue(porcentaje);
-                        
                         JOptionPane.showMessageDialog(button, "Actividad finalizada correctamente.");
+                        
+                        // Cerrar y reabrir la ventana principal
+                        if (parentFrame != null) {
+                            parentFrame.dispose();
+                            new VerProyecto(gestor, idProyecto).setVisible(true);
+                        }
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(button, "Error al finalizar la actividad: " + ex.getMessage());
                     }
                 }
             } else if (accionActual.equals("Cargar Informe")) {
-                // Obtener la ventana padre
-                Component parent = button.getParent();
-                while (parent != null && !(parent instanceof JFrame)) {
-                    parent = parent.getParent();
-                }
-                if (parent instanceof JFrame) {
-                    parentFrame = (JFrame) parent;
-                }
-
                 Proyectos proyectos = new Proyectos(gestor);
                 new VentanaCargarInforme(proyectos, act, v -> {
-                    // Actualizar la tabla después de cargar el informe
-                    model.setValueAt("Ver Informe", currentRow, 2);
-                    
                     // Cerrar y reabrir la ventana principal
                     if (parentFrame != null) {
                         parentFrame.dispose();
