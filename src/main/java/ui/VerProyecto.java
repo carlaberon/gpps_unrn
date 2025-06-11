@@ -132,7 +132,7 @@ public class VerProyecto extends JFrame {
         }
 
         tabla.getColumn("Acciones").setCellRenderer(new BotonRenderer());
-        tabla.getColumn("Acciones").setCellEditor(new BotonEditor(new JCheckBox(), actividades, gestorDeProyectos, model, barraProgreso, plan, tabla));
+        tabla.getColumn("Acciones").setCellEditor(new BotonEditor(new JCheckBox(), actividades, gestorDeProyectos, model, barraProgreso, plan, tabla, idProyecto));
 
         setVisible(true);
     }
@@ -169,10 +169,12 @@ public class VerProyecto extends JFrame {
         private final PlanDeTrabajo plan;
         private final JTable tabla;
         private final JLabel dash = new JLabel("—", SwingConstants.CENTER);
+        private final int idProyecto;
         private int currentRow;
+        private JFrame parentFrame;
 
         public BotonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestor,
-                          DefaultTableModel model, JProgressBar barra, PlanDeTrabajo plan, JTable tabla) {
+                          DefaultTableModel model, JProgressBar barra, PlanDeTrabajo plan, JTable tabla, int idProyecto) {
             super(checkBox);
             this.actividades = actividades;
             this.gestor = gestor;
@@ -180,6 +182,7 @@ public class VerProyecto extends JFrame {
             this.barra = barra;
             this.plan = plan;
             this.tabla = tabla;
+            this.idProyecto = idProyecto;
             this.button = new JButton();
             button.addActionListener(e -> accion());
         }
@@ -213,10 +216,25 @@ public class VerProyecto extends JFrame {
                     }
                 }
             } else if (accionActual.equals("Cargar Informe")) {
+                // Obtener la ventana padre
+                Component parent = button.getParent();
+                while (parent != null && !(parent instanceof JFrame)) {
+                    parent = parent.getParent();
+                }
+                if (parent instanceof JFrame) {
+                    parentFrame = (JFrame) parent;
+                }
+
                 Proyectos proyectos = new Proyectos(gestor);
                 new VentanaCargarInforme(proyectos, act, v -> {
                     // Actualizar la tabla después de cargar el informe
                     model.setValueAt("Ver Informe", currentRow, 2);
+                    
+                    // Cerrar y reabrir la ventana principal
+                    if (parentFrame != null) {
+                        parentFrame.dispose();
+                        new VerProyecto(gestor, idProyecto).setVisible(true);
+                    }
                 }).setVisible(true);
             } else if (accionActual.equals("Ver Informe")) {
                 Proyectos proyectos = new Proyectos(gestor);
