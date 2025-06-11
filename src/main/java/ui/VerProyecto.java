@@ -52,7 +52,7 @@ public class VerProyecto extends JFrame {
             }
         };
 
-        JTable tabla = new JTable(modeloTabla);
+        JTable tabla = new JTable(model);
         tabla.setRowHeight(100);
         tabla.getColumnModel().getColumn(0).setPreferredWidth(400);
 
@@ -122,17 +122,17 @@ public class VerProyecto extends JFrame {
             String accion;
             if (a.finalizado()) accion = "—";
             else if (!a.requiereInforme()) accion = "Finalizar";
-            else accion = "Cargar Informe";
+            else accion = a.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe";
 
-            model.addRow(new Object[]{a.getDescripcion(),
-                    a.finalizado() ? "Sí" : "No",
-                    a.requiereInforme() ? (a.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe")
-                            : "Esta actividad no requiere informe"
+            model.addRow(new Object[]{
+                a.getDescripcion(),
+                a.finalizado() ? "Sí" : "No",
+                accion
             });
         }
 
-        tabla.getColumn("Acciones").setCellRenderer(new ButtonRenderer(actividades));
-        tabla.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos));
+        tabla.getColumn("Acciones").setCellRenderer(new BotonRenderer());
+        tabla.getColumn("Acciones").setCellEditor(new BotonEditor(new JCheckBox(), actividades, gestorDeProyectos, model, barraProgreso, plan, tabla));
 
         setVisible(true);
     }
@@ -146,21 +146,15 @@ public class VerProyecto extends JFrame {
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
-
-            if (!actividad.requiereInforme()) {
-                return new JLabel("Esta actividad no requiere informe");
+            if (value.toString().equals("—")) {
+                dash.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                dash.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                return dash;
             }
 
-            setText(actividad.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
-
-            if (isSelected) {
-                setForeground(table.getSelectionForeground());
-                setBackground(table.getSelectionBackground());
-            } else {
-                setForeground(table.getForeground());
-                setBackground(table.getBackground());
-            }
             button.setText(value.toString());
+            button.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            button.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
             return button;
         }
     }
@@ -174,13 +168,18 @@ public class VerProyecto extends JFrame {
         private final JProgressBar barra;
         private final PlanDeTrabajo plan;
         private final JTable tabla;
+        private final JLabel dash = new JLabel("—", SwingConstants.CENTER);
         private int currentRow;
-        private GestorDeProyectos gestorDeProyectos;
 
-        public ButtonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestorDeProyectos) {
+        public BotonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestor,
+                          DefaultTableModel model, JProgressBar barra, PlanDeTrabajo plan, JTable tabla) {
             super(checkBox);
             this.actividades = actividades;
-            this.gestorDeProyectos = gestorDeProyectos;
+            this.gestor = gestor;
+            this.model = model;
+            this.barra = barra;
+            this.plan = plan;
+            this.tabla = tabla;
             this.button = new JButton();
             button.addActionListener(e -> accion());
         }
@@ -189,20 +188,43 @@ public class VerProyecto extends JFrame {
             Actividad act = actividades.get(currentRow);
             String accionActual = model.getValueAt(currentRow, 2).toString();
 
-                if (!act.requiereInforme()) {
-                    JOptionPane.showMessageDialog(button, "Esta actividad no requiere informe.");
-                    return;
-                }
-
-                if (act.getIdInforme() > 0) {
-                    Informe informe = gestorDeProyectos.obtenerInforme(act.getIdInforme());
-                    if (informe != null) {
-                        new VerInformeEstudiante(proyectos, informe).setVisible(true);
+            if (accionActual.equals("Finalizar")) {
+                int confirmacion = JOptionPane.showConfirmDialog(
+                    button,
+                    "¿Está seguro que desea finalizar esta actividad?",
+                    "Confirmar finalización",
+                    JOptionPane.YES_NO_OPTION
+                );
+                
+                if (confirmacion == JOptionPane.YES_OPTION) {
+                    try {
+                        gestor.finalizarActividad(act.getIdActividad());
+                        model.setValueAt("—", currentRow, 2);
+                        model.setValueAt("Sí", currentRow, 1);
+                        
+                        // Actualizar barra de progreso
+                        long finalizadas = actividades.stream().filter(Actividad::finalizado).count();
+                        int porcentaje = (int) ((finalizadas * 100.0) / actividades.size());
+                        barra.setValue(porcentaje);
+                        
+                        JOptionPane.showMessageDialog(button, "Actividad finalizada correctamente.");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(button, "Error al finalizar la actividad: " + ex.getMessage());
                     }
-                } else {
-                    new VentanaCargarInforme(proyectos, act).setVisible(true);
                 }
-            });
+            } else if (accionActual.equals("Cargar Informe")) {
+                Proyectos proyectos = new Proyectos(gestor);
+                new VentanaCargarInforme(proyectos, act, v -> {
+                    // Actualizar la tabla después de cargar el informe
+                    model.setValueAt("Ver Informe", currentRow, 2);
+                }).setVisible(true);
+            } else if (accionActual.equals("Ver Informe")) {
+                Proyectos proyectos = new Proyectos(gestor);
+                Informe informe = gestor.obtenerInforme(act.getIdInforme());
+                if (informe != null) {
+                    new VerInformeEstudiante(proyectos, informe).setVisible(true);
+                }
+            }
         }
 
         @Override
@@ -211,26 +233,20 @@ public class VerProyecto extends JFrame {
             this.currentRow = row;
             Actividad act = actividades.get(row);
 
-            if (!act.requiereInforme()) {
-                return new JLabel("Esta actividad no requiere informe");
+            if (act.finalizado()) {
+                return dash;
             }
 
-            button.setText(act.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
-
-            if (isSelected) {
-                button.setForeground(table.getSelectionForeground());
-                button.setBackground(table.getSelectionBackground());
-            } else {
-                button.setForeground(table.getForeground());
-                button.setBackground(table.getBackground());
-            }
+            button.setText(value.toString());
+            button.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            button.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
 
             return button;
         }
 
         @Override
         public Object getCellEditorValue() {
-            return button.getText();   // devolverá "—" tras el cambio
+            return button.getText();
         }
     }
 }
