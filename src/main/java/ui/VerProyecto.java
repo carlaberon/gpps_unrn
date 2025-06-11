@@ -53,74 +53,86 @@ public class VerProyecto extends JFrame {
         };
 
         JTable tabla = new JTable(model);
-        tabla.setRowHeight(90);
-        tabla.getColumnModel().getColumn(0).setPreferredWidth(420);
-        tabla.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        tabla.setRowHeight(100);
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(400);
 
-        // Render multi-línea para descripción
         tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable t, Object val,
-                                                           boolean sel, boolean foc, int r, int c) {
-                JTextArea ta = new JTextArea(val.toString());
-                ta.setLineWrap(true);
-                ta.setWrapStyleWord(true);
-                ta.setRows(3);
-                ta.setBackground(sel ? t.getSelectionBackground() : t.getBackground());
-                ta.setForeground(sel ? t.getSelectionForeground() : t.getForeground());
-                return ta;
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                JTextArea textArea = new JTextArea(value.toString());
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                textArea.setRows(2);
+                textArea.setFont(table.getFont());
+                textArea.setMargin(new Insets(2, 2, 2, 2));
+                textArea.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                textArea.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                return textArea;
             }
         });
 
-        /* --- Cargar filas según reglas --- */
+        JScrollPane scroll = new JScrollPane(tabla);
+        scroll.setPreferredSize(new Dimension(700, 300));
+
+        JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
+        panelDetallesPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
+
+        int totalHoras = actividades.stream().mapToInt(Actividad::horas).sum();
+
+        panelDetallesPlan.add(new JLabel("Fecha de Inicio:"));
+        panelDetallesPlan.add(new JLabel(plan.fechaInicio().toString()));
+
+        panelDetallesPlan.add(new JLabel("Fecha de Fin:"));
+        panelDetallesPlan.add(new JLabel(plan.fechaFin().toString()));
+
+        panelDetallesPlan.add(new JLabel("Recursos:"));
+        panelDetallesPlan.add(new JLabel(plan.recursos()));
+
+        panelDetallesPlan.add(new JLabel("Total de Horas:"));
+        panelDetallesPlan.add(new JLabel(String.valueOf(totalHoras)));
+
+        JPanel contenedorCentro = new JPanel();
+        contenedorCentro.setLayout(new BoxLayout(contenedorCentro, BoxLayout.Y_AXIS));
+
+        JPanel panelActividadesTop = new JPanel(new BorderLayout());
+        panelActividadesTop.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
+
+        JLabel lblActividades = new JLabel("Actividades:");
+        lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
+        panelActividadesTop.add(lblActividades, BorderLayout.WEST);
+
+        int totalActividades = actividades.size();
+        long finalizadas = actividades.stream().filter(Actividad::finalizado).count();
+        int porcentaje = totalActividades == 0 ? 0 : (int) ((finalizadas * 100.0) / totalActividades);
+
+        JProgressBar barraProgreso = new JProgressBar(0, 100);
+        barraProgreso.setValue(porcentaje);
+        barraProgreso.setStringPainted(true);
+        barraProgreso.setPreferredSize(new Dimension(200, 20));
+        panelActividadesTop.add(barraProgreso, BorderLayout.EAST);
+
+        contenedorCentro.add(panelDetallesPlan);
+        contenedorCentro.add(panelActividadesTop);
+        contenedorCentro.add(scroll);
+
+        add(contenedorCentro, BorderLayout.CENTER);
+
         for (Actividad a : actividades) {
             String accion;
             if (a.finalizado()) accion = "—";
             else if (!a.requiereInforme()) accion = "Finalizar";
-            else accion = "Cargar Informe";
+            else accion = a.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe";
 
-            model.addRow(new Object[]{a.getDescripcion(),
-                    a.finalizado() ? "Sí" : "No",
-                    accion});
+            model.addRow(new Object[]{
+                a.getDescripcion(),
+                a.finalizado() ? "Sí" : "No",
+                accion
+            });
         }
 
-        JScrollPane scroll = new JScrollPane(tabla);
-
-        /* --- Panel Plan + progreso --- */
-        JPanel pPlan = new JPanel(new GridLayout(4, 2, 5, 5));
-        pPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
-        pPlan.add(new JLabel("Fecha de Inicio:"));
-        pPlan.add(new JLabel(plan.fechaInicio().toString()));
-        pPlan.add(new JLabel("Fecha de Fin:"));
-        pPlan.add(new JLabel(plan.fechaFin().toString()));
-        pPlan.add(new JLabel("Recursos:"));
-        pPlan.add(new JLabel(plan.recursos()));
-        pPlan.add(new JLabel("Total de Horas:"));
-        pPlan.add(new JLabel(String.valueOf(plan.cantHoras())));
-
-        JPanel topAct = new JPanel(new BorderLayout());
-        topAct.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
-        JLabel lblA = new JLabel("Actividades:");
-        lblA.setFont(lblA.getFont().deriveFont(Font.BOLD, 14f));
-        topAct.add(lblA, BorderLayout.WEST);
-        JProgressBar barra = new JProgressBar(0, 100);
-        barra.setValue(plan.porcentajeDeFinalizado());
-        barra.setStringPainted(true);
-        barra.setPreferredSize(new Dimension(180, 20));
-        topAct.add(barra, BorderLayout.EAST);
-
-        JPanel centro = new JPanel();
-        centro.setLayout(new BoxLayout(centro, BoxLayout.Y_AXIS));
-        centro.add(pPlan);
-        centro.add(topAct);
-        centro.add(scroll);
-        add(centro, BorderLayout.CENTER);
-
-        /* --- Render y editor de botón --- */
         tabla.getColumn("Acciones").setCellRenderer(new BotonRenderer());
-        tabla.getColumn("Acciones").setCellEditor(
-                new BotonEditor(new JCheckBox(), actividades, gestorDeProyectos,
-                        model, barra, plan, tabla));
+        tabla.getColumn("Acciones").setCellEditor(new BotonEditor(new JCheckBox(), actividades, gestorDeProyectos, model, barraProgreso, plan, tabla));
 
         setVisible(true);
     }
@@ -134,18 +146,15 @@ public class VerProyecto extends JFrame {
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
-
-            if ("—".equals(value)) {
-                if (isSelected) {
-                    dash.setOpaque(true);
-                    dash.setBackground(table.getSelectionBackground());
-                    dash.setForeground(table.getSelectionForeground());
-                } else {
-                    dash.setOpaque(false);
-                }
+            if (value.toString().equals("—")) {
+                dash.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                dash.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
                 return dash;
             }
+
             button.setText(value.toString());
+            button.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            button.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
             return button;
         }
     }
@@ -159,19 +168,18 @@ public class VerProyecto extends JFrame {
         private final JProgressBar barra;
         private final PlanDeTrabajo plan;
         private final JTable tabla;
+        private final JLabel dash = new JLabel("—", SwingConstants.CENTER);
         private int currentRow;
 
-        BotonEditor(JCheckBox cb, List<Actividad> acts, GestorDeProyectos gestor,
-                    DefaultTableModel model, JProgressBar barra,
-                    PlanDeTrabajo plan, JTable tabla) {
-            super(cb);
-            this.actividades = acts;
+        public BotonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestor,
+                          DefaultTableModel model, JProgressBar barra, PlanDeTrabajo plan, JTable tabla) {
+            super(checkBox);
+            this.actividades = actividades;
             this.gestor = gestor;
             this.model = model;
             this.barra = barra;
             this.plan = plan;
             this.tabla = tabla;
-
             this.button = new JButton();
             button.addActionListener(e -> accion());
         }
@@ -180,42 +188,65 @@ public class VerProyecto extends JFrame {
             Actividad act = actividades.get(currentRow);
             String accionActual = model.getValueAt(currentRow, 2).toString();
 
-            if ("Finalizar".equals(accionActual)) {
-                int ok = JOptionPane.showConfirmDialog(
-                        SwingUtilities.getWindowAncestor(button),
-                        "¿Seguro que desea marcar la actividad como finalizada?",
-                        "Confirmar finalización",
-                        JOptionPane.YES_NO_OPTION);
-
-                if (ok == JOptionPane.YES_OPTION) {
-                    gestor.finalizarActividad(act.getIdActividad()); // actualiza BD
-
-                    model.setValueAt("Sí", currentRow, 1);   // Finalizado = Sí
-
-                    /* --- parte crítica --- */
-                    button.setText("—");                     // ahora el editor devolverá "—"
-
-                    fireEditingStopped();                    // termina la edición
+            if (accionActual.equals("Finalizar")) {
+                int confirmacion = JOptionPane.showConfirmDialog(
+                    button,
+                    "¿Está seguro que desea finalizar esta actividad?",
+                    "Confirmar finalización",
+                    JOptionPane.YES_NO_OPTION
+                );
+                
+                if (confirmacion == JOptionPane.YES_OPTION) {
+                    try {
+                        gestor.finalizarActividad(act.getIdActividad());
+                        model.setValueAt("—", currentRow, 2);
+                        model.setValueAt("Sí", currentRow, 1);
+                        
+                        // Actualizar barra de progreso
+                        long finalizadas = actividades.stream().filter(Actividad::finalizado).count();
+                        int porcentaje = (int) ((finalizadas * 100.0) / actividades.size());
+                        barra.setValue(porcentaje);
+                        
+                        JOptionPane.showMessageDialog(button, "Actividad finalizada correctamente.");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(button, "Error al finalizar la actividad: " + ex.getMessage());
+                    }
                 }
-                return;
-            }
-
-            if ("Cargar Informe".equals(accionActual)) {
-                new VentanaCargarInforme(new Proyectos(gestor), act).setVisible(true);
+            } else if (accionActual.equals("Cargar Informe")) {
+                Proyectos proyectos = new Proyectos(gestor);
+                new VentanaCargarInforme(proyectos, act, v -> {
+                    // Actualizar la tabla después de cargar el informe
+                    model.setValueAt("Ver Informe", currentRow, 2);
+                }).setVisible(true);
+            } else if (accionActual.equals("Ver Informe")) {
+                Proyectos proyectos = new Proyectos(gestor);
+                Informe informe = gestor.obtenerInforme(act.getIdInforme());
+                if (informe != null) {
+                    new VerInformeEstudiante(proyectos, informe).setVisible(true);
+                }
             }
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable t, Object v,
-                                                     boolean s, int r, int c) {
-            currentRow = r;
-            button.setText(v.toString());
+        public Component getTableCellEditorComponent(JTable table, Object value,
+                                                     boolean isSelected, int row, int column) {
+            this.currentRow = row;
+            Actividad act = actividades.get(row);
+
+            if (act.finalizado()) {
+                return dash;
+            }
+
+            button.setText(value.toString());
+            button.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            button.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+
             return button;
         }
 
         @Override
         public Object getCellEditorValue() {
-            return button.getText();   // devolverá "—" tras el cambio
+            return button.getText();
         }
     }
 }

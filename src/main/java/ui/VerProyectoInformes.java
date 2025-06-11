@@ -172,6 +172,8 @@ public class VerProyectoInformes extends JFrame {
                     } else {
                         JOptionPane.showMessageDialog(button, "No se encontró el informe asociado.");
                     }
+                } else {
+                    JOptionPane.showMessageDialog(button, "Esta actividad no tiene informe.");
                 }
             });
         }
@@ -189,3 +191,4 @@ public class VerProyectoInformes extends JFrame {
         }
     }
 }
+
