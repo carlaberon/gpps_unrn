@@ -67,7 +67,7 @@ public class VerProyectoDirector extends JFrame {
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
         panelDetallesPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
 
-        int totalHoras = actividades.stream().mapToInt(Actividad::horas).sum();
+        int totalHoras = plan.cantHoras();
 
         panelDetallesPlan.add(new JLabel("Fecha de Inicio:"));
         panelDetallesPlan.add(new JLabel(plan.fechaInicio().toString()));
@@ -93,9 +93,8 @@ public class VerProyectoDirector extends JFrame {
         lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
         panelActividadesTop.add(lblActividades, BorderLayout.WEST);
 
-        int totalActividades = actividades.size();
-        long finalizadas = actividades.stream().filter(Actividad::finalizado).count();
-        int porcentaje = totalActividades == 0 ? 0 : (int) ((finalizadas * 100.0) / totalActividades);
+
+        int porcentaje = plan.porcentajeDeFinalizado();
 
         JProgressBar barraProgreso = new JProgressBar(0, 100);
         barraProgreso.setValue(porcentaje);

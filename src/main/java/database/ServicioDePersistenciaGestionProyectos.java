@@ -505,7 +505,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         }
         return null;
     }
-  
+
     @Override
     public void valorarInforme(int idInforme, int valoracion) {
         String sql = "UPDATE informes SET valoracionInforme = ? WHERE id_informe = ?";
@@ -522,6 +522,21 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             }
         } catch (SQLException ex) {
             throw new RuntimeException("Error al valorar el informe: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public void finalizarActividad(int idActividad) {
+        String sql = "UPDATE actividades SET estado = 1 WHERE id_actividad = ?";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idActividad);
+            stmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error al finalizar la actividad");
         }
     }
 

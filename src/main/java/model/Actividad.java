@@ -23,9 +23,7 @@ public class Actividad {
         if (horas <= 0) {
             throw new RuntimeException("Las horas deben ser un número positivo.");
         }
-        if (finalizado && requiereInforme) {
-            throw new RuntimeException("No se puede finalizar una actividad que requiere informe sin haberlo cargado.");
-        }
+
 
         this.descripcion = descripcion;
         this.fechaInicio = fechaInicio;

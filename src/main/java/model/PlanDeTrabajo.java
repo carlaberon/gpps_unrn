@@ -104,5 +104,18 @@ public class PlanDeTrabajo {
         return dato == null;
     }
 
+    public int porcentajeDeFinalizado() {
+        long requiriendo = actividades.stream()
+                .filter(Actividad::requiereInforme)
+                .count();
+        if (requiriendo == 0) return 0;   // evita división por cero
+
+        long finalizadas = actividades.stream()
+                .filter(a -> a.requiereInforme() && a.finalizado())
+                .count();
+
+        return (int) ((finalizadas * 100.0) / requiriendo);
+    }
+
 
 }
