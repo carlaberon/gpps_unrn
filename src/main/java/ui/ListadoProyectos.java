@@ -117,13 +117,7 @@ public class ListadoProyectos extends JFrame {
         int idProyecto = (int) tabla.getModel().getValueAt(modelRow, 0);
 
         new DetalleProyecto(gestorDeProyectos, idProyecto).setVisible(true);
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Abrir detalles del proyecto con id = " + idProyecto,
-                "Info",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+        
     }
 }
 
