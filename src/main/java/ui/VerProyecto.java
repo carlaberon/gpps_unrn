@@ -102,9 +102,8 @@ public class VerProyecto extends JFrame {
         lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
         panelActividadesTop.add(lblActividades, BorderLayout.WEST);
 
-        int totalActividades = actividades.size();
-        long finalizadas = actividades.stream().filter(Actividad::finalizado).count();
-        int porcentaje = totalActividades == 0 ? 0 : (int) ((finalizadas * 100.0) / totalActividades);
+
+        int porcentaje = plan.porcentajeDeFinalizado();
 
         JProgressBar barraProgreso = new JProgressBar(0, 100);
         barraProgreso.setValue(porcentaje);
@@ -125,9 +124,9 @@ public class VerProyecto extends JFrame {
             else accion = a.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe";
 
             model.addRow(new Object[]{
-                a.getDescripcion(),
-                a.finalizado() ? "Sí" : "No",
-                accion
+                    a.getDescripcion(),
+                    a.finalizado() ? "Sí" : "No",
+                    accion
             });
         }
 
@@ -174,7 +173,7 @@ public class VerProyecto extends JFrame {
         private JFrame parentFrame;
 
         public BotonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestor,
-                          DefaultTableModel model, JProgressBar barra, PlanDeTrabajo plan, JTable tabla, int idProyecto) {
+                           DefaultTableModel model, JProgressBar barra, PlanDeTrabajo plan, JTable tabla, int idProyecto) {
             super(checkBox);
             this.actividades = actividades;
             this.gestor = gestor;
@@ -202,24 +201,24 @@ public class VerProyecto extends JFrame {
 
             if (accionActual.equals("Finalizar")) {
                 int confirmacion = JOptionPane.showConfirmDialog(
-                    button,
-                    "¿Está seguro que desea finalizar esta actividad?",
-                    "Confirmar finalización",
-                    JOptionPane.YES_NO_OPTION
+                        parentFrame,
+                        "¿Está seguro que desea finalizar esta actividad?",
+                        "Confirmar finalización",
+                        JOptionPane.YES_NO_OPTION
                 );
-                
+
                 if (confirmacion == JOptionPane.YES_OPTION) {
                     try {
                         gestor.finalizarActividad(act.getIdActividad());
-                        JOptionPane.showMessageDialog(button, "Actividad finalizada correctamente.");
-                        
+                        JOptionPane.showMessageDialog(parentFrame, "Actividad finalizada correctamente.");
+
                         // Cerrar y reabrir la ventana principal
                         if (parentFrame != null) {
                             parentFrame.dispose();
                             new VerProyecto(gestor, idProyecto).setVisible(true);
                         }
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(button, "Error al finalizar la actividad: " + ex.getMessage());
+                        JOptionPane.showMessageDialog(parentFrame, "Error al finalizar la actividad: " + ex.getMessage());
                     }
                 }
             } else if (accionActual.equals("Cargar Informe")) {

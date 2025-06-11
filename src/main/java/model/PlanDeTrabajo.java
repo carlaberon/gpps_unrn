@@ -50,12 +50,6 @@ public class PlanDeTrabajo {
         this.actividades = actividades;
     }
 
-    public double calcularProgreso() {
-        if (actividades == null || actividades.isEmpty()) return 0.0;
-        long realizadas = actividades.stream().filter(Actividad::finalizado).count();
-        return ((double) realizadas / actividades.size()) * 100;
-    }
-
     public void aprobar() {
         this.aprobado = true;
     }
@@ -105,16 +99,13 @@ public class PlanDeTrabajo {
     }
 
     public int porcentajeDeFinalizado() {
-        long requiriendo = actividades.stream()
-                .filter(Actividad::requiereInforme)
-                .count();
-        if (requiriendo == 0) return 0;   // evita división por cero
-
+        //Contamos las actividades finalizadas
         long finalizadas = actividades.stream()
-                .filter(a -> a.requiereInforme() && a.finalizado())
+                .filter(Actividad::finalizado)
                 .count();
 
-        return (int) ((finalizadas * 100.0) / requiriendo);
+        //Calculamos el porcentaje y lo devolvemos como entero (0-100)
+        return (int) ((finalizadas * 100.0) / actividades.size());
     }
 
 
