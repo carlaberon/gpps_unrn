@@ -361,7 +361,10 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
     public List<Proyecto> obtenerProyectosSinAprobar() {
         List<Proyecto> proyectos = new ArrayList<>();
 
-        String sql = "SELECT id_proyecto, nombre, descripcion, estado FROM proyectos WHERE estado = 0";
+        String sql =
+                "SELECT id_proyecto, nombre, descripcion, estado " +
+                        "FROM proyectos " +
+                        "WHERE estado = 0 AND estado_proyecto <> 'DENEGADO'";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -624,7 +627,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void denegarProyecto(int idProyecto) {
-        
+
         String sql = "UPDATE proyectos SET estado_proyecto = 'DENEGADO' WHERE id_proyecto = ?";
 
         try (Connection conn = Conn.getConnection();
