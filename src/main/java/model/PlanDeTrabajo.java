@@ -10,17 +10,29 @@ public class PlanDeTrabajo {
     private int cantHoras;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private List<Actividad> actividades;
+    private List<Actividad> actividades = new ArrayList<>();
     private String recursos;
     private boolean aprobado;
 
     public PlanDeTrabajo(int proyectoAsignado, LocalDate fechaInicio, LocalDate fechaFin, List<Actividad> actividades, String recursos) {
+        if (fechaInicio.isAfter(fechaFin))
+            throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio");
+
+        if (esFechaNula(fechaInicio) || esFechaNula(fechaFin)) {
+            throw new RuntimeException("Las fechas de inicio y fin no pueden ser nulas");
+        }
+
+        if (actividades == null || actividades.isEmpty()) {
+            throw new RuntimeException("Debe haber al menos una actividad en el plan de trabajo");
+        }
+
+        if (esDatoNulo(recursos) || esDatoVacio(recursos)) {
+            throw new RuntimeException("Los recursos no pueden ser nulos o vacíos");
+        }
+
         this.idProyecto = proyectoAsignado;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
-        if (actividades == null) {
-            actividades = new ArrayList<>();
-        }
         this.actividades = actividades;
         this.aprobado = false;
         this.recursos = recursos;
@@ -79,5 +91,31 @@ public class PlanDeTrabajo {
     public String recursos() {
         return recursos;
     }
+
+    private boolean esDatoVacio(String dato) {
+        return dato.equals("");
+    }
+
+    private boolean esDatoNulo(String dato) {
+        return dato == null;
+    }
+
+    private boolean esFechaNula(LocalDate dato) {
+        return dato == null;
+    }
+
+    public int porcentajeDeFinalizado() {
+        long requiriendo = actividades.stream()
+                .filter(Actividad::requiereInforme)
+                .count();
+        if (requiriendo == 0) return 0;   // evita división por cero
+
+        long finalizadas = actividades.stream()
+                .filter(a -> a.requiereInforme() && a.finalizado())
+                .count();
+
+        return (int) ((finalizadas * 100.0) / requiriendo);
+    }
+
 
 }

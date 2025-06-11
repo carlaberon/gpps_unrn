@@ -191,15 +191,23 @@ public class ProyectoFormSwing extends JFrame {
             );
 
             if (proyecto.esValido()) {
-                int idGenerado = proyectoDAO.guardarProyectoSinEstudiante(proyecto); // ← ¡Este método debe devolver el ID!
-                mostrarAlerta("Éxito", "Proyecto guardado correctamente");
 
-                // Abrir la ventana de Plan de Trabajo
-                CrearPlanTrabajo planTrabajoWindow = new CrearPlanTrabajo(proyectoDAOPersistencia, idGenerado);
-                planTrabajoWindow.setVisible(true);
+                int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea continuar con el registro del Plan de Trabajo?", "Continuar", JOptionPane.YES_NO_OPTION);
+                if (respuesta == JOptionPane.YES_OPTION){
+                    // Guardar el proyecto
+                    int idGenerado = proyectoDAO.guardarProyectoSinEstudiante(proyecto); // ← ¡Este método debe devolver el ID!
+                    mostrarAlerta("Éxito", "Proyecto registrado correctamente");
 
-                // Cerrar esta ventana si no la necesitás más:
-                dispose();
+                    // Abrir la ventana de Plan de Trabajo
+                    CrearPlanTrabajo planTrabajoWindow = new CrearPlanTrabajo(proyectoDAOPersistencia, idGenerado);
+                    planTrabajoWindow.setVisible(true);
+                    dispose();
+                }
+                if (respuesta == JOptionPane.NO_OPTION) {
+                    dispose();
+                }
+
+
 
             } else {
                 mostrarAlerta("Error", "Los datos del proyecto no son válidos");
@@ -208,6 +216,8 @@ public class ProyectoFormSwing extends JFrame {
             mostrarAlerta("Error", "Error al guardar el proyecto: " + e.getMessage());
         }
     }
+
+
 
     private boolean validarCampos() {
         StringBuilder errores = new StringBuilder();

@@ -13,6 +13,18 @@ public class Actividad {
     private boolean requiereInforme;
 
     public Actividad(String descripcion, LocalDate fechaInicio, int horas, boolean finalizado, boolean requiereInforme) {
+
+        if (esDatoNulo(descripcion) || esDatoVacio(descripcion)) {
+            throw new RuntimeException("La descripción no puede ser nula o vacía.");
+        }
+        if (esFechaNula(fechaInicio)) {
+            throw new RuntimeException("La fecha de inicio no puede ser nula.");
+        }
+        if (horas <= 0) {
+            throw new RuntimeException("Las horas deben ser un número positivo.");
+        }
+
+
         this.descripcion = descripcion;
         this.fechaInicio = fechaInicio;
         this.horas = horas;
@@ -95,4 +107,17 @@ public class Actividad {
     public boolean requiereInforme() {
         return requiereInforme;
     }
+
+    private boolean esDatoVacio(String dato) {
+        return dato.equals("");
+    }
+
+    private boolean esDatoNulo(String dato) {
+        return dato == null;
+    }
+
+    private boolean esFechaNula(LocalDate dato) {
+        return dato == null;
+    }
+
 }

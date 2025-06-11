@@ -535,19 +535,16 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void finalizarActividad(int idActividad) {
-        String sql = "UPDATE actividades SET estado = TRUE WHERE id_actividad = ?";
+        String sql = "UPDATE actividades SET estado = 1 WHERE id_actividad = ?";
 
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setInt(1, idActividad);
-            
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new RuntimeException("No se encontró la actividad con ID: " + idActividad);
-            }
+            stmt.executeUpdate();
+
         } catch (SQLException ex) {
-            throw new RuntimeException("Error al finalizar la actividad: " + ex.getMessage());
+            throw new RuntimeException("Error al finalizar la actividad");
         }
     }
 

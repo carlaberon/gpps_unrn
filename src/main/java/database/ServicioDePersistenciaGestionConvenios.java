@@ -4,10 +4,15 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import model.Convenio;
+import model.EntidadColaboradora;
 import model.GestorDeConvenios;
+import model.Proyecto;
 
 
 public class ServicioDePersistenciaGestionConvenios implements GestorDeConvenios {
@@ -142,6 +147,59 @@ public class ServicioDePersistenciaGestionConvenios implements GestorDeConvenios
             }
         }
     }
+    
+    @Override
+	public List<EntidadColaboradora> obtenerTodas() throws SQLException {
+	    List<EntidadColaboradora> entidades = new ArrayList<>();
+	    String sql = "SELECT id_entidad, nombre FROM entidades";
 
+	    try (Connection conn = Conn.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql);
+	         ResultSet rs = stmt.executeQuery()) {
+
+	        while (rs.next()) {
+	            int id = rs.getInt("id_entidad");
+	            String nombre = rs.getString("nombre");
+
+	            EntidadColaboradora entidad = new EntidadColaboradora(id, nombre, nombre, nombre, nombre, nombre);
+	            entidad.setId(id);
+	            entidad.setNombre(nombre);
+	            entidades.add(entidad);
+	        }
+	    }
+	    return entidades;
+	}
+	
+    @Override
+    public List<Proyecto> obtenerProyectosConEstudiante() throws SQLException {
+        List<Proyecto> proyectos = new ArrayList<>();
+
+        String sql = "SELECT DISTINCT p.id_proyecto, p.nombre, p.descripcion, p.area_de_interes, " +
+                     "p.ubicacion, p.id_usuario_tutor_interno, p.id_usuario_tutor_externo, p.estado " +
+                     "FROM proyectos p " +
+                     "JOIN estudiantes e ON p.id_proyecto = e.id_proyecto " +
+                     "WHERE p.estado = TRUE " +
+                     "AND NOT EXISTS (SELECT 1 FROM convenios c WHERE c.id_proyecto = p.id_proyecto)";
+
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Proyecto proyecto = new Proyecto(
+                        rs.getInt("id_proyecto"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getBoolean("estado"),
+                        rs.getString("area_de_interes"),
+                        null, 
+                        null, 
+                        rs.getString("ubicacion")
+                );
+                proyectos.add(proyecto);
+            }
+        }
+        return proyectos;
+    }
 }
 

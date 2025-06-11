@@ -42,5 +42,4 @@ public interface GestorDeProyectos {
     void valorarInforme(int idInforme, int valoracion);
 
     void finalizarActividad(int idActividad);
-
 }

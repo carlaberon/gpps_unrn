@@ -13,6 +13,16 @@ public class Convenio {
     private byte[] archivoPdf;
 
     public Convenio(int idEntidad, int idProyecto, String descripcion, LocalDate fechaInicio, LocalDate fechaFin) {
+       if (esDatoNulo(descripcion) || esDatoVacio(descripcion)) {
+            throw new RuntimeException("La descripción no puede ser nula o vacía.");
+        }
+        if (esFechaNula(fechaInicio) || esFechaNula(fechaFin)) {
+            throw new RuntimeException("Las fechas de inicio y fin no pueden ser nulas.");
+        }
+        if (fechaInicio.isAfter(fechaFin)) {
+            throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio.");
+        }
+
         this.idEntidad = idEntidad;
         this.idProyecto = idProyecto;
         this.descripcion = descripcion;
@@ -58,5 +68,18 @@ public class Convenio {
     public void setId(int id) {
         this.id = id;
     }
+
+    private boolean esDatoVacio(String dato) {
+        return dato.equals("");
+    }
+
+    private boolean esDatoNulo(String dato) {
+        return dato == null;
+    }
+
+    private boolean esFechaNula(LocalDate dato) {
+        return dato == null;
+    }
+
 
 }

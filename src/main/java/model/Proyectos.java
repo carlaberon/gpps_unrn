@@ -8,16 +8,18 @@ import java.util.List;
 public class Proyectos {
     private GestorDeProyectos gestorDeProyectos;
     private ServiceInformes servicioDeVerificacionInformes;
+    private ServicioDeNotificaciones servicioDeNotificaciones;
 
 
     public Proyectos(GestorDeProyectos gestorDeProyectos) {
         this.gestorDeProyectos = gestorDeProyectos;
     }
 
-    public Proyectos(GestorDeProyectos gestorDeProyectos, ServiceInformes verificacion) {
+    public Proyectos(GestorDeProyectos gestorDeProyectos, ServiceInformes verificacion, ServicioDeNotificaciones servicioDeNotificaciones) {
 
         this.gestorDeProyectos = gestorDeProyectos;
         this.servicioDeVerificacionInformes = verificacion;
+        this.servicioDeNotificaciones = servicioDeNotificaciones;
     }
 
 
@@ -40,6 +42,7 @@ public class Proyectos {
 
     public void asignarDocenteTutor(int idProyecto, int idTutorInterno) {
         this.gestorDeProyectos.registrarAsignacionTutorInterno(idProyecto, idTutorInterno);
+        this.servicioDeNotificaciones.notificar(idTutorInterno, "Se le ha asignado un nuevo proyecto como tutor interno.");
     }
 
     public void cargarInforme(Informe informe) {

@@ -1,14 +1,10 @@
-package front;
+package ui;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import database.ServicioDePersistenciaGestionProyectos;
-import front.VentanaPrincipal;
 import model.*;
-import ui.ProyectoFormSwing;
 
 public class VentanaPrincipal extends JFrame {
 

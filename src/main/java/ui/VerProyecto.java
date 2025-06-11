@@ -9,54 +9,52 @@ import java.awt.*;
 import java.util.List;
 
 public class VerProyecto extends JFrame {
-    private GestorDeProyectos gestorDeProyectos;
-    private int idProyecto;
+    private final GestorDeProyectos gestorDeProyectos;
+    private final int idProyecto;
 
     public VerProyecto(GestorDeProyectos gestor, int idProyecto) {
         this.gestorDeProyectos = gestor;
         this.idProyecto = idProyecto;
 
-        setTitle("Detalles del Proyecto");
-        setSize(700, 600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-
+        /* ──────────  Dominio  ────────── */
         Proyecto proyecto = gestorDeProyectos.obtenerProyecto(idProyecto);
         PlanDeTrabajo plan = gestorDeProyectos.obtenerPlan(idProyecto);
         List<Actividad> actividades = plan.actividades();
 
-        JPanel panelProyecto = new JPanel(new GridLayout(5, 2, 5, 5));
-        panelProyecto.setBorder(BorderFactory.createTitledBorder("Información del Proyecto"));
+        /* ──────────  UI principal  ────────── */
+        setTitle("Detalles del Proyecto");
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-        panelProyecto.add(new JLabel("Nombre:"));
-        panelProyecto.add(new JLabel(proyecto.getNombre()));
+        /* --- Panel Proyecto --- */
+        JPanel pDatos = new JPanel(new GridLayout(5, 2, 5, 5));
+        pDatos.setBorder(BorderFactory.createTitledBorder("Información del Proyecto"));
+        pDatos.add(new JLabel("Nombre:"));
+        pDatos.add(new JLabel(proyecto.getNombre()));
+        pDatos.add(new JLabel("Descripción:"));
+        pDatos.add(new JLabel(proyecto.getDescripcion()));
+        pDatos.add(new JLabel("Área de Interés:"));
+        pDatos.add(new JLabel(proyecto.getAreaDeInteres()));
+        pDatos.add(new JLabel("Ubicación:"));
+        pDatos.add(new JLabel(proyecto.getUbicacion()));
+        pDatos.add(new JLabel("Aprobado:"));
+        pDatos.add(new JLabel(proyecto.getEstado() ? "Sí" : "No"));
+        add(pDatos, BorderLayout.NORTH);
 
-        panelProyecto.add(new JLabel("Descripción:"));
-        panelProyecto.add(new JLabel(proyecto.getDescripcion()));
-
-        panelProyecto.add(new JLabel("Área de Interés:"));
-        panelProyecto.add(new JLabel(proyecto.getAreaDeInteres()));
-
-        panelProyecto.add(new JLabel("Ubicación:"));
-        panelProyecto.add(new JLabel(proyecto.getUbicacion()));
-
-        panelProyecto.add(new JLabel("Aprobado:"));
-        panelProyecto.add(new JLabel(proyecto.getEstado() ? "Sí" : "No"));
-
-        add(panelProyecto, BorderLayout.NORTH);
-
-        String[] columnas = {"Descripción", "Finalizado", "Acciones"};
-        DefaultTableModel modeloTabla = new DefaultTableModel(columnas, 0) {
+        /* --- Tabla de actividades --- */
+        String[] cols = {"Descripción", "Finalizado", "Acciones"};
+        DefaultTableModel model = new DefaultTableModel(cols, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 2;
+            public boolean isCellEditable(int r, int c) {
+                return c == 2;
             }
         };
 
         JTable tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(80);
-        tabla.getColumnModel().getColumn(0).setPreferredWidth(300);
+        tabla.setRowHeight(100);
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(400);
 
         tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
@@ -65,7 +63,7 @@ public class VerProyecto extends JFrame {
                 JTextArea textArea = new JTextArea(value.toString());
                 textArea.setLineWrap(true);
                 textArea.setWrapStyleWord(true);
-                textArea.setRows(3);
+                textArea.setRows(2);
                 textArea.setFont(table.getFont());
                 textArea.setMargin(new Insets(2, 2, 2, 2));
                 textArea.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
@@ -75,7 +73,7 @@ public class VerProyecto extends JFrame {
         });
 
         JScrollPane scroll = new JScrollPane(tabla);
-        scroll.setPreferredSize(new Dimension(600, 300));
+        scroll.setPreferredSize(new Dimension(700, 300));
 
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
         panelDetallesPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
@@ -121,42 +119,39 @@ public class VerProyecto extends JFrame {
         add(contenedorCentro, BorderLayout.CENTER);
 
         for (Actividad a : actividades) {
-            modeloTabla.addRow(new Object[]{
-                    a.getDescripcion(),
+            String accion;
+            if (a.finalizado()) accion = "—";
+            else if (!a.requiereInforme()) accion = "Finalizar";
+            else accion = "Cargar Informe";
+
+            model.addRow(new Object[]{a.getDescripcion(),
                     a.finalizado() ? "Sí" : "No",
                     a.requiereInforme() ? (a.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe")
-                            : (a.finalizado() ? "Actividad Finalizada" : "Finalizar Actividad")
+                            : "Esta actividad no requiere informe"
             });
         }
 
         tabla.getColumn("Acciones").setCellRenderer(new ButtonRenderer(actividades));
-        tabla.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos, idProyecto));
+        tabla.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos));
 
         setVisible(true);
     }
 
-    static class ButtonRenderer extends JButton implements javax.swing.table.TableCellRenderer {
-        private List<Actividad> actividades;
-
-        public ButtonRenderer(List<Actividad> actividades) {
-            this.actividades = actividades;
-            setOpaque(true);
-        }
+    /* ========= RENDERER ========= */
+    static class BotonRenderer implements javax.swing.table.TableCellRenderer {
+        private final JButton button = new JButton();
+        private final JLabel dash = new JLabel("—", SwingConstants.CENTER);
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
-            Actividad actividad = actividades.get(row);
 
             if (!actividad.requiereInforme()) {
-                if (actividad.finalizado()) {
-                    return new JLabel("Actividad Finalizada");
-                }
-                setText("Finalizar Actividad");
-            } else {
-                setText(actividad.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
+                return new JLabel("Esta actividad no requiere informe");
             }
+
+            setText(actividad.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
 
             if (isSelected) {
                 setForeground(table.getSelectionForeground());
@@ -165,59 +160,37 @@ public class VerProyecto extends JFrame {
                 setForeground(table.getForeground());
                 setBackground(table.getBackground());
             }
-
-            return this;
+            button.setText(value.toString());
+            return button;
         }
     }
 
-    static class ButtonEditor extends DefaultCellEditor {
-        private JButton button;
-        private List<Actividad> actividades;
+    /* ========= EDITOR ========= */
+    static class BotonEditor extends DefaultCellEditor {
+        private final JButton button;
+        private final List<Actividad> actividades;
+        private final GestorDeProyectos gestor;
+        private final DefaultTableModel model;
+        private final JProgressBar barra;
+        private final PlanDeTrabajo plan;
+        private final JTable tabla;
         private int currentRow;
         private GestorDeProyectos gestorDeProyectos;
-        private JFrame parentFrame;
-        private int idProyecto;
 
-        public ButtonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestorDeProyectos, int idProyecto) {
+        public ButtonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestorDeProyectos) {
             super(checkBox);
             this.actividades = actividades;
             this.gestorDeProyectos = gestorDeProyectos;
-            this.idProyecto = idProyecto;
             this.button = new JButton();
-            this.button.setOpaque(true);
-            this.button.addActionListener(e -> {
-                Actividad act = actividades.get(currentRow);
-                Proyectos proyectos = new Proyectos(gestorDeProyectos);
+            button.addActionListener(e -> accion());
+        }
+
+        private void accion() {
+            Actividad act = actividades.get(currentRow);
+            String accionActual = model.getValueAt(currentRow, 2).toString();
 
                 if (!act.requiereInforme()) {
-                    if (!act.finalizado()) {
-                        int confirmacion = JOptionPane.showConfirmDialog(
-                            button,
-                            "¿Está seguro que desea finalizar esta actividad?",
-                            "Confirmar finalización",
-                            JOptionPane.YES_NO_OPTION
-                        );
-                        
-                        if (confirmacion == JOptionPane.YES_OPTION) {
-                            try {
-                                gestorDeProyectos.finalizarActividad(act.getIdActividad());
-                                JOptionPane.showMessageDialog(button, "Actividad finalizada correctamente.");
-                                
-                                // Refresh the window
-                                Component parent = button.getParent();
-                                while (parent != null && !(parent instanceof JFrame)) {
-                                    parent = parent.getParent();
-                                }
-                                if (parent instanceof JFrame) {
-                                    parentFrame = (JFrame) parent;
-                                    parentFrame.dispose();
-                                    new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
-                                }
-                            } catch (Exception ex) {
-                                JOptionPane.showMessageDialog(button, "Error al finalizar la actividad: " + ex.getMessage());
-                            }
-                        }
-                    }
+                    JOptionPane.showMessageDialog(button, "Esta actividad no requiere informe.");
                     return;
                 }
 
@@ -227,22 +200,7 @@ public class VerProyecto extends JFrame {
                         new VerInformeEstudiante(proyectos, informe).setVisible(true);
                     }
                 } else {
-                    // Get the parent frame
-                    Component parent = button.getParent();
-                    while (parent != null && !(parent instanceof JFrame)) {
-                        parent = parent.getParent();
-                    }
-                    if (parent instanceof JFrame) {
-                        parentFrame = (JFrame) parent;
-                    }
-                    
-                    // Create new window with callback to refresh parent
-                    new VentanaCargarInforme(proyectos, act, v -> {
-                        if (parentFrame != null) {
-                            parentFrame.dispose();
-                            new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
-                        }
-                    }).setVisible(true);
+                    new VentanaCargarInforme(proyectos, act).setVisible(true);
                 }
             });
         }
@@ -254,13 +212,10 @@ public class VerProyecto extends JFrame {
             Actividad act = actividades.get(row);
 
             if (!act.requiereInforme()) {
-                if (act.finalizado()) {
-                    return new JLabel("Actividad Finalizada");
-                }
-                button.setText("Finalizar Actividad");
-            } else {
-                button.setText(act.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
+                return new JLabel("Esta actividad no requiere informe");
             }
+
+            button.setText(act.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe");
 
             if (isSelected) {
                 button.setForeground(table.getSelectionForeground());
@@ -275,8 +230,11 @@ public class VerProyecto extends JFrame {
 
         @Override
         public Object getCellEditorValue() {
-            return button.getText();
+            return button.getText();   // devolverá "—" tras el cambio
         }
     }
 }
+
+
+
 

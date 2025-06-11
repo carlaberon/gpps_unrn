@@ -1,8 +1,8 @@
 package main;
 
-import front.VentanaLogin;
 import model.GestorDeConvenios;
 import model.GestorDeUsuarios;
+import ui.VentanaLogin;
 import model.GestorDeProyectos;
 import database.ServicioDePersistenciaGestionUsuarios;
 import database.ServicioDePersistenciaGestionProyectos;
@@ -12,7 +12,6 @@ import database.Conn;
 public class MainPrincipal {
     public static void main(String[] args) {
         try {
-            // Initialize database connection
             Conn.connect();
             
             GestorDeUsuarios gestorDeUsuarios = new ServicioDePersistenciaGestionUsuarios(Conn.getConnection());

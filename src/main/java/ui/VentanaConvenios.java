@@ -1,4 +1,4 @@
-package front;
+package ui;
 
 import model.Convenio;
 
