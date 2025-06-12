@@ -119,9 +119,13 @@ public class VerProyecto extends JFrame {
 
         for (Actividad a : actividades) {
             String accion;
-            if (a.finalizado()) accion = "—";
-            else if (!a.requiereInforme()) accion = "Finalizar";
-            else accion = a.getIdInforme() > 0 ? "Ver Informe" : "Cargar Informe";
+            if (!a.requiereInforme()) {
+                accion = a.finalizado() ? "—" : "Finalizar";
+            } else if (a.getIdInforme() > 0) {
+                accion = "Ver Informe";
+            } else {
+                accion = "Cargar Informe";
+            }
 
             model.addRow(new Object[]{
                     a.getDescripcion(),
@@ -145,15 +149,17 @@ public class VerProyecto extends JFrame {
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
-            if (value.toString().equals("—")) {
+            String text = value.toString();
+            if (text.equals("—")) {
                 dash.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
                 dash.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
                 return dash;
             }
 
-            button.setText(value.toString());
+            button.setText(text);
             button.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
             button.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+            button.setOpaque(true);
             return button;
         }
     }
@@ -171,6 +177,7 @@ public class VerProyecto extends JFrame {
         private final int idProyecto;
         private int currentRow;
         private JFrame parentFrame;
+        private String currentAction;
 
         public BotonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestor,
                            DefaultTableModel model, JProgressBar barra, PlanDeTrabajo plan, JTable tabla, int idProyecto) {
@@ -244,21 +251,23 @@ public class VerProyecto extends JFrame {
                                                      boolean isSelected, int row, int column) {
             this.currentRow = row;
             Actividad act = actividades.get(row);
+            this.currentAction = value.toString();
 
-            if (act.finalizado()) {
+            if (act.finalizado() && !act.requiereInforme()) {
                 return dash;
             }
 
-            button.setText(value.toString());
+            button.setText(currentAction);
             button.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
             button.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+            button.setOpaque(true);
 
             return button;
         }
 
         @Override
         public Object getCellEditorValue() {
-            return button.getText();
+            return currentAction;
         }
     }
 }
