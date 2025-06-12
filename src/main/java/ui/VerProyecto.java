@@ -109,8 +109,23 @@ public class VerProyecto extends JFrame {
         barraProgreso.setValue(porcentaje);
         barraProgreso.setStringPainted(true);
         barraProgreso.setPreferredSize(new Dimension(200, 20));
-        
-        panelActividadesTop.add(barraProgreso, BorderLayout.EAST);
+        // Panel que contiene la barra y el botón
+        JPanel panelProgresoFinal = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        panelProgresoFinal.add(barraProgreso);
+
+        if (porcentaje == 100) {
+            JButton btnInformeFinal = new JButton("Cargar Informe Final");
+            btnInformeFinal.addActionListener(e -> {
+                Proyectos proyectos = new Proyectos(gestorDeProyectos);
+                new VentanaCargarInforme(proyectos, null, v -> {
+                    JOptionPane.showMessageDialog(this, "Informe final cargado correctamente.");
+                }, "FINAL").setVisible(true);
+            });
+            panelProgresoFinal.add(btnInformeFinal);
+        }
+
+        panelActividadesTop.add(panelProgresoFinal, BorderLayout.EAST);
+
 
         contenedorCentro.add(panelDetallesPlan);
         contenedorCentro.add(panelActividadesTop);
@@ -237,7 +252,7 @@ public class VerProyecto extends JFrame {
                         parentFrame.dispose();
                         new VerProyecto(gestor, idProyecto).setVisible(true);
                     }
-                }).setVisible(true);
+                }, "Parcial").setVisible(true);
             } else if (accionActual.equals("Ver Informe")) {
                 Proyectos proyectos = new Proyectos(gestor);
                 Informe informe = gestor.obtenerInforme(act.getIdInforme());
