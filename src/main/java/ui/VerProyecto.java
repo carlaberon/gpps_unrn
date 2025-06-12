@@ -39,8 +39,8 @@ public class VerProyecto extends JFrame {
         pDatos.add(new JLabel(proyecto.getAreaDeInteres()));
         pDatos.add(new JLabel("Ubicación:"));
         pDatos.add(new JLabel(proyecto.getUbicacion()));
-        pDatos.add(new JLabel("Aprobado:"));
-        pDatos.add(new JLabel(proyecto.getEstado() ? "Sí" : "No"));
+        pDatos.add(new JLabel("Estado:"));
+        pDatos.add(new JLabel(proyecto.estadoProyecto()));
         add(pDatos, BorderLayout.NORTH);
 
         /* --- Tabla de actividades --- */
@@ -114,15 +114,45 @@ public class VerProyecto extends JFrame {
         panelProgresoFinal.add(barraProgreso);
 
         if (porcentaje == 100) {
-            JButton btnInformeFinal = new JButton("Cargar Informe Final");
-            btnInformeFinal.addActionListener(e -> {
-                Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                new VentanaCargarInforme(proyectos, null, v -> {
-                    JOptionPane.showMessageDialog(this, "Informe final cargado correctamente.");
-                }, "FINAL").setVisible(true);
-            });
-            panelProgresoFinal.add(btnInformeFinal);
+            if (!gestorDeProyectos.existeInformeFinal(idProyecto)) {
+                JButton btnInformeFinal = new JButton("Cargar Informe Final");
+
+                btnInformeFinal.addActionListener(e -> {
+                    // Obtener ventana padre
+                    Component parent = btnInformeFinal.getParent();
+                    while (parent != null && !(parent instanceof JFrame)) {
+                        parent = parent.getParent();
+                    }
+                    JFrame parentFrame = null;
+                    if (parent instanceof JFrame) {
+                        parentFrame = (JFrame) parent;
+                    }
+
+                    Proyectos proyectos = new Proyectos(gestorDeProyectos);
+                    JFrame finalParentFrame = parentFrame; // necesario para usar en lambda
+                    new VentanaCargarInforme(proyectos, null, v -> {
+                        
+                        // Cerrar y reabrir ventana principal
+                        if (finalParentFrame != null) {
+                            finalParentFrame.dispose();
+                            new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
+                        }
+
+                    }, "FINAL", idProyecto).setVisible(true);
+                });
+
+                panelProgresoFinal.add(btnInformeFinal);
+            } else {
+                JButton btnVerInformeFinal = new JButton("Ver Informe Final");
+                btnVerInformeFinal.addActionListener(e -> {
+                    Informe informe = gestorDeProyectos.obtenerInformeFinal(idProyecto);
+                    Proyectos proyectos = new Proyectos(gestorDeProyectos);
+                    new VerInformeEstudiante(proyectos, informe).setVisible(true);
+                });
+                panelProgresoFinal.add(btnVerInformeFinal);
+            }
         }
+
 
         panelActividadesTop.add(panelProgresoFinal, BorderLayout.EAST);
 
@@ -252,7 +282,7 @@ public class VerProyecto extends JFrame {
                         parentFrame.dispose();
                         new VerProyecto(gestor, idProyecto).setVisible(true);
                     }
-                }, "Parcial").setVisible(true);
+                }, "Parcial", idProyecto).setVisible(true);
             } else if (accionActual.equals("Ver Informe")) {
                 Proyectos proyectos = new Proyectos(gestor);
                 Informe informe = gestor.obtenerInforme(act.getIdInforme());

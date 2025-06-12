@@ -23,12 +23,15 @@ public class VentanaCargarInforme extends JFrame {
     private Proyectos proyectos;
     private Actividad actividad;
     private Consumer<Void> onInformeCargado;
+    private int idProyecto;
 
-    public VentanaCargarInforme(Proyectos proyectos, Actividad actividad, Consumer<Void> onInformeCargado, String tipoInforme) {
+
+    public VentanaCargarInforme(Proyectos proyectos, Actividad actividad, Consumer<Void> onInformeCargado, String tipoInforme, int idProyecto) {
         this.proyectos = proyectos;
         this.actividad = actividad;
         this.onInformeCargado = onInformeCargado;
         this.tipoInforme = tipoInforme;
+        this.idProyecto = idProyecto;
 
         setTitle("Cargar Informe " + tipoInforme);
         setSize(450, 250);
@@ -42,7 +45,7 @@ public class VentanaCargarInforme extends JFrame {
         SwingUtilities.invokeLater(() -> {
             ServicioDePersistenciaGestionProyectos servicio = new ServicioDePersistenciaGestionProyectos();
             Proyectos proyectos = new Proyectos(servicio);
-            new VentanaCargarInforme(proyectos, null, null, "PARCIAL").setVisible(true);
+            new VentanaCargarInforme(proyectos, null, null, "PARCIAL", 1).setVisible(true);
         });
     }
 
@@ -115,7 +118,7 @@ public class VentanaCargarInforme extends JFrame {
                     tipoInforme,
                     archivoBytes
             );
-            proyectos.cargarInforme(informe);
+            proyectos.cargarInforme(informe, idProyecto);
 
             JOptionPane.showMessageDialog(this, "Informe cargado correctamente.");
 

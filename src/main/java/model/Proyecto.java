@@ -10,6 +10,7 @@ public class Proyecto {
     private Tutor tutorInterno;
     private String ubicacion;
     private String estado_Proyecto;
+    private int id_informe_final;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
                     Tutor tutorExterno, Tutor tutorInterno, String ubicacion) {
@@ -97,5 +98,13 @@ public class Proyecto {
 
     public void setEstadoProyecto(String estado_Proyecto) {
         this.estado_Proyecto = estado_Proyecto;
+    }
+
+    public int getInformeFinal() {
+        return id_informe_final;
+    }
+
+    public void setInformeFinal(int idInformeFinal) {
+        this.id_informe_final = id_informe_final;
     }
 }

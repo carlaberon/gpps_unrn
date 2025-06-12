@@ -50,6 +50,7 @@ public class VerProyectoDirector extends JFrame {
 
         add(panelProyecto, BorderLayout.NORTH);
 
+
         // Tabla de actividades (sin botón de acciones)
         String[] columnas = {"Descripción", "Finalizado"};
         DefaultTableModel modeloTabla = new DefaultTableModel(columnas, 0) {

@@ -17,7 +17,7 @@ public interface GestorDeProyectos {
 
     void aprobarProyecto(int idProyecto);
 
-    void cargarInforme(Informe informeParcial);
+    void cargarInforme(Informe informeParcial, int idProyecto);
 
     Proyecto obtenerProyecto(int idProyecto);
 
@@ -46,4 +46,8 @@ public interface GestorDeProyectos {
     Estudiante obtenerEstudianteAsignado(int idProyecto);
 
     boolean existeConvenio(int id, Integer idProyecto);
+
+    boolean existeInformeFinal(int idProyecto);
+
+    Informe obtenerInformeFinal(int idProyecto);
 }

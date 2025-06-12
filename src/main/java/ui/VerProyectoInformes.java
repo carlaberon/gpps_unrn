@@ -40,8 +40,8 @@ public class VerProyectoInformes extends JFrame {
         panelProyecto.add(new JLabel("Ubicación:"));
         panelProyecto.add(new JLabel(proyecto.getUbicacion()));
 
-        panelProyecto.add(new JLabel("Aprobado:"));
-        panelProyecto.add(new JLabel(proyecto.getEstado() ? "Sí" : "No"));
+        panelProyecto.add(new JLabel("Estado:"));
+        panelProyecto.add(new JLabel(proyecto.estadoProyecto()));
 
         add(panelProyecto, BorderLayout.NORTH);
 
@@ -77,7 +77,24 @@ public class VerProyectoInformes extends JFrame {
         barraProgreso.setValue(porcentaje);
         barraProgreso.setStringPainted(true);
         barraProgreso.setPreferredSize(new Dimension(200, 20));
-        panelActividadesTop.add(barraProgreso, BorderLayout.EAST);
+
+        // Panel que contiene la barra y el botón
+        JPanel panelProgresoFinal = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        panelProgresoFinal.add(barraProgreso);
+
+        if (porcentaje == 100) {
+            if (gestorDeProyectos.existeInformeFinal(idProyecto)) {
+                JButton btnVerInformeFinal = new JButton("Ver Informe Final");
+                btnVerInformeFinal.addActionListener(e -> {
+                    Informe informe = gestorDeProyectos.obtenerInformeFinal(idProyecto);
+                    Proyectos proyectos = new Proyectos(gestorDeProyectos);
+                    new VerInformeTutor(proyectos, informe).setVisible(true);
+                });
+                panelProgresoFinal.add(btnVerInformeFinal);
+            }
+        }
+
+        panelActividadesTop.add(panelProgresoFinal, BorderLayout.EAST);
 
         // Tabla de actividades con columna para ver informes
         String[] columnas = {"ID", "Descripción", "Finalizado", "Ver Informe"};

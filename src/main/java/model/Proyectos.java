@@ -39,16 +39,8 @@ public class Proyectos {
         this.servicioDeNotificaciones.notificar(idTutorInterno, "Se le ha asignado un nuevo proyecto como tutor interno.");
     }
 
-    public void cargarInforme(Informe informe) {
-        this.gestorDeProyectos.cargarInforme(informe);
-    }
-
-    public void cargarInformeFinal(String descripcionInformeFinal, String tipo, List<Integer> idInformesParciales, int idInformeFinal, byte[] archivoEntregable) {
-        if (!this.servicioDeVerificacionInformes.verificarInformeParcialAprobado(idInformesParciales)) { //lista de informes parciales
-            throw new RuntimeException("El informe parcial no se encuentra aprobado. Intente en otro momento.");
-        }
-        var informeFinal = new Informe(idInformeFinal, descripcionInformeFinal, tipo, archivoEntregable);
-        this.gestorDeProyectos.cargarInforme(informeFinal);
+    public void cargarInforme(Informe informe, int idProyecto) {
+        this.gestorDeProyectos.cargarInforme(informe, idProyecto);
     }
 
     public void valorarInformeParcial(int idInforme, int valorInforme) {
