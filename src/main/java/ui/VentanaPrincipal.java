@@ -1,20 +1,23 @@
 package ui;
 
+import model.Administrador;
+import model.GestorDeConvenios;
+import model.GestorDeProyectos;
+import model.GestorDeUsuarios;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import model.*;
 
 public class VentanaPrincipal extends JFrame {
-
-    private JButton btnCrearProyecto;
-    private JButton btnCrearConvenio;
 
     private final GestorDeUsuarios gestorDeUsuarios;
     private final GestorDeProyectos gestorDeProyectos;
     private final Administrador administrador;
     private final GestorDeConvenios gestorDeConvenios;
+    private JButton btnCrearProyecto;
+    private JButton btnCrearConvenio;
 
     public VentanaPrincipal(GestorDeUsuarios gestorDeUsuarios, GestorDeProyectos gestorDeProyectos,
                             Administrador administrador, GestorDeConvenios gestorDeConvenios) {
@@ -53,7 +56,7 @@ public class VentanaPrincipal extends JFrame {
         btnCrearProyecto.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ProyectoFormSwing proyectoForm = new ProyectoFormSwing(gestorDeUsuarios, gestorDeProyectos);
+                CrearProyecto proyectoForm = new CrearProyecto(gestorDeUsuarios, gestorDeProyectos);
                 proyectoForm.setVisible(true);
             }
         });

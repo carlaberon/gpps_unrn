@@ -104,7 +104,8 @@ public class SeleccionarProyecto extends JFrame {
             }
         } catch (SQLException e) {
             if (e.getMessage().contains("ya tiene un proyecto asignado")) {
-                mostrarMensaje("Error", "No se puede seleccionar un nuevo proyecto porque ya tienes uno asignado.");
+                JOptionPane.showMessageDialog(this, "Ya has seleccionado un proyecto. Debes esperar que se genere el convenio correspondiente",
+                        "Advertencia", JOptionPane.WARNING_MESSAGE);
             } else {
                 mostrarMensaje("Error", "Error al seleccionar el proyecto.\n" + e.getMessage());
             }

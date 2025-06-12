@@ -85,7 +85,7 @@ public class AprobacionDeProyectos extends JFrame {
                         JOptionPane.YES_NO_OPTION
                 );
                 if (confirm == JOptionPane.YES_OPTION) {
-                    gestorDeProyectos.aprobarPlanDeTrabajo(id);
+                    gestorDeProyectos.aprobarProyecto(id);
                     modelo.removeRow(fila);
                     JOptionPane.showMessageDialog(this, "Proyecto aprobado correctamente.");
                 }

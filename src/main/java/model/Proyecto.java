@@ -79,11 +79,11 @@ public class Proyecto {
     }
 
     public int getIdUsuarioTutorInterno() {
-        return tutorExterno.getId();
+        return tutorInterno.getId();
     }
 
     public int getIdUsuarioTutorExterno() {
-        return tutorInterno.getId();
+        return tutorExterno.getId();
     }
 
     @Override

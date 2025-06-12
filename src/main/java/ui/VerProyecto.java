@@ -109,6 +109,7 @@ public class VerProyecto extends JFrame {
         barraProgreso.setValue(porcentaje);
         barraProgreso.setStringPainted(true);
         barraProgreso.setPreferredSize(new Dimension(200, 20));
+        
         panelActividadesTop.add(barraProgreso, BorderLayout.EAST);
 
         contenedorCentro.add(panelDetallesPlan);

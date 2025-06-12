@@ -15,12 +15,13 @@ public class PlanDeTrabajo {
     private boolean aprobado;
 
     public PlanDeTrabajo(int proyectoAsignado, LocalDate fechaInicio, LocalDate fechaFin, List<Actividad> actividades, String recursos) {
-        if (fechaInicio.isAfter(fechaFin))
-            throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio");
-
         if (esFechaNula(fechaInicio) || esFechaNula(fechaFin)) {
             throw new RuntimeException("Las fechas de inicio y fin no pueden ser nulas");
         }
+
+        if (fechaInicio.isAfter(fechaFin))
+            throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio");
+
 
         if (actividades == null || actividades.isEmpty()) {
             throw new RuntimeException("Debe haber al menos una actividad en el plan de trabajo");

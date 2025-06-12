@@ -10,12 +10,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
-public class VerInforme extends JFrame {
+public class VerInformeTutor extends JFrame {
     private final Informe informe;
     private final Proyectos proyectos;
     private JTextField txtValoracion;
 
-    public VerInforme(Proyectos proyectos, Informe informe) {
+    public VerInformeTutor(Proyectos proyectos, Informe informe) {
         this.proyectos = proyectos;
         this.informe = informe;
 
@@ -101,28 +101,46 @@ public class VerInforme extends JFrame {
     }
 
     private void verArchivo() {
-        if (informe.archivoEntregable() == null) {
+        byte[] archivo = informe.archivoEntregable();
+
+        if (archivo == null || archivo.length == 0) {
             JOptionPane.showMessageDialog(this, "No hay archivo adjunto.");
             return;
         }
 
         try {
+            // Validar que el archivo parece ser un PDF (opcional pero útil)
+            if (!(archivo[0] == '%' && archivo[1] == 'P' && archivo[2] == 'D' && archivo[3] == 'F')) {
+                JOptionPane.showMessageDialog(this, "El archivo no parece ser un PDF válido.");
+                return;
+            }
+
             // Crear archivo temporal
             File tempFile = File.createTempFile("informe_", ".pdf");
             try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-                fos.write(informe.archivoEntregable());
+                fos.write(archivo);
             }
 
-            // Abrir el archivo con el visor predeterminado
-            Desktop.getDesktop().open(tempFile);
+            // Asegurar que el archivo tenga extensión .pdf y sea ejecutable
+            if (!Desktop.isDesktopSupported()) {
+                JOptionPane.showMessageDialog(this, "El visor de escritorio no es compatible.");
+                return;
+            }
 
-            // Programar la eliminación del archivo temporal al cerrar la app
+            Desktop desktop = Desktop.getDesktop();
+            if (tempFile.exists()) {
+                desktop.open(tempFile);
+            } else {
+                JOptionPane.showMessageDialog(this, "El archivo no se pudo crear correctamente.");
+            }
+
             tempFile.deleteOnExit();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error al abrir el archivo: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void descargarArchivo() {
         if (informe.archivoEntregable() == null) {

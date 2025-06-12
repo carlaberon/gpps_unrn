@@ -1,13 +1,10 @@
 package ui;
 
+import database.DataBaseConnectionException;
 import model.Convenio;
-
-
-import javax.swing.*;
-
-import database.DataBaseConnectionException; // TENGOESTO X AHORA CUANDO CREEMOS UN PAQUETE DONDE ESTE LAS EXCEPTION YA NO TENDRE NADA DE DATABASE
 import model.GestorDeConvenios;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -30,7 +27,7 @@ public class VentanaConvenios extends JFrame {
         this.gestorDeConvenios = gestorDeConvenios;
 
         setTitle("Detalle del Convenio");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(450, 300);
         setLocationRelativeTo(null);
         setLayout(new GridLayout(6, 1, 10, 10));
