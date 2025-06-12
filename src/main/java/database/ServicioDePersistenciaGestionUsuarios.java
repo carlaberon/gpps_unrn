@@ -33,7 +33,7 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                         null, rs.getString("legajo"),
                         rs.getBoolean("esRegular"),
                         "" // No tenemos dirección en la nueva estructura
-, 0
+                        , 0
                 ));
             }
         } catch (SQLException e) {
@@ -49,7 +49,8 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                 "FROM usuarios u " +
                 "JOIN tutores t ON u.id_usuario = t.id_usuario";
 
-        try (Statement stmt = conn.createStatement();
+        try (Connection conn = Conn.getConnection();
+             Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -59,25 +60,28 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                         "", // No obtenemos la contraseña por seguridad
                         rs.getString("nombre"),
                         rs.getString("email"),
-                        null, rs.getString("tipo")
+                        null,
+                        rs.getString("tipo")
                 ));
             }
+            return tutores;
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error al obtener los tutores: " + e.getMessage(), e);
         }
-        return tutores;
     }
+
 
     public Usuario buscarUsuario(String nombreUsuario, String contrasena) throws SQLException {
         String sql = """
-            SELECT u.id_usuario, u.nombre_usuario, u.contrasenia,
-                   u.nombre, u.email,
-                   r.codigo AS rol_codigo, r.nombre AS rol_nombre
-            FROM usuarios u
-            JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
-            JOIN roles r ON ur.codigo = r.codigo
-            WHERE u.nombre_usuario = ? AND u.contrasenia = ?
-        """;
+                    SELECT u.id_usuario, u.nombre_usuario, u.contrasenia,
+                           u.nombre, u.email,
+                           r.codigo AS rol_codigo, r.nombre AS rol_nombre
+                    FROM usuarios u
+                    JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+                    JOIN roles r ON ur.codigo = r.codigo
+                    WHERE u.nombre_usuario = ? AND u.contrasenia = ?
+                """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nombreUsuario);
@@ -94,7 +98,8 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
 
                     return switch (nombreRol.toLowerCase()) {
                         case "administrador" -> new Administrador(id, nombreUsuario, contrasena, nombre, email, rol);
-                        case "estudiante" -> new Estudiante(id, nombreUsuario, contrasena, nombre, email, rol, null, null, null, codigoRol);
+                        case "estudiante" ->
+                                new Estudiante(id, nombreUsuario, contrasena, nombre, email, rol, null, null, null, codigoRol);
                         case "director" -> new Director(id, nombreUsuario, contrasena, nombre, email, rol);
                         case "tutor" -> new Tutor(id, nombreUsuario, contrasena, nombre, email, rol, null);
                         default -> throw new SQLException("Rol desconocido: " + nombreRol);

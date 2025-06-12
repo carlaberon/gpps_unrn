@@ -10,12 +10,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
-public class VerInforme extends JFrame {
+public class VerInformeTutor extends JFrame {
     private final Informe informe;
     private final Proyectos proyectos;
     private JTextField txtValoracion;
 
-    public VerInforme(Proyectos proyectos, Informe informe) {
+    public VerInformeTutor(Proyectos proyectos, Informe informe) {
         this.proyectos = proyectos;
         this.informe = informe;
 
@@ -26,11 +26,8 @@ public class VerInforme extends JFrame {
         setLayout(new BorderLayout());
 
         // Panel de información del informe
-        JPanel panelInfo = new JPanel(new GridLayout(6, 2, 5, 5));
+        JPanel panelInfo = new JPanel(new GridLayout(4, 2, 5, 5)); // Eliminamos la fila del ID
         panelInfo.setBorder(BorderFactory.createTitledBorder("Información del Informe"));
-
-        panelInfo.add(new JLabel("ID:"));
-        panelInfo.add(new JLabel(String.valueOf(informe.id())));
 
         panelInfo.add(new JLabel("Descripción:"));
         panelInfo.add(new JLabel(informe.descripcion()));
@@ -44,26 +41,23 @@ public class VerInforme extends JFrame {
         panelInfo.add(new JLabel("Valoración:"));
         panelInfo.add(new JLabel(informe.valoracionInforme() == -1 ? "No valorado" : String.valueOf(informe.valoracionInforme())));
 
-        panelInfo.add(new JLabel("Estado:"));
-        panelInfo.add(new JLabel(informe.estado() ? "Recibido" : "Pendiente"));
-
         add(panelInfo, BorderLayout.NORTH);
 
         // Panel de valoración - solo se muestra si el informe no tiene valoración
         if (informe.valoracionInforme() == -1) {
             JPanel panelValoracion = new JPanel(new FlowLayout(FlowLayout.LEFT));
             panelValoracion.setBorder(BorderFactory.createTitledBorder("Valorar Informe"));
-            
+
             JLabel lblValoracion = new JLabel("Ingrese valoración (0-10):");
             txtValoracion = new JTextField(5);
             JButton btnGuardarValoracion = new JButton("Guardar Valoración");
-            
+
             btnGuardarValoracion.addActionListener(e -> guardarValoracion());
-            
+
             panelValoracion.add(lblValoracion);
             panelValoracion.add(txtValoracion);
             panelValoracion.add(btnGuardarValoracion);
-            
+
             add(panelValoracion, BorderLayout.CENTER);
         }
 
@@ -91,7 +85,7 @@ public class VerInforme extends JFrame {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             try {
                 proyectos.valorarInforme(informe.id(), valoracion);
                 JOptionPane.showMessageDialog(this, "Valoración guardada correctamente");
@@ -107,28 +101,46 @@ public class VerInforme extends JFrame {
     }
 
     private void verArchivo() {
-        if (informe.archivoEntregable() == null) {
+        byte[] archivo = informe.archivoEntregable();
+
+        if (archivo == null || archivo.length == 0) {
             JOptionPane.showMessageDialog(this, "No hay archivo adjunto.");
             return;
         }
 
         try {
+            // Validar que el archivo parece ser un PDF (opcional pero útil)
+            if (!(archivo[0] == '%' && archivo[1] == 'P' && archivo[2] == 'D' && archivo[3] == 'F')) {
+                JOptionPane.showMessageDialog(this, "El archivo no parece ser un PDF válido.");
+                return;
+            }
+
             // Crear archivo temporal
             File tempFile = File.createTempFile("informe_", ".pdf");
             try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-                fos.write(informe.archivoEntregable());
+                fos.write(archivo);
             }
 
-            // Abrir el archivo con el visor predeterminado
-            Desktop.getDesktop().open(tempFile);
+            // Asegurar que el archivo tenga extensión .pdf y sea ejecutable
+            if (!Desktop.isDesktopSupported()) {
+                JOptionPane.showMessageDialog(this, "El visor de escritorio no es compatible.");
+                return;
+            }
 
-            // Programar la eliminación del archivo temporal cuando se cierre la aplicación
+            Desktop desktop = Desktop.getDesktop();
+            if (tempFile.exists()) {
+                desktop.open(tempFile);
+            } else {
+                JOptionPane.showMessageDialog(this, "El archivo no se pudo crear correctamente.");
+            }
+
             tempFile.deleteOnExit();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error al abrir el archivo: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void descargarArchivo() {
         if (informe.archivoEntregable() == null) {
@@ -137,8 +149,10 @@ public class VerInforme extends JFrame {
         }
 
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setSelectedFile(new File("informe_" + informe.id() + ".pdf"));
-        
+        // En vez de usar el ID, generamos un nombre genérico o con la fecha
+        String nombreBase = "informe_" + informe.fechaEntrega().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".pdf";
+        fileChooser.setSelectedFile(new File(nombreBase));
+
         if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -150,4 +164,4 @@ public class VerInforme extends JFrame {
             }
         }
     }
-} 
+}

@@ -15,12 +15,13 @@ public class PlanDeTrabajo {
     private boolean aprobado;
 
     public PlanDeTrabajo(int proyectoAsignado, LocalDate fechaInicio, LocalDate fechaFin, List<Actividad> actividades, String recursos) {
-        if (fechaInicio.isAfter(fechaFin))
-            throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio");
-
         if (esFechaNula(fechaInicio) || esFechaNula(fechaFin)) {
             throw new RuntimeException("Las fechas de inicio y fin no pueden ser nulas");
         }
+
+        if (fechaInicio.isAfter(fechaFin))
+            throw new RuntimeException("La fecha de fin no puede ser antes de la fecha de inicio");
+
 
         if (actividades == null || actividades.isEmpty()) {
             throw new RuntimeException("Debe haber al menos una actividad en el plan de trabajo");
@@ -48,12 +49,6 @@ public class PlanDeTrabajo {
 
     public void setActividades(List<Actividad> actividades) {
         this.actividades = actividades;
-    }
-
-    public double calcularProgreso() {
-        if (actividades == null || actividades.isEmpty()) return 0.0;
-        long realizadas = actividades.stream().filter(Actividad::finalizado).count();
-        return ((double) realizadas / actividades.size()) * 100;
     }
 
     public void aprobar() {
@@ -102,6 +97,16 @@ public class PlanDeTrabajo {
 
     private boolean esFechaNula(LocalDate dato) {
         return dato == null;
+    }
+
+    public int porcentajeDeFinalizado() {
+        //Contamos las actividades finalizadas
+        long finalizadas = actividades.stream()
+                .filter(Actividad::finalizado)
+                .count();
+
+        //Calculamos el porcentaje y lo devolvemos como entero (0-100)
+        return (int) ((finalizadas * 100.0) / actividades.size());
     }
 
 

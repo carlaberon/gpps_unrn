@@ -71,9 +71,7 @@ public class VerProyectoInformes extends JFrame {
         lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
         panelActividadesTop.add(lblActividades, BorderLayout.WEST);
 
-        int totalActividades = actividades.size();
-        long finalizadas = actividades.stream().filter(Actividad::finalizado).count();
-        int porcentaje = totalActividades == 0 ? 0 : (int) ((finalizadas * 100.0) / totalActividades);
+        int porcentaje = plan.porcentajeDeFinalizado();
 
         JProgressBar barraProgreso = new JProgressBar(0, 100);
         barraProgreso.setValue(porcentaje);
@@ -82,7 +80,7 @@ public class VerProyectoInformes extends JFrame {
         panelActividadesTop.add(barraProgreso, BorderLayout.EAST);
 
         // Tabla de actividades con columna para ver informes
-        String[] columnas = {"ID", "Descripción", "Estado", "Ver Informe"};
+        String[] columnas = {"ID", "Descripción", "Finalizado", "Ver Informe"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -104,7 +102,7 @@ public class VerProyectoInformes extends JFrame {
             modelo.addRow(new Object[]{
                     actividad.getIdActividad(),
                     actividad.descripcion(),
-                    actividad.finalizado() ? "Finalizada" : "En progreso",
+                    actividad.finalizado() ? "Si" : "No",
                     celdaInforme
             });
         }
@@ -170,10 +168,12 @@ public class VerProyectoInformes extends JFrame {
                     Informe informe = gestorDeProyectos.obtenerInforme(act.getIdInforme());
                     if (informe != null) {
                         Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                        new VerInforme(proyectos, informe).setVisible(true);
+                        new VerInformeTutor(proyectos, informe).setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(button, "No se encontró el informe asociado.");
                     }
+                } else {
+                    JOptionPane.showMessageDialog(button, "Esta actividad no tiene informe.");
                 }
             });
         }
@@ -191,3 +191,4 @@ public class VerProyectoInformes extends JFrame {
         }
     }
 }
+

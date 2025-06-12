@@ -1,5 +1,10 @@
 package ui;
 
+import model.Administrador;
+import model.EntidadColaboradora;
+import model.GestorDeConvenios;
+import model.Proyecto;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,19 +14,16 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import model.*;
-
 public class GenerarConvenio extends JFrame {
 
+    private final Administrador admin;
+    private final GestorDeConvenios gestorDeConvenios;
     private JComboBox<EntidadColaboradora> comboEntidades;
     private JComboBox<Proyecto> comboProyectos;
     private JTextArea txtDescripcion;
     private JSpinner spinnerFechaInicio;
     private JSpinner spinnerFechaFin;
     private JButton btnGenerar;
-
-    private final Administrador admin;
-    private final GestorDeConvenios gestorDeConvenios;
 
     public GenerarConvenio(Administrador admin, GestorDeConvenios gestorDeConvenios) {
         this.admin = admin;
@@ -30,7 +32,7 @@ public class GenerarConvenio extends JFrame {
         setTitle("Generar Convenio");
         setSize(500, 400);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         comboEntidades = new JComboBox<>();
         comboProyectos = new JComboBox<>();
@@ -72,7 +74,7 @@ public class GenerarConvenio extends JFrame {
         add(panel);
 
         btnGenerar.addActionListener(this::generarConvenio);
-        
+
     }
 
     private void cargarEntidades() {
@@ -96,7 +98,7 @@ public class GenerarConvenio extends JFrame {
             mostrarError("Error al cargar proyectos: " + e.getMessage());
         }
     }
-    
+
     private void generarConvenio(ActionEvent event) {
         try {
             EntidadColaboradora entidad = (EntidadColaboradora) comboEntidades.getSelectedItem();

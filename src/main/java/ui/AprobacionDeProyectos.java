@@ -85,7 +85,7 @@ public class AprobacionDeProyectos extends JFrame {
                         JOptionPane.YES_NO_OPTION
                 );
                 if (confirm == JOptionPane.YES_OPTION) {
-                    gestorDeProyectos.aprobarPlanDeTrabajo(id);
+                    gestorDeProyectos.aprobarProyecto(id);
                     modelo.removeRow(fila);
                     JOptionPane.showMessageDialog(this, "Proyecto aprobado correctamente.");
                 }
@@ -125,6 +125,7 @@ public class AprobacionDeProyectos extends JFrame {
                             gestorDeProyectos.notificarComentarioDenegacion(comentario);
                             modelo.removeRow(fila);
                             comentarioFrame.dispose();
+                            gestorDeProyectos.denegarProyecto(id);
                             JOptionPane.showMessageDialog(this, "Proyecto denegado con comentario: " + comentario);
                         } else {
                             JOptionPane.showMessageDialog(comentarioFrame, "Debe ingresar un comentario.");

@@ -24,7 +24,7 @@ public class VentanaLogin extends JFrame {
         this.gestorDeConvenios = gestorDeConvenios;
 
         setTitle("Iniciar Sesión");
-        setSize(400, 280);
+        setSize(400, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
@@ -39,37 +39,77 @@ public class VentanaLogin extends JFrame {
         txtContrasena = new JPasswordField();
         chkVerContrasena = new JCheckBox("Ver contraseña");
         btnIniciarSesion = new JButton("Iniciar Sesión");
+
+        Dimension campoPequeno = new Dimension(150, 25);
+        txtUsuario.setPreferredSize(campoPequeno);
+        txtContrasena.setPreferredSize(campoPequeno);
+        btnIniciarSesion.setPreferredSize(new Dimension(120, 25));
+
         chkVerContrasena.addActionListener(e -> {
             txtContrasena.setEchoChar(chkVerContrasena.isSelected() ? (char) 0 : '\u2022');
         });
+
         getRootPane().setDefaultButton(btnIniciarSesion);
     }
 
     private void setupLayout() {
         setLayout(new BorderLayout());
-        JPanel panelTitulo = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel lblGPPS = new JLabel("GPPS");
-        lblGPPS.setFont(new Font("SansSerif", Font.BOLD, 36));
-        lblGPPS.setForeground(Color.RED);
 
+        // ---------- Panel superior con fondo gris ----------
+        JPanel panelTitulo = new JPanel();
+        panelTitulo.setBackground(Color.decode("#BFBFBF"));
+        panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
+        panelTitulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Logo centrado
+        JLabel lblLogo = new JLabel();
+        lblLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ImagenPanel panelImagen = new ImagenPanel("imagenes/UNRN-color.png");
+        panelTitulo.add(panelImagen);
+
+
+        // Título centrado
         JLabel lblDescripcion = new JLabel("Gestor de Práctica Profesional Supervisada");
-        lblDescripcion.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        lblDescripcion.setForeground(Color.BLACK);
+        lblDescripcion.setFont(new Font("SansSerif", Font.BOLD, 16));
+        lblDescripcion.setForeground(Color.WHITE);
+        lblDescripcion.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        panelTitulo.add(lblGPPS);
+        panelTitulo.add(lblLogo);
+        panelTitulo.add(Box.createVerticalStrut(20));
         panelTitulo.add(lblDescripcion);
 
-        JPanel panelFormulario = new JPanel(new GridLayout(4, 2, 10, 10));
-        panelFormulario.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        panelFormulario.add(new JLabel("Usuario:"));
-        panelFormulario.add(txtUsuario);
-        panelFormulario.add(new JLabel("Contraseña:"));
-        panelFormulario.add(txtContrasena);
-        panelFormulario.add(new JLabel());
-        panelFormulario.add(chkVerContrasena);
-        panelFormulario.add(new JLabel());
-        panelFormulario.add(btnIniciarSesion);
+        // ---------- Panel formulario ----------
+        JPanel panelFormulario = new JPanel(new GridBagLayout());
+        panelFormulario.setBackground(Color.decode("#BFBFBF"));
+        panelFormulario.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panelFormulario.add(new JLabel("Usuario:"), gbc);
+        gbc.gridx = 1;
+        panelFormulario.add(txtUsuario, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panelFormulario.add(new JLabel("Contraseña:"), gbc);
+        gbc.gridx = 1;
+        panelFormulario.add(txtContrasena, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        chkVerContrasena.setOpaque(true);
+        chkVerContrasena.setBackground(Color.decode("#BFBFBF"));
+        panelFormulario.add(chkVerContrasena, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        panelFormulario.add(btnIniciarSesion, gbc);
+
+        // ---------- Ensamblar ventana ----------
         add(panelTitulo, BorderLayout.NORTH);
         add(panelFormulario, BorderLayout.CENTER);
     }
@@ -90,22 +130,18 @@ public class VentanaLogin extends JFrame {
 
                 if (user instanceof Administrador admin) {
                     new VentanaPrincipal(gestorDeUsuarios, gestorDeProyectos, admin, gestorDeConvenios).setVisible(true);
-
                 } else if (user instanceof Estudiante estudiante) {
                     Integer idProyecto = gestorDeUsuarios.obtenerIdProyectoEstudiante(estudiante.getId());
 
-                    if (idProyecto == null) {
+                    if (idProyecto == null || !gestorDeProyectos.existeConvenio(estudiante.getId(), idProyecto)) {
                         new SeleccionarProyecto(gestorDeProyectos, estudiante.getId()).setVisible(true);
                     } else {
                         new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
                     }
-
                 } else if (user instanceof Director) {
-                    new AprobacionDeProyectos(gestorDeProyectos).setVisible(true);
-
+                    new MenuPrincipalDirector(gestorDeProyectos).setVisible(true);
                 } else if (user instanceof Tutor tutor) {
                     new ProyectosACargo(gestorDeProyectos, tutor.getId()).setVisible(true);
-
                 } else {
                     JOptionPane.showMessageDialog(this, "Tipo de usuario desconocido.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -123,3 +159,4 @@ public class VentanaLogin extends JFrame {
         });
     }
 }
+

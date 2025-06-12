@@ -6,19 +6,20 @@ public class Proyecto {
     private String descripcion;
     private Boolean estado;
     private String areaDeInteres;
-    private Tutor tutor;
-    private Tutor docenteSupervisor;
+    private Tutor tutorExterno;
+    private Tutor tutorInterno;
     private String ubicacion;
+    private String estado_Proyecto;
 
     public Proyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
-                    Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
+                    Tutor tutorExterno, Tutor tutorInterno, String ubicacion) {
         this.id_proyecto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.estado = estado;
         this.areaDeInteres = areaDeInteres;
-        this.tutor = tutor;
-        this.docenteSupervisor = docenteSupervisor;
+        this.tutorExterno = tutorExterno;
+        this.tutorInterno = tutorInterno;
         this.ubicacion = ubicacion;
     }
 
@@ -32,7 +33,7 @@ public class Proyecto {
         return nombre != null && !nombre.isEmpty()
                 && descripcion != null && !descripcion.isEmpty()
                 && areaDeInteres != null && !areaDeInteres.isEmpty()
-                && tutor != null && docenteSupervisor != null;
+                && tutorExterno != null && tutorInterno != null;
     }
 
     public int getId() {
@@ -65,12 +66,12 @@ public class Proyecto {
         return estado;
     }
 
-    public Tutor getDocenteSupervisor() {
-        return docenteSupervisor;
+    public Tutor tutorInterno() {
+        return tutorInterno;
     }
 
-    public Tutor getTutor() {
-        return tutor;
+    public Tutor tutorExterno() {
+        return tutorExterno;
     }
 
     public String getUbicacion() {
@@ -78,15 +79,23 @@ public class Proyecto {
     }
 
     public int getIdUsuarioTutorInterno() {
-        return tutor.getId();
+        return tutorInterno.getId();
     }
 
     public int getIdUsuarioTutorExterno() {
-        return docenteSupervisor.getId();
+        return tutorExterno.getId();
     }
 
     @Override
     public String toString() {
         return nombre;
+    }
+
+    public String estadoProyecto() {
+        return estado_Proyecto;
+    }
+
+    public void setEstadoProyecto(String estado_Proyecto) {
+        this.estado_Proyecto = estado_Proyecto;
     }
 }

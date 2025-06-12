@@ -7,19 +7,15 @@ public interface GestorDeProyectos {
 
     void registrarPropuestaDeProyecto(Proyecto proyecto);
 
-    void guardar(Proyecto proyecto) throws SQLException;
+    int guardarProyecto(Proyecto proyecto, PlanDeTrabajo planDeTrabajo);
 
-    int guardarSinEstudiante(Proyecto proyecto) throws SQLException;
-
-    List<Proyecto> obtenerProyectos() throws SQLException;
+    List<Proyecto> obtenerProyectosAprobados() throws SQLException;
 
     List<Proyecto> listarProyectosRelacionados(int idUsuario);
 
     void registrarAsignacionTutorInterno(int idProyecto, int idTutorInterno);
 
-    void cargarPlanDeTrabajo(PlanDeTrabajo plan, int idProyecto);
-
-    void aprobarPlanDeTrabajo(int idPlan);
+    void aprobarProyecto(int idProyecto);
 
     void cargarInforme(Informe informeParcial);
 
@@ -41,4 +37,13 @@ public interface GestorDeProyectos {
 
     void valorarInforme(int idInforme, int valoracion);
 
+    void finalizarActividad(int idActividad);
+
+    List<Proyecto> obtenerProyectos();
+
+    void denegarProyecto(int idProyecto);
+
+    Estudiante obtenerEstudianteAsignado(int idProyecto);
+
+    boolean existeConvenio(int id, Integer idProyecto);
 }

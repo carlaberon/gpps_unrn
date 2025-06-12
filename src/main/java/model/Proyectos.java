@@ -22,14 +22,8 @@ public class Proyectos {
         this.servicioDeNotificaciones = servicioDeNotificaciones;
     }
 
-
-    public void guardarProyecto(Proyecto proyecto) throws SQLException {
-        //var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, estudiante, tutor, docenteSupervisor);
-        this.gestorDeProyectos.guardar(proyecto);
-    }
-
-    public int guardarProyectoSinEstudiante(Proyecto proyecto) throws SQLException {
-        return this.gestorDeProyectos.guardarSinEstudiante(proyecto);
+    public int guardarProyectoSinEstudiante(Proyecto proyecto, PlanDeTrabajo planDeTrabajo) throws SQLException {
+        return this.gestorDeProyectos.guardarProyecto(proyecto, planDeTrabajo);
     }
 
     public void propuestaDeProyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
