@@ -27,6 +27,11 @@ public class CrearProyecto extends JFrame {
     /* ---------- datos en memoria ---------- */
     private PlanDeTrabajo planCreado;
 
+    // ---------- NUEVO: atributos para modo estudiante ----------
+    private boolean esPostulacion;
+    private int idEstudiante;
+
+    // Constructor normal (modo admin)
     public CrearProyecto(GestorDeUsuarios gUsuarios, GestorDeProyectos gProyectos) {
         this.gestorProyectos = gProyectos;
         this.gestorUsuarios = gUsuarios;
@@ -36,9 +41,22 @@ public class CrearProyecto extends JFrame {
         setupListeners();
     }
 
+    // Constructor nuevo para modo estudiante
+    public CrearProyecto(GestorDeUsuarios gUsuarios, GestorDeProyectos gProyectos, boolean esPostulacion, int idEstudiante) {
+        this.gestorProyectos = gProyectos;
+        this.gestorUsuarios = gUsuarios;
+        this.esPostulacion = esPostulacion;
+        this.idEstudiante = idEstudiante;
+
+        initComponents();
+        setupLayout();
+        loadData();
+        setupListeners();
+    }
+
     /* ---------------- init ---------------- */
     private void initComponents() {
-        setTitle("Formulario de Proyecto");
+        setTitle(esPostulacion ? "Postular Proyecto" : "Formulario de Proyecto");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 520);
         setLocationRelativeTo(null);
@@ -99,7 +117,7 @@ public class CrearProyecto extends JFrame {
         main.add(btnPanel, gbc);
 
         // Título personalizado
-        JLabel titulo = new JLabel("Crear Proyecto", SwingConstants.CENTER);
+        JLabel titulo = new JLabel(esPostulacion ? "Postular Proyecto" : "Crear Proyecto", SwingConstants.CENTER);
         titulo.setFont(new Font("SansSerif", Font.BOLD, 24)); // más grande
         titulo.setForeground(new Color(3, 1, 1));
         titulo.setOpaque(true);
@@ -191,8 +209,17 @@ public class CrearProyecto extends JFrame {
                 return;
             }
 
-            int idGenerado = proyectoDAO.guardarProyectoSinEstudiante(proyecto, planCreado);
-            mostrarAlerta("Éxito", "Proyecto creado con éxito.");
+            int idGenerado;
+
+            if (esPostulacion) {
+                // NUEVO: guardar con estudiante
+                proyectoDAO.guardarPostulacionDeProyecto(idEstudiante, proyecto, planCreado);
+                mostrarAlerta("Éxito", "Proyecto postulado con éxito.");
+            } else {
+                idGenerado = proyectoDAO.guardarProyectoSinEstudiante(proyecto, planCreado);
+                mostrarAlerta("Éxito", "Proyecto creado con éxito.");
+            }
+
             dispose();
 
         } catch (Exception ex) {

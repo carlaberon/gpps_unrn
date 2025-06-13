@@ -167,12 +167,143 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         }
     }
 
+    @Override
+    public void guardarPostulacionDeProyecto(int idEstudiante, Proyecto proyecto, PlanDeTrabajo planDeTrabajo) {
+        String sqlProyecto = "INSERT INTO proyectos (nombre, descripcion, area_de_interes, ubicacion, estado, id_usuario_tutor_interno, id_usuario_tutor_externo, estado_proyecto) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        String sqlPlan = "INSERT INTO planes (id_proyecto, cant_horas, fecha_inicio, fecha_fin, estado_aprobacion, recursos) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        String sqlActividad = "INSERT INTO actividades (descripcion, fecha_inicio, horas, estado, requiere_informe, id_plan, id_informe) " +
+                "VALUES (?, ?, ?, ?, ?, ?, NULL)";
+
+        String sqlActualizarEstudiante = "UPDATE estudiantes SET id_proyecto = ? WHERE id_usuario = ?";
+
+        try (Connection conn = Conn.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (
+                    PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto, Statement.RETURN_GENERATED_KEYS)
+            ) {
+                // 1. Insertar proyecto con estado_proyecto = 'Postulación'
+                stmtProyecto.setString(1, proyecto.getNombre());
+                stmtProyecto.setString(2, proyecto.getDescripcion());
+                stmtProyecto.setString(3, proyecto.getAreaDeInteres());
+                stmtProyecto.setString(4, proyecto.getUbicacion());
+                stmtProyecto.setBoolean(5, proyecto.getEstado());
+                stmtProyecto.setInt(6, proyecto.tutorInterno().getId());
+                stmtProyecto.setInt(7, proyecto.tutorExterno().getId());
+                stmtProyecto.setString(8, "Postulación");
+
+                int filasProyecto = stmtProyecto.executeUpdate();
+                if (filasProyecto == 0) {
+                    throw new RuntimeException("No se pudo insertar el proyecto.");
+                }
+
+                int idProyecto;
+                try (ResultSet keys = stmtProyecto.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        idProyecto = keys.getInt(1);
+                    } else {
+                        throw new RuntimeException("No se pudo obtener el ID del proyecto insertado.");
+                    }
+                }
+
+                // 2. Actualizar tabla estudiantes
+                try (PreparedStatement stmtEstudiante = conn.prepareStatement(sqlActualizarEstudiante)) {
+                    stmtEstudiante.setInt(1, idProyecto);
+                    stmtEstudiante.setInt(2, idEstudiante);
+                    int filasEstudiante = stmtEstudiante.executeUpdate();
+                    if (filasEstudiante == 0) {
+                        throw new RuntimeException("No se pudo actualizar el estudiante con el proyecto.");
+                    }
+                }
+
+                // 3. Insertar plan de trabajo
+                int idPlan;
+                try (PreparedStatement stmtPlan = conn.prepareStatement(sqlPlan, Statement.RETURN_GENERATED_KEYS)) {
+                    stmtPlan.setInt(1, idProyecto);
+                    stmtPlan.setInt(2, planDeTrabajo.cantHoras());
+
+                    if (planDeTrabajo.fechaInicio() != null) {
+                        stmtPlan.setDate(3, java.sql.Date.valueOf(planDeTrabajo.fechaInicio()));
+                    } else {
+                        stmtPlan.setNull(3, java.sql.Types.DATE);
+                    }
+
+                    if (planDeTrabajo.fechaFin() != null) {
+                        stmtPlan.setDate(4, java.sql.Date.valueOf(planDeTrabajo.fechaFin()));
+                    } else {
+                        stmtPlan.setNull(4, java.sql.Types.DATE);
+                    }
+
+                    stmtPlan.setBoolean(5, false); // estado_aprobacion por defecto
+                    stmtPlan.setString(6, planDeTrabajo.recursos());
+
+                    int filasPlan = stmtPlan.executeUpdate();
+                    if (filasPlan == 0) {
+                        throw new RuntimeException("No se pudo insertar el plan de trabajo.");
+                    }
+
+                    try (ResultSet planKeys = stmtPlan.getGeneratedKeys()) {
+                        if (planKeys.next()) {
+                            idPlan = planKeys.getInt(1);
+                        } else {
+                            throw new RuntimeException("No se pudo obtener el ID del plan insertado.");
+                        }
+                    }
+                }
+
+                // 4. Insertar actividades
+                try (PreparedStatement stmtActividad = conn.prepareStatement(sqlActividad)) {
+                    for (Actividad actividad : planDeTrabajo.actividades()) {
+                        stmtActividad.setString(1, actividad.descripcion());
+                        stmtActividad.setDate(2, java.sql.Date.valueOf(actividad.fechaInicio()));
+                        stmtActividad.setInt(3, actividad.horas());
+                        stmtActividad.setBoolean(4, actividad.isEstado());
+                        stmtActividad.setBoolean(5, actividad.requiereInforme());
+                        stmtActividad.setInt(6, idPlan);
+
+                        int insertAct = stmtActividad.executeUpdate();
+                        if (insertAct == 0) {
+                            throw new RuntimeException("No se pudo insertar una actividad.");
+                        }
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    throw new RuntimeException("Error al revertir la transacción: " + rollbackEx.getMessage(), rollbackEx);
+                }
+                throw new RuntimeException("Error al guardar postulación: " + e.getMessage(), e);
+            } finally {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    throw new RuntimeException("No se pudo restaurar autoCommit", e);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error de conexión o transacción: " + e.getMessage(), e);
+        }
+    }
+
 
     @Override
     public void aprobarProyecto(int idProyecto) {
         String sqlPlan = "UPDATE planes SET estado_aprobacion = 1 WHERE id_proyecto = ?";
         String sqlProyecto = "UPDATE proyectos SET estado = 1 WHERE id_proyecto = " +
                 "?";
+        String sqlProyecto1 = "UPDATE proyectos SET estado_proyecto = 'INACTIVO' WHERE id_proyecto = " +
+                "?";
+
+
+        Estudiante existeEstudiante = obtenerEstudianteAsignado(idProyecto);
 
         try (Connection conn = Conn.getConnection()) {
 
@@ -184,6 +315,11 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
             // Actualiza el estado del proyecto relacionado
             try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto)) {
+                stmtProyecto.setInt(1, idProyecto);
+                stmtProyecto.executeUpdate();
+            }
+            // Actualiza el estado_proyecto del proyecto relacionado
+            try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto1)) {
                 stmtProyecto.setInt(1, idProyecto);
                 stmtProyecto.executeUpdate();
             }
@@ -509,7 +645,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             ResultSet rs = checkStmt.executeQuery();
 
             if (rs.next()) {
-                throw new SQLException("El estudiante ya tiene un proyecto asignado.");
+                throw new SQLException("Ya has elegido o postulado un proyecto");
             }
         }
 
@@ -522,7 +658,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         // Actualizar el estado del proyecto a "EN CURSO"
         String updateProyectoEstadoSql =
                 "UPDATE proyectos " +
-                        "SET estado_proyecto = 'EN CURSO' " +
+                        "SET estado_proyecto = 'INACTIVO' " +
                         "WHERE id_proyecto = ?";
 
         try (Connection conn = Conn.getConnection()) {
@@ -692,20 +828,39 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
     @Override
     public void denegarProyecto(int idProyecto) {
+        String sqlDenegar = "UPDATE proyectos SET estado_proyecto = 'DENEGADO' WHERE id_proyecto = ?";
+        String sqlBuscarEstudiante = "SELECT id_usuario FROM estudiantes WHERE id_proyecto = ?";
+        String sqlLimpiarProyecto = "UPDATE estudiantes SET id_proyecto = NULL WHERE id_proyecto = ?";
 
-        String sql = "UPDATE proyectos SET estado_proyecto = 'DENEGADO' WHERE id_proyecto = ?";
+        try (Connection conn = Conn.getConnection()) {
+            // 1. Denegar proyecto
+            try (PreparedStatement stmt = conn.prepareStatement(sqlDenegar)) {
+                stmt.setInt(1, idProyecto);
+                stmt.executeUpdate();
+            }
 
-        try (Connection conn = Conn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // 2. Verificar si hay estudiante asignado
+            boolean hayEstudiante;
+            try (PreparedStatement stmt = conn.prepareStatement(sqlBuscarEstudiante)) {
+                stmt.setInt(1, idProyecto);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    hayEstudiante = rs.next(); // hay al menos un estudiante
+                }
+            }
 
-            stmt.setInt(1, idProyecto);
-            stmt.executeUpdate();
+            // 3. Si lo hay, setear id_proyecto en NULL
+            if (hayEstudiante) {
+                try (PreparedStatement stmt = conn.prepareStatement(sqlLimpiarProyecto)) {
+                    stmt.setInt(1, idProyecto);
+                    stmt.executeUpdate();
+                }
+            }
 
         } catch (SQLException ex) {
-            throw new RuntimeException("Error al denegar proyecto");
+            throw new RuntimeException("Error al denegar proyecto y limpiar asignación de estudiante", ex);
         }
-
     }
+
 
     @Override
     public Estudiante obtenerEstudianteAsignado(int idProyecto) {

@@ -26,6 +26,11 @@ public class Proyectos {
         return this.gestorDeProyectos.guardarProyecto(proyecto, planDeTrabajo);
     }
 
+    public void guardarPostulacionDeProyecto(int idEstudiante, Proyecto proyecto, PlanDeTrabajo planDeTrabajo) {
+        this.gestorDeProyectos.guardarPostulacionDeProyecto(idEstudiante, proyecto, planDeTrabajo);
+    }
+
+
     public void propuestaDeProyecto(int id, String nombre, String descripcion, Boolean estado, String areaDeInteres,
                                     Tutor tutor, Tutor docenteSupervisor, String ubicacion) {
 
