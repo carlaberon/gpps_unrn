@@ -16,6 +16,7 @@ public class ServicioDePersistenciaGestionConvenios implements GestorDeConvenios
         String sqlEstudiante = "SELECT id_usuario FROM estudiantes WHERE id_proyecto = " + convenio.getIdProyecto();
         String sqlInsert = "INSERT INTO convenios (id_proyecto, id_entidad, id_usuario, fecha_inicio, fecha_fin, descripcion, activo) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sqlProyecto = "UPDATE proyectos SET estado_proyecto = 'EN CURSO' WHERE id_proyecto = ?";
 
         try (Connection conn = Conn.getConnection();
              Statement stmtEst = conn.createStatement();
@@ -27,6 +28,7 @@ public class ServicioDePersistenciaGestionConvenios implements GestorDeConvenios
 
             int idUsuario = rs.getInt("id_usuario");
 
+            // Insertar el convenio
             try (PreparedStatement stmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setInt(1, convenio.getIdProyecto());
                 stmt.setInt(2, convenio.getIdEntidad());
@@ -45,6 +47,12 @@ public class ServicioDePersistenciaGestionConvenios implements GestorDeConvenios
                         throw new RuntimeException("No se pudo obtener el ID generado del convenio.");
                     }
                 }
+            }
+
+            // Actualizar estado del proyecto a 'EN CURSO'
+            try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto)) {
+                stmtProyecto.setInt(1, convenio.getIdProyecto());
+                stmtProyecto.executeUpdate();
             }
 
         } catch (SQLException e) {

@@ -658,7 +658,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         // Actualizar el estado del proyecto a "EN CURSO"
         String updateProyectoEstadoSql =
                 "UPDATE proyectos " +
-                        "SET estado_proyecto = 'EN CURSO' " +
+                        "SET estado_proyecto = 'INACTIVO' " +
                         "WHERE id_proyecto = ?";
 
         try (Connection conn = Conn.getConnection()) {
