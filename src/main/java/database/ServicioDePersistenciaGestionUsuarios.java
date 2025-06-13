@@ -27,12 +27,12 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                 estudiantes.add(new Estudiante(
                         rs.getInt("idUsuario"),
                         rs.getString("nombreUsuario"),
-                        "", // No obtenemos la contraseña por seguridad
+                        "",
                         rs.getString("nombre"),
                         rs.getString("email"),
                         null, rs.getString("legajo"),
                         rs.getBoolean("esRegular"),
-                        "" // No tenemos dirección en la nueva estructura
+                        ""
                         , 0
                 ));
             }
@@ -57,7 +57,7 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                 tutores.add(new Tutor(
                         rs.getInt("id_usuario"),
                         rs.getString("nombre_usuario"),
-                        "", // No obtenemos la contraseña por seguridad
+                        "",
                         rs.getString("nombre"),
                         rs.getString("email"),
                         null,
@@ -136,7 +136,6 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
 
     @Override
     public List<Director> obtenerTodosDirector() {
-        //completar
         return List.of();
     }
 }

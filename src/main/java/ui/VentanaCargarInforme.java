@@ -127,7 +127,7 @@ public class VentanaCargarInforme extends JFrame {
                 onInformeCargado.accept(null);
             }
 
-            dispose(); // Cerrar la ventana después de cargar exitosamente
+            dispose();
 
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error al leer el archivo.");

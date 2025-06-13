@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-//el import...dependencia
 
 public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos {
 
@@ -60,7 +59,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
         String sqlActividad = "INSERT INTO actividades (descripcion, fecha_inicio, horas, estado, requiere_informe, id_plan, id_informe) " +
-                "VALUES (?, ?, ?, ?, ?, ?, NULL)"; // id_informe se deja como NULL inicialmente
+                "VALUES (?, ?, ?, ?, ?, ?, NULL)";
 
         try (Connection conn = Conn.getConnection()) {
             conn.setAutoCommit(false);
@@ -68,7 +67,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             try (
                     PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto, Statement.RETURN_GENERATED_KEYS);
             ) {
-                // 1. Insertar proyecto
+
                 stmtProyecto.setString(1, proyecto.getNombre());
                 stmtProyecto.setString(2, proyecto.getDescripcion());
                 stmtProyecto.setString(3, proyecto.getAreaDeInteres());
@@ -92,7 +91,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     }
                 }
 
-                // 2. Insertar plan de trabajo
                 int idPlan;
                 try (PreparedStatement stmtPlan = conn.prepareStatement(sqlPlan, Statement.RETURN_GENERATED_KEYS)) {
                     stmtPlan.setInt(1, idProyecto);
@@ -110,7 +108,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         stmtPlan.setNull(4, java.sql.Types.DATE);
                     }
 
-                    stmtPlan.setBoolean(5, false); // estado_aprobacion por defecto
+                    stmtPlan.setBoolean(5, false);
                     stmtPlan.setString(6, planDeTrabajo.recursos());
 
                     affectedRows = stmtPlan.executeUpdate();
@@ -127,7 +125,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     }
                 }
 
-                // 3. Insertar actividades
                 try (PreparedStatement stmtActividad = conn.prepareStatement(sqlActividad)) {
                     for (Actividad actividad : planDeTrabajo.actividades()) {
                         stmtActividad.setString(1, actividad.descripcion());
@@ -144,7 +141,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     }
                 }
 
-                conn.commit();  // Confirmar todo
+                conn.commit();
                 return idProyecto;
 
             } catch (SQLException e) {
@@ -186,7 +183,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             try (
                     PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto, Statement.RETURN_GENERATED_KEYS)
             ) {
-                // 1. Insertar proyecto con estado_proyecto = 'Postulación'
+
                 stmtProyecto.setString(1, proyecto.getNombre());
                 stmtProyecto.setString(2, proyecto.getDescripcion());
                 stmtProyecto.setString(3, proyecto.getAreaDeInteres());
@@ -210,7 +207,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     }
                 }
 
-                // 2. Actualizar tabla estudiantes
                 try (PreparedStatement stmtEstudiante = conn.prepareStatement(sqlActualizarEstudiante)) {
                     stmtEstudiante.setInt(1, idProyecto);
                     stmtEstudiante.setInt(2, idEstudiante);
@@ -220,7 +216,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     }
                 }
 
-                // 3. Insertar plan de trabajo
                 int idPlan;
                 try (PreparedStatement stmtPlan = conn.prepareStatement(sqlPlan, Statement.RETURN_GENERATED_KEYS)) {
                     stmtPlan.setInt(1, idProyecto);
@@ -238,7 +233,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         stmtPlan.setNull(4, java.sql.Types.DATE);
                     }
 
-                    stmtPlan.setBoolean(5, false); // estado_aprobacion por defecto
+                    stmtPlan.setBoolean(5, false);
                     stmtPlan.setString(6, planDeTrabajo.recursos());
 
                     int filasPlan = stmtPlan.executeUpdate();
@@ -255,7 +250,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     }
                 }
 
-                // 4. Insertar actividades
                 try (PreparedStatement stmtActividad = conn.prepareStatement(sqlActividad)) {
                     for (Actividad actividad : planDeTrabajo.actividades()) {
                         stmtActividad.setString(1, actividad.descripcion());
@@ -307,18 +301,17 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
 
         try (Connection conn = Conn.getConnection()) {
 
-            // Actualiza el estado del plan
+
             try (PreparedStatement stmtPlan = conn.prepareStatement(sqlPlan)) {
                 stmtPlan.setInt(1, idProyecto);
                 stmtPlan.executeUpdate();
             }
 
-            // Actualiza el estado del proyecto relacionado
             try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto)) {
                 stmtProyecto.setInt(1, idProyecto);
                 stmtProyecto.executeUpdate();
             }
-            // Actualiza el estado_proyecto del proyecto relacionado
+
             try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto1)) {
                 stmtProyecto.setInt(1, idProyecto);
                 stmtProyecto.executeUpdate();
@@ -350,7 +343,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         rs.getString("area_de_interes"),
                         null, // tutor
                         null, // docenteSupervisor
-                        rs.getString("ubicacion")  // tutor externo (igual)
+                        rs.getString("ubicacion")
                 );
                 proyectos.add(proyecto);
             }
@@ -401,7 +394,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         try (Connection conn = Conn.getConnection();
              PreparedStatement stmtInsert = conn.prepareStatement(sqlInsertInforme, Statement.RETURN_GENERATED_KEYS)) {
 
-            // Insertar informe
             stmtInsert.setString(1, informeParcial.descripcion());
             stmtInsert.setDate(2, Date.valueOf(informeParcial.fechaEntrega()));
             stmtInsert.setString(3, informeParcial.tipo());
@@ -410,16 +402,14 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             stmtInsert.setBytes(6, informeParcial.archivoEntregable());
             stmtInsert.executeUpdate();
 
-            // Obtener ID generado
             ResultSet generatedKeys = stmtInsert.getGeneratedKeys();
             if (generatedKeys.next()) {
                 int idInforme = generatedKeys.getInt(1);
 
-                // Actualizar según tipo
                 if ("PARCIAL".equalsIgnoreCase(informeParcial.tipo())) {
                     try (PreparedStatement stmtUpdateActividad = conn.prepareStatement(sqlUpdateActividad)) {
                         stmtUpdateActividad.setInt(1, idInforme);
-                        stmtUpdateActividad.setInt(2, informeParcial.id()); // idActividad
+                        stmtUpdateActividad.setInt(2, informeParcial.id());
                         stmtUpdateActividad.executeUpdate();
                     }
                 } else if ("FINAL".equalsIgnoreCase(informeParcial.tipo())) {
@@ -461,8 +451,8 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                             rs.getString("descripcion"),
                             rs.getBoolean("estado"),
                             rs.getString("area_de_interes"),
-                            null, // estudiante aún no asignado
-                            null, // tutor interno
+                            null,
+                            null,
                             rs.getString("ubicacion")  // tutor externo
                     );
                     proyecto.setEstadoProyecto(rs.getString("estado_proyecto"));
@@ -520,7 +510,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         }
                     }
 
-                    // Crear el plan con las actividades
                     plan = new PlanDeTrabajo(idProyecto, fechaInicio, fechaFin, actividades, recursos);
                 }
             }
@@ -552,7 +541,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         rs.getInt("id_proyecto"),
                         rs.getString("nombre"),
                         rs.getString("descripcion"),
-                        rs.getBoolean("estado"), // será false porque estado = 0
+                        rs.getBoolean("estado"),
                         null, null, null, null
                 );
                 proyectos.add(resumen);
@@ -649,13 +638,11 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             }
         }
 
-        // Asignar el estudiante al proyecto
         String updateEstudianteSql =
                 "UPDATE estudiantes " +
                         "SET id_proyecto = ? " +
                         "WHERE id_usuario = ?";
 
-        // Actualizar el estado del proyecto a "EN CURSO"
         String updateProyectoEstadoSql =
                 "UPDATE proyectos " +
                         "SET estado_proyecto = 'INACTIVO' " +
@@ -668,12 +655,11 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                     PreparedStatement stmt1 = conn.prepareStatement(updateEstudianteSql);
                     PreparedStatement stmt2 = conn.prepareStatement(updateProyectoEstadoSql)
             ) {
-                // Actualizar estudiante
+
                 stmt1.setInt(1, idProyecto);
                 stmt1.setInt(2, idEstudiante);
                 int rows1 = stmt1.executeUpdate();
 
-                // Actualizar proyecto
                 stmt2.setInt(1, idProyecto);
                 int rows2 = stmt2.executeUpdate();
 
@@ -711,7 +697,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                             rs.getString("tipo"),
                             rs.getBytes("archivo")
                     );
-                    // Establecer los valores adicionales
+
                     informe.setValoracionInforme(rs.getInt("valoracionInforme"));
                     return informe;
                 }
@@ -730,7 +716,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         String sqlFinalizarProyecto = "UPDATE proyectos SET estado_proyecto = 'FINALIZADO' WHERE id_informe_final = ?";
 
         try (Connection conn = Conn.getConnection()) {
-            // Obtener el tipo del informe
             String tipoInforme = null;
             try (PreparedStatement stmtTipo = conn.prepareStatement(sqlTipo)) {
                 stmtTipo.setInt(1, idInforme);
@@ -743,7 +728,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 }
             }
 
-            // Actualizar la valoración del informe
             try (PreparedStatement stmtValoracion = conn.prepareStatement(sqlValoracion)) {
                 stmtValoracion.setInt(1, valoracion);
                 stmtValoracion.setInt(2, idInforme);
@@ -754,7 +738,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 }
             }
 
-            // Actualizar según el tipo
             if ("PARCIAL".equalsIgnoreCase(tipoInforme)) {
                 try (PreparedStatement stmtActividad = conn.prepareStatement(sqlUpdateActividad)) {
                     stmtActividad.setInt(1, idInforme);
@@ -810,7 +793,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                         rs.getInt("p.id_proyecto"),
                         rs.getString("p.nombre"),
                         rs.getString("p.descripcion"),
-                        rs.getBoolean("p.estado"), // será false porque estado = 0
+                        rs.getBoolean("p.estado"),
                         rs.getString("p.area_de_interes"),
                         new Tutor(rs.getInt("id_usuario_tutor_externo"), null, null, rs.getString("nombre_tutor_externo"), null, null, null),
                         new Tutor(rs.getInt("id_usuario_tutor_interno"), null, null, rs.getString("nombre_tutor_interno"), null, null, null), rs.getString("ubicacion")
@@ -833,13 +816,11 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         String sqlLimpiarProyecto = "UPDATE estudiantes SET id_proyecto = NULL WHERE id_proyecto = ?";
 
         try (Connection conn = Conn.getConnection()) {
-            // 1. Denegar proyecto
             try (PreparedStatement stmt = conn.prepareStatement(sqlDenegar)) {
                 stmt.setInt(1, idProyecto);
                 stmt.executeUpdate();
             }
 
-            // 2. Verificar si hay estudiante asignado
             boolean hayEstudiante;
             try (PreparedStatement stmt = conn.prepareStatement(sqlBuscarEstudiante)) {
                 stmt.setInt(1, idProyecto);
@@ -848,7 +829,6 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 }
             }
 
-            // 3. Si lo hay, setear id_proyecto en NULL
             if (hayEstudiante) {
                 try (PreparedStatement stmt = conn.prepareStatement(sqlLimpiarProyecto)) {
                     stmt.setInt(1, idProyecto);
@@ -881,16 +861,16 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     estudiante = new Estudiante(
-                            rs.getInt("id_usuario"),        // id
-                            rs.getString("nombre_usuario"),    // nombreUsuario
-                            rs.getString("contrasenia"),       // contrasenia
-                            rs.getString("nombre"),            // nombre completo
-                            rs.getString("email"),             // email
-                            null,                    // rol
-                            rs.getString("legajo"),            // legajo
-                            rs.getBoolean("es_regular"),       // regular
-                            null,  // dirección postal
-                            rs.getInt("id_proyecto")           // id_proyecto
+                            rs.getInt("id_usuario"),
+                            rs.getString("nombre_usuario"),
+                            rs.getString("contrasenia"),
+                            rs.getString("nombre"),
+                            rs.getString("email"),
+                            null,
+                            rs.getString("legajo"),
+                            rs.getBoolean("es_regular"),
+                            null,
+                            rs.getInt("id_proyecto")
                     );
                 }
             }
@@ -899,7 +879,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             throw new RuntimeException("Problema de con busqueda de estudiante del proyecto");
         }
 
-        return estudiante; // null si no existe estudiante para el proyecto
+        return estudiante;
     }
 
     @Override
@@ -910,7 +890,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
-            return rs.next(); // Retorna true si encuentra al menos una tupla
+            return rs.next();
         } catch (SQLException e) {
             throw new RuntimeException("Error al consultar existencia del convenio", e);
         }
@@ -928,7 +908,7 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     int idInformeFinal = rs.getInt("id_informe_final");
-                    return !rs.wasNull(); // true si hay informe final, false si está en NULL
+                    return !rs.wasNull();
                 }
             }
         } catch (SQLException e) {
@@ -962,10 +942,10 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Podrías loguear o lanzar una excepción personalizada
+            e.printStackTrace();
         }
 
-        return null; // No se encontró informe asociado
+        return null;
     }
 
 

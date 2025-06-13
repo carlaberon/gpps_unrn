@@ -167,12 +167,12 @@ public class AprobacionDeProyectos extends JFrame {
         // Panel inferior con distribución personalizada
         JPanel panelInferior = new JPanel(new BorderLayout());
         panelInferior.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panelInferior.setBackground(new Color(0xBFBFBF)); // mismo color fondo
+        panelInferior.setBackground(new Color(0xBFBFBF));
 
         panelInferior.add(btnVer, BorderLayout.WEST);
 
         JPanel panelDerecha = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelDerecha.setBackground(new Color(0xBFBFBF)); // mismo color fondo
+        panelDerecha.setBackground(new Color(0xBFBFBF));
         panelDerecha.add(btnDenegar);
         panelDerecha.add(btnAprobar);
         panelInferior.add(panelDerecha, BorderLayout.EAST);

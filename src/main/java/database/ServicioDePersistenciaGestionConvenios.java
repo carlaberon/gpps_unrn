@@ -28,7 +28,6 @@ public class ServicioDePersistenciaGestionConvenios implements GestorDeConvenios
 
             int idUsuario = rs.getInt("id_usuario");
 
-            // Insertar el convenio
             try (PreparedStatement stmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setInt(1, convenio.getIdProyecto());
                 stmt.setInt(2, convenio.getIdEntidad());
@@ -49,7 +48,6 @@ public class ServicioDePersistenciaGestionConvenios implements GestorDeConvenios
                 }
             }
 
-            // Actualizar estado del proyecto a 'EN CURSO'
             try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto)) {
                 stmtProyecto.setInt(1, convenio.getIdProyecto());
                 stmtProyecto.executeUpdate();

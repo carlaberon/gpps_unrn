@@ -23,15 +23,10 @@ public class CrearProyecto extends JFrame {
     private JLabel lblPlanCreado;
     private Proyectos proyectoDAO;
     private Usuarios tutorDAO;
-
-    /* ---------- datos en memoria ---------- */
     private PlanDeTrabajo planCreado;
-
-    // ---------- NUEVO: atributos para modo estudiante ----------
     private boolean esPostulacion;
     private int idEstudiante;
 
-    // Constructor normal (modo admin)
     public CrearProyecto(GestorDeUsuarios gUsuarios, GestorDeProyectos gProyectos) {
         this.gestorProyectos = gProyectos;
         this.gestorUsuarios = gUsuarios;
@@ -41,7 +36,6 @@ public class CrearProyecto extends JFrame {
         setupListeners();
     }
 
-    // Constructor nuevo para modo estudiante
     public CrearProyecto(GestorDeUsuarios gUsuarios, GestorDeProyectos gProyectos, boolean esPostulacion, int idEstudiante) {
         this.gestorProyectos = gProyectos;
         this.gestorUsuarios = gUsuarios;

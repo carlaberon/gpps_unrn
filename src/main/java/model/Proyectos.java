@@ -36,7 +36,6 @@ public class Proyectos {
 
         var proyecto = new Proyecto(id, nombre, descripcion, estado, areaDeInteres, tutor, docenteSupervisor, ubicacion);
         this.gestorDeProyectos.registrarPropuestaDeProyecto(proyecto);
-        //registra el proyecto
     }
 
     public void asignarDocenteTutor(int idProyecto, int idTutorInterno) {

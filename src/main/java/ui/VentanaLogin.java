@@ -55,7 +55,7 @@ public class VentanaLogin extends JFrame {
     private void setupLayout() {
         setLayout(new BorderLayout());
 
-        // ---------- Panel superior con fondo gris ----------
+        /* ---------- Panel superior----------*/
         JPanel panelTitulo = new JPanel();
         panelTitulo.setBackground(Color.decode("#BFBFBF"));
         panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
@@ -78,7 +78,7 @@ public class VentanaLogin extends JFrame {
         panelTitulo.add(Box.createVerticalStrut(20));
         panelTitulo.add(lblDescripcion);
 
-        // ---------- Panel formulario ----------
+        /* ---------- Panel formulario ---------- */
         JPanel panelFormulario = new JPanel(new GridBagLayout());
         panelFormulario.setBackground(Color.decode("#BFBFBF"));
         panelFormulario.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -109,7 +109,6 @@ public class VentanaLogin extends JFrame {
         gbc.gridy = 3;
         panelFormulario.add(btnIniciarSesion, gbc);
 
-        // ---------- Ensamblar ventana ----------
         add(panelTitulo, BorderLayout.NORTH);
         add(panelFormulario, BorderLayout.CENTER);
     }

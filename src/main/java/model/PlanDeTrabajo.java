@@ -100,12 +100,10 @@ public class PlanDeTrabajo {
     }
 
     public int porcentajeDeFinalizado() {
-        //Contamos las actividades finalizadas
         long finalizadas = actividades.stream()
                 .filter(Actividad::finalizado)
                 .count();
 
-        //Calculamos el porcentaje y lo devolvemos como entero (0-100)
         return (int) ((finalizadas * 100.0) / actividades.size());
     }
 

@@ -123,7 +123,7 @@ public class VerInformeTutor extends JFrame {
                 if (listener != null) {
                     listener.informeValorado();
                 }
-                dispose(); // Cierra la ventana después de guardar
+                dispose();
             } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(this, "Error al guardar la valoración: " + ex.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);

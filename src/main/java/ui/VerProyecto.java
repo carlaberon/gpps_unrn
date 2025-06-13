@@ -186,7 +186,6 @@ public class VerProyecto extends JFrame {
         setVisible(true);
     }
 
-    /* ========= RENDERER ========= */
     static class BotonRenderer implements javax.swing.table.TableCellRenderer {
         private final JButton button = new JButton();
         private final JLabel dash = new JLabel("—", SwingConstants.CENTER);
@@ -210,7 +209,6 @@ public class VerProyecto extends JFrame {
         }
     }
 
-    /* ========= EDITOR ========= */
     static class BotonEditor extends DefaultCellEditor {
         private final JButton button;
         private final List<Actividad> actividades;
@@ -243,7 +241,6 @@ public class VerProyecto extends JFrame {
             Actividad act = actividades.get(currentRow);
             String accionActual = model.getValueAt(currentRow, 2).toString();
 
-            // Obtener la ventana padre
             Component parent = button.getParent();
             while (parent != null && !(parent instanceof JFrame)) {
                 parent = parent.getParent();
@@ -265,7 +262,6 @@ public class VerProyecto extends JFrame {
                         gestor.finalizarActividad(act.getIdActividad());
                         JOptionPane.showMessageDialog(parentFrame, "Actividad finalizada correctamente.");
 
-                        // Cerrar y reabrir la ventana principal
                         if (parentFrame != null) {
                             parentFrame.dispose();
                             new VerProyecto(gestor, idProyecto).setVisible(true);
@@ -277,7 +273,7 @@ public class VerProyecto extends JFrame {
             } else if (accionActual.equals("Cargar Informe")) {
                 Proyectos proyectos = new Proyectos(gestor);
                 new VentanaCargarInforme(proyectos, act, v -> {
-                    // Cerrar y reabrir la ventana principal
+
                     if (parentFrame != null) {
                         parentFrame.dispose();
                         new VerProyecto(gestor, idProyecto).setVisible(true);
