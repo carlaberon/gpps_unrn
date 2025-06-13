@@ -133,11 +133,12 @@ public class VentanaLogin extends JFrame {
                 } else if (user instanceof Estudiante estudiante) {
                     Integer idProyecto = gestorDeUsuarios.obtenerIdProyectoEstudiante(estudiante.getId());
 
-                    if (idProyecto == null || !gestorDeProyectos.existeConvenio(estudiante.getId(), idProyecto)) {
-                        new SeleccionarProyecto(gestorDeProyectos, estudiante.getId()).setVisible(true);
-                    } else {
+                    if (idProyecto == null)
+                        new MenuEstudiante(gestorDeUsuarios, gestorDeProyectos, estudiante.getId()).setVisible(true);
+                    else if (!gestorDeProyectos.existeConvenio(estudiante.getId(), idProyecto)) {
+                        throw new RuntimeException("Ya has postulado o seleccionado un proyecto. Espere la generacion del convenio!");
+                    } else
                         new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
-                    }
                 } else if (user instanceof Director) {
                     new MenuPrincipalDirector(gestorDeProyectos).setVisible(true);
                 } else if (user instanceof Tutor tutor) {
@@ -155,6 +156,9 @@ public class VentanaLogin extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
                 }
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+                dispose();
             }
         });
     }

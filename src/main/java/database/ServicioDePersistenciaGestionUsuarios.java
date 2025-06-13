@@ -111,10 +111,12 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
         }
     }
 
-    public Integer obtenerIdProyectoEstudiante(int idEstudiante) throws SQLException {
+    public Integer obtenerIdProyectoEstudiante(int idEstudiante) {
         String sql = "SELECT id_proyecto FROM estudiantes WHERE id_usuario = ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, idEstudiante);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -123,9 +125,14 @@ public class ServicioDePersistenciaGestionUsuarios implements GestorDeUsuarios {
                     return rs.wasNull() ? null : idProyecto;
                 }
             }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al obtener el ID del proyecto del estudiante", e);
         }
+
         return null;
     }
+
 
     @Override
     public List<Director> obtenerTodosDirector() {

@@ -9,6 +9,8 @@ public interface GestorDeProyectos {
 
     int guardarProyecto(Proyecto proyecto, PlanDeTrabajo planDeTrabajo);
 
+    void guardarPostulacionDeProyecto(int idEstudiante, Proyecto proyecto, PlanDeTrabajo planDeTrabajo);
+
     List<Proyecto> obtenerProyectosAprobados() throws SQLException;
 
     List<Proyecto> listarProyectosRelacionados(int idUsuario);
