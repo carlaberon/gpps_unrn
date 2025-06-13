@@ -136,7 +136,7 @@ public class VentanaLogin extends JFrame {
                     if (idProyecto == null)
                         new MenuEstudiante(gestorDeUsuarios, gestorDeProyectos, estudiante.getId()).setVisible(true);
                     else if (!gestorDeProyectos.existeConvenio(estudiante.getId(), idProyecto)) {
-                        throw new RuntimeException("Ya has postulado o seleccionado un proyecto. Espere la generacion del convenio!");
+                        throw new RuntimeException("Ya has postulado o seleccionado un proyecto. Espere la generacion del convenio.");
                     } else
                         new VerProyecto(gestorDeProyectos, idProyecto).setVisible(true);
                 } else if (user instanceof Director) {
@@ -157,7 +157,7 @@ public class VentanaLogin extends JFrame {
                     JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (RuntimeException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Aviso", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
             }
         });
