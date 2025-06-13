@@ -14,10 +14,12 @@ public class VerInformeTutor extends JFrame {
     private final Informe informe;
     private final Proyectos proyectos;
     private JTextField txtValoracion;
+    private InformeValoradoListener listener;
 
-    public VerInformeTutor(Proyectos proyectos, Informe informe) {
+    public VerInformeTutor(Proyectos proyectos, Informe informe, InformeValoradoListener listener) {
         this.proyectos = proyectos;
         this.informe = informe;
+        this.listener = listener;
 
         setTitle("Detalles del Informe");
         setSize(600, 450);
@@ -25,30 +27,50 @@ public class VerInformeTutor extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+        Color fondo = Color.decode("#BFBFBF");
+        Font fuenteNegrita = new Font("SansSerif", Font.BOLD, 12);
+        Font fuenteTitulo = new Font("SansSerif", Font.BOLD, 16);
+
         // Panel de información del informe
-        JPanel panelInfo = new JPanel(new GridLayout(4, 2, 5, 5)); // Eliminamos la fila del ID
-        panelInfo.setBorder(BorderFactory.createTitledBorder("Información del Informe"));
+        JPanel panelInfo = new JPanel(new GridLayout(4, 2, 5, 5));
+        panelInfo.setBackground(fondo);
 
-        panelInfo.add(new JLabel("Descripción:"));
-        panelInfo.add(new JLabel(informe.descripcion()));
+        JPanel panelInfoConTitulo = new JPanel(new BorderLayout());
+        panelInfoConTitulo.setBackground(fondo);
+        panelInfoConTitulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        panelInfo.add(new JLabel("Fecha de Entrega:"));
-        panelInfo.add(new JLabel(informe.fechaEntrega().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+        JLabel lblTitulo = new JLabel("Información del Informe");
+        lblTitulo.setFont(fuenteTitulo);
+        lblTitulo.setForeground(Color.BLACK);
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        panelInfoConTitulo.add(lblTitulo, BorderLayout.NORTH);
+        panelInfoConTitulo.add(panelInfo, BorderLayout.CENTER);
 
-        panelInfo.add(new JLabel("Tipo:"));
-        panelInfo.add(new JLabel(informe.tipo()));
+        panelInfo.add(crearLabel("Descripción:", fuenteNegrita));
+        panelInfo.add(crearLabel(informe.descripcion(), fuenteNegrita));
 
-        panelInfo.add(new JLabel("Valoración:"));
-        panelInfo.add(new JLabel(informe.valoracionInforme() == -1 ? "No valorado" : String.valueOf(informe.valoracionInforme())));
+        panelInfo.add(crearLabel("Fecha de Entrega:", fuenteNegrita));
+        panelInfo.add(crearLabel(informe.fechaEntrega().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), fuenteNegrita));
 
-        add(panelInfo, BorderLayout.NORTH);
+        panelInfo.add(crearLabel("Tipo:", fuenteNegrita));
+        panelInfo.add(crearLabel(informe.tipo(), fuenteNegrita));
 
-        // Panel de valoración - solo se muestra si el informe no tiene valoración
+        panelInfo.add(crearLabel("Valoración:", fuenteNegrita));
+        panelInfo.add(crearLabel(informe.valoracionInforme() == -1 ? "No valorado" : String.valueOf(informe.valoracionInforme()), fuenteNegrita));
+
+        add(panelInfoConTitulo, BorderLayout.NORTH);
+
+        // Panel de valoración
         if (informe.valoracionInforme() == -1) {
             JPanel panelValoracion = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            panelValoracion.setBackground(fondo);
             panelValoracion.setBorder(BorderFactory.createTitledBorder("Valorar Informe"));
 
             JLabel lblValoracion = new JLabel("Ingrese valoración (0-10):");
+            lblValoracion.setFont(fuenteNegrita);
+            lblValoracion.setForeground(Color.BLACK);
+
             txtValoracion = new JTextField(5);
             JButton btnGuardarValoracion = new JButton("Guardar Valoración");
 
@@ -63,6 +85,7 @@ public class VerInformeTutor extends JFrame {
 
         // Panel de botones
         JPanel panelBotones = new JPanel();
+        panelBotones.setBackground(fondo);
         JButton btnVerArchivo = new JButton("Ver Archivo");
         JButton btnDescargarArchivo = new JButton("Descargar Archivo");
 
@@ -74,7 +97,15 @@ public class VerInformeTutor extends JFrame {
 
         add(panelBotones, BorderLayout.SOUTH);
 
+        getContentPane().setBackground(fondo);
         setVisible(true);
+    }
+
+    private JLabel crearLabel(String texto, Font fuente) {
+        JLabel label = new JLabel(texto);
+        label.setFont(fuente);
+        label.setForeground(Color.BLACK);
+        return label;
     }
 
     private void guardarValoracion() {
@@ -89,6 +120,9 @@ public class VerInformeTutor extends JFrame {
             try {
                 proyectos.valorarInforme(informe.id(), valoracion);
                 JOptionPane.showMessageDialog(this, "Valoración guardada correctamente");
+                if (listener != null) {
+                    listener.informeValorado();
+                }
                 dispose(); // Cierra la ventana después de guardar
             } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(this, "Error al guardar la valoración: " + ex.getMessage(),
@@ -109,19 +143,16 @@ public class VerInformeTutor extends JFrame {
         }
 
         try {
-            // Validar que el archivo parece ser un PDF (opcional pero útil)
             if (!(archivo[0] == '%' && archivo[1] == 'P' && archivo[2] == 'D' && archivo[3] == 'F')) {
                 JOptionPane.showMessageDialog(this, "El archivo no parece ser un PDF válido.");
                 return;
             }
 
-            // Crear archivo temporal
             File tempFile = File.createTempFile("informe_", ".pdf");
             try (FileOutputStream fos = new FileOutputStream(tempFile)) {
                 fos.write(archivo);
             }
 
-            // Asegurar que el archivo tenga extensión .pdf y sea ejecutable
             if (!Desktop.isDesktopSupported()) {
                 JOptionPane.showMessageDialog(this, "El visor de escritorio no es compatible.");
                 return;
@@ -141,7 +172,6 @@ public class VerInformeTutor extends JFrame {
         }
     }
 
-
     private void descargarArchivo() {
         if (informe.archivoEntregable() == null) {
             JOptionPane.showMessageDialog(this, "No hay archivo adjunto.");
@@ -149,7 +179,6 @@ public class VerInformeTutor extends JFrame {
         }
 
         JFileChooser fileChooser = new JFileChooser();
-        // En vez de usar el ID, generamos un nombre genérico o con la fecha
         String nombreBase = "informe_" + informe.fechaEntrega().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".pdf";
         fileChooser.setSelectedFile(new File(nombreBase));
 

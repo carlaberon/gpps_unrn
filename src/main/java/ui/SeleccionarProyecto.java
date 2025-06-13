@@ -4,7 +4,9 @@ import model.GestorDeProyectos;
 import model.Proyecto;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
@@ -32,14 +34,44 @@ public class SeleccionarProyecto extends JFrame {
     }
 
     private void initComponents() {
+        Color fondo = Color.decode("#BFBFBF");
+        getContentPane().setBackground(fondo);
         setLayout(new BorderLayout());
 
-        tableProyectos = new JTable(new DefaultTableModel(
-                new Object[]{"Nombre", "Descripción"}, 0
-        ));
+        // Tabla con estilo visual como en ProyectosACargo
+        String[] columnas = {"Nombre", "Descripción"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        tableProyectos = new JTable(modelo);
+        tableProyectos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableProyectos.setRowHeight(40);
+        tableProyectos.setIntercellSpacing(new Dimension(0, 2));
+        tableProyectos.setShowGrid(true);
+        tableProyectos.setShowHorizontalLines(true);
+        tableProyectos.setShowVerticalLines(false);
+        tableProyectos.setGridColor(Color.BLACK); // línea negra entre filas
+        tableProyectos.setBackground(fondo);
+        tableProyectos.setSelectionBackground(new Color(184, 207, 229));
+        tableProyectos.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        JTableHeader header = tableProyectos.getTableHeader();
+        header.setBackground(new Color(64, 64, 64));
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("SansSerif", Font.BOLD, 13));
+        ((DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.LEFT);
+
         JScrollPane scrollPane = new JScrollPane(tableProyectos);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setBackground(fondo);
         add(scrollPane, BorderLayout.CENTER);
 
+        // Panel inferior con botones
         btnVerDetalles = new JButton("Ver Detalles");
         btnVerDetalles.addActionListener(e -> verDetallesProyecto());
 
@@ -47,6 +79,7 @@ public class SeleccionarProyecto extends JFrame {
         btnSeleccionar.addActionListener(e -> seleccionarProyecto());
 
         JPanel panelBoton = new JPanel();
+        panelBoton.setBackground(fondo);
         panelBoton.add(btnVerDetalles);
         panelBoton.add(btnSeleccionar);
         add(panelBoton, BorderLayout.SOUTH);
@@ -93,12 +126,11 @@ public class SeleccionarProyecto extends JFrame {
             List<Proyecto> proyectos = proyectoDAO.obtenerProyectosAprobados();
             proyectoSeleccionado = proyectos.get(selectedRow);
 
-            // Llamar al método del gestor para asignar el estudiante al proyecto
             boolean asignacionExitosa = proyectoDAO.asignarEstudianteAProyecto(idEstudiante, proyectoSeleccionado.getId());
 
             if (asignacionExitosa) {
                 mostrarMensaje("Éxito", "Estudiante asignado correctamente al proyecto: " + proyectoSeleccionado.getNombre());
-                dispose(); // Cierra la ventana después de seleccionar
+                dispose();
             } else {
                 mostrarMensaje("Error", "No se pudo asignar el estudiante al proyecto.");
             }

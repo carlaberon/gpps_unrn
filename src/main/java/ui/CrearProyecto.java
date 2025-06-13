@@ -9,6 +9,7 @@ public class CrearProyecto extends JFrame {
     /* ---------- DAOs / servicios ---------- */
     private final GestorDeProyectos gestorProyectos;
     private final GestorDeUsuarios gestorUsuarios;
+
     /* ---------- campos de la UI ---------- */
     private JTextField nombreField;
     private JTextArea descripcionField;
@@ -24,7 +25,7 @@ public class CrearProyecto extends JFrame {
     private Usuarios tutorDAO;
 
     /* ---------- datos en memoria ---------- */
-    private PlanDeTrabajo planCreado;  // ← se llena desde el diálogo
+    private PlanDeTrabajo planCreado;
 
     public CrearProyecto(GestorDeUsuarios gUsuarios, GestorDeProyectos gProyectos) {
         this.gestorProyectos = gProyectos;
@@ -64,8 +65,9 @@ public class CrearProyecto extends JFrame {
 
     /* ---------------- UI ---------------- */
     private void setupLayout() {
-        // Panel principal con GridBagLayout
+        // Fondo general
         JPanel main = new JPanel(new GridBagLayout());
+        main.setBackground(Color.decode("#BFBFBF")); // ← Fondo gris claro
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -78,8 +80,9 @@ public class CrearProyecto extends JFrame {
         addLine(main, gbc, y++, "Tutor Interno:", tutorCombo);
         addLine(main, gbc, y++, "Tutor Externo:", supervisorCombo);
 
-        // Panel para mostrar plan creado y botón
+        // Panel para plan de trabajo
         JPanel planPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        planPanel.setBackground(Color.decode("#BFBFBF"));
         planPanel.add(lblPlanCreado);
         planPanel.add(Box.createHorizontalStrut(10));
         planPanel.add(btnCrearPlan);
@@ -87,6 +90,7 @@ public class CrearProyecto extends JFrame {
 
         // Panel de botones inferior
         JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(Color.decode("#BFBFBF"));
         btnPanel.add(guardarButton);
         btnPanel.add(limpiarButton);
         gbc.gridx = 0;
@@ -94,23 +98,27 @@ public class CrearProyecto extends JFrame {
         gbc.gridwidth = 2;
         main.add(btnPanel, gbc);
 
-        // ------------ NUEVO: Panel superior con título ------------
+        // Título personalizado
         JLabel titulo = new JLabel("Crear Proyecto", SwingConstants.CENTER);
-        titulo.setFont(new Font("SansSerif", Font.BOLD, 20));
-        titulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        titulo.setFont(new Font("SansSerif", Font.BOLD, 24)); // más grande
+        titulo.setForeground(new Color(3, 1, 1));
+        titulo.setOpaque(true);
+        titulo.setBackground(Color.decode("#BFBFBF"));
+        titulo.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10)); // más separado del borde
 
-        // Usamos BorderLayout en el frame para poner el título arriba
+        // Layout principal
         getContentPane().setLayout(new BorderLayout());
+        getContentPane().setBackground(Color.decode("#BFBFBF"));
         getContentPane().add(titulo, BorderLayout.NORTH);
         getContentPane().add(main, BorderLayout.CENTER);
     }
-
 
     private void addLine(JPanel p, GridBagConstraints gbc, int y, String label, Component c) {
         gbc.gridx = 0;
         gbc.gridy = y;
         gbc.gridwidth = 1;
-        p.add(new JLabel(label), gbc);
+        JLabel lbl = new JLabel(label);
+        p.add(lbl, gbc);
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         p.add(c, gbc);
@@ -183,9 +191,8 @@ public class CrearProyecto extends JFrame {
                 return;
             }
 
-            // Guardado en persistencia → devuelve ID generado
             int idGenerado = proyectoDAO.guardarProyectoSinEstudiante(proyecto, planCreado);
-            mostrarAlerta("Éxito", "Proyecto creado con exito");
+            mostrarAlerta("Éxito", "Proyecto creado con éxito.");
             dispose();
 
         } catch (Exception ex) {
@@ -202,6 +209,7 @@ public class CrearProyecto extends JFrame {
         if (ubicacionField.getText().isBlank()) err.append("- Falta Ubicación\n");
         if (tutorCombo.getSelectedItem() == null) err.append("- Seleccione Tutor Interno\n");
         if (supervisorCombo.getSelectedItem() == null) err.append("- Seleccione Tutor Externo\n");
+
         if (err.length() > 0) {
             mostrarAlerta("Errores de validación", err.toString());
             return false;

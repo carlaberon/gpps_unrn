@@ -26,11 +26,12 @@ public class VentanaPrincipal extends JFrame {
         this.administrador = administrador;
         this.gestorDeConvenios = gestorDeConvenios;
 
-
         setTitle("Gestión de Proyectos PPS");
         setSize(400, 150);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        getContentPane().setBackground(Color.decode("#BFBFBF")); // Fondo del JFrame
+
         initComponents();
         setupLayout();
         setupListeners();
@@ -44,6 +45,7 @@ public class VentanaPrincipal extends JFrame {
     private void setupLayout() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 1, 10, 10));
+        panel.setBackground(Color.decode("#BFBFBF")); // Fondo del panel
 
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.add(btnCrearProyecto);

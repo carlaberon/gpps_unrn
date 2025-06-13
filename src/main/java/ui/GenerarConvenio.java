@@ -1,5 +1,6 @@
 package ui;
 
+import com.toedter.calendar.JDateChooser;
 import model.Administrador;
 import model.EntidadColaboradora;
 import model.GestorDeConvenios;
@@ -21,8 +22,8 @@ public class GenerarConvenio extends JFrame {
     private JComboBox<EntidadColaboradora> comboEntidades;
     private JComboBox<Proyecto> comboProyectos;
     private JTextArea txtDescripcion;
-    private JSpinner spinnerFechaInicio;
-    private JSpinner spinnerFechaFin;
+    private JDateChooser fechaInicioChooser;
+    private JDateChooser fechaFinChooser;
     private JButton btnGenerar;
 
     public GenerarConvenio(Administrador admin, GestorDeConvenios gestorDeConvenios) {
@@ -34,16 +35,22 @@ public class GenerarConvenio extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        Color fondo = Color.decode("#BFBFBF");
+        getContentPane().setBackground(fondo);
+
         comboEntidades = new JComboBox<>();
         comboProyectos = new JComboBox<>();
-        txtDescripcion = new JTextArea(4, 20);
-        SpinnerDateModel modelInicio = new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH);
-        spinnerFechaInicio = new JSpinner(modelInicio);
-        spinnerFechaInicio.setEditor(new JSpinner.DateEditor(spinnerFechaInicio, "dd/MM/yyyy"));
 
-        SpinnerDateModel modelFin = new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH);
-        spinnerFechaFin = new JSpinner(modelFin);
-        spinnerFechaFin.setEditor(new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy"));
+        txtDescripcion = new JTextArea(4, 20);
+        txtDescripcion.setLineWrap(true);
+        txtDescripcion.setWrapStyleWord(true);
+        txtDescripcion.setBackground(Color.WHITE);
+
+        fechaInicioChooser = new JDateChooser();
+        fechaInicioChooser.setDateFormatString("dd/MM/yyyy");
+
+        fechaFinChooser = new JDateChooser();
+        fechaFinChooser.setDateFormatString("dd/MM/yyyy");
 
         btnGenerar = new JButton("Generar Convenio");
 
@@ -52,21 +59,32 @@ public class GenerarConvenio extends JFrame {
 
         JPanel panel = new JPanel(new GridLayout(6, 2, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        panel.setBackground(fondo);
 
-        panel.add(new JLabel("Entidad colaboradora:"));
+        JLabel lblEntidades = new JLabel("Entidad colaboradora:");
+        JLabel lblProyectos = new JLabel("Proyecto:");
+        JLabel lblDescripcion = new JLabel("Descripción:");
+        JLabel lblInicio = new JLabel("Fecha de inicio:");
+        JLabel lblFin = new JLabel("Fecha de fin:");
+
+        JScrollPane scrollDescripcion = new JScrollPane(txtDescripcion);
+        scrollDescripcion.getViewport().setBackground(Color.WHITE);
+        scrollDescripcion.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+        panel.add(lblEntidades);
         panel.add(comboEntidades);
 
-        panel.add(new JLabel("Proyecto:"));
+        panel.add(lblProyectos);
         panel.add(comboProyectos);
 
-        panel.add(new JLabel("Descripción:"));
-        panel.add(new JScrollPane(txtDescripcion));
+        panel.add(lblDescripcion);
+        panel.add(scrollDescripcion);
 
-        panel.add(new JLabel("Fecha de inicio:"));
-        panel.add(spinnerFechaInicio);
+        panel.add(lblInicio);
+        panel.add(fechaInicioChooser);
 
-        panel.add(new JLabel("Fecha de fin:"));
-        panel.add(spinnerFechaFin);
+        panel.add(lblFin);
+        panel.add(fechaFinChooser);
 
         panel.add(new JLabel());
         panel.add(btnGenerar);
@@ -74,7 +92,6 @@ public class GenerarConvenio extends JFrame {
         add(panel);
 
         btnGenerar.addActionListener(this::generarConvenio);
-
     }
 
     private void cargarEntidades() {
@@ -105,8 +122,16 @@ public class GenerarConvenio extends JFrame {
             Proyecto proyecto = (Proyecto) comboProyectos.getSelectedItem();
             String descripcion = txtDescripcion.getText().trim();
 
-            LocalDate fechaInicio = convertirFecha((Date) spinnerFechaInicio.getValue());
-            LocalDate fechaFin = convertirFecha((Date) spinnerFechaFin.getValue());
+            Date fechaInicioDate = fechaInicioChooser.getDate();
+            Date fechaFinDate = fechaFinChooser.getDate();
+
+            if (fechaInicioDate == null || fechaFinDate == null) {
+                mostrarError("Debe seleccionar ambas fechas.");
+                return;
+            }
+
+            LocalDate fechaInicio = convertirFecha(fechaInicioDate);
+            LocalDate fechaFin = convertirFecha(fechaFinDate);
 
             admin.generarConvenio(entidad.getId(), proyecto.getId(), descripcion, fechaInicio, fechaFin, gestorDeConvenios);
             JOptionPane.showMessageDialog(this, "Convenio generado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -117,12 +142,10 @@ public class GenerarConvenio extends JFrame {
     }
 
     private LocalDate convertirFecha(Date date) {
-        return (date != null) ? date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
-
-

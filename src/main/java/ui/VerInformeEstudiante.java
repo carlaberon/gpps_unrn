@@ -4,6 +4,7 @@ import model.Informe;
 import model.Proyectos;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,28 +23,83 @@ public class VerInformeEstudiante extends JFrame {
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
+
+        Color fondo = Color.decode("#BFBFBF");
+        getContentPane().setBackground(fondo);
         setLayout(new BorderLayout());
 
-        // Panel de información del informe
-        JPanel panelInfo = new JPanel(new GridLayout(4, 2, 5, 5)); // Eliminamos fila del ID
-        panelInfo.setBorder(BorderFactory.createTitledBorder("Información del Informe"));
+        // Panel para el título separado
+        JPanel panelTitulo = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelTitulo.setBackground(fondo);
+        panelTitulo.setBorder(new EmptyBorder(20, 10, 10, 10)); // margen superior y algo abajo
 
-        panelInfo.add(new JLabel("Descripción:"));
-        panelInfo.add(new JLabel(informe.descripcion()));
+        JLabel lblTitulo = new JLabel("Información del Informe");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        lblTitulo.setForeground(Color.BLACK);
 
-        panelInfo.add(new JLabel("Fecha de Entrega:"));
-        panelInfo.add(new JLabel(informe.fechaEntrega().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+        panelTitulo.add(lblTitulo);
+        add(panelTitulo, BorderLayout.NORTH);
 
-        panelInfo.add(new JLabel("Tipo:"));
-        panelInfo.add(new JLabel(informe.tipo()));
+        // Panel con las características (labels)
+        JPanel panelInfo = new JPanel(new GridLayout(4, 2, 8, 8));
+        panelInfo.setBackground(fondo);
+        panelInfo.setBorder(new EmptyBorder(10, 30, 20, 30)); // margen interno para separar de los bordes
+        panelInfo.setPreferredSize(new Dimension(500, 150));
 
-        panelInfo.add(new JLabel("Valoración:"));
-        panelInfo.add(new JLabel(informe.valoracionInforme() == -1 ? "No valorado" : String.valueOf(informe.valoracionInforme())));
+        Font labelTituloFont = new Font("Segoe UI", Font.BOLD, 13);
+        Font labelValorFont = new Font("Segoe UI", Font.PLAIN, 13);
 
-        add(panelInfo, BorderLayout.NORTH);
+        JLabel lblDescripcion = new JLabel("Descripción:");
+        lblDescripcion.setFont(labelTituloFont);
+        lblDescripcion.setForeground(Color.BLACK);
+        panelInfo.add(lblDescripcion);
+
+        JLabel valDescripcion = new JLabel(informe.descripcion());
+        valDescripcion.setFont(labelValorFont);
+        valDescripcion.setForeground(Color.DARK_GRAY);
+        panelInfo.add(valDescripcion);
+
+        JLabel lblFecha = new JLabel("Fecha de Entrega:");
+        lblFecha.setFont(labelTituloFont);
+        lblFecha.setForeground(Color.BLACK);
+        panelInfo.add(lblFecha);
+
+        JLabel valFecha = new JLabel(informe.fechaEntrega().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        valFecha.setFont(labelValorFont);
+        valFecha.setForeground(Color.DARK_GRAY);
+        panelInfo.add(valFecha);
+
+        JLabel lblTipo = new JLabel("Tipo:");
+        lblTipo.setFont(labelTituloFont);
+        lblTipo.setForeground(Color.BLACK);
+        panelInfo.add(lblTipo);
+
+        JLabel valTipo = new JLabel(informe.tipo());
+        valTipo.setFont(labelValorFont);
+        valTipo.setForeground(Color.DARK_GRAY);
+        panelInfo.add(valTipo);
+
+        JLabel lblValoracion = new JLabel("Valoración:");
+        lblValoracion.setFont(labelTituloFont);
+        lblValoracion.setForeground(Color.BLACK);
+        panelInfo.add(lblValoracion);
+
+        JLabel valValoracion = new JLabel(informe.valoracionInforme() == -1 ? "No valorado" : String.valueOf(informe.valoracionInforme()));
+        valValoracion.setFont(labelValorFont);
+        valValoracion.setForeground(Color.DARK_GRAY);
+        panelInfo.add(valValoracion);
+
+        // Contenedor para centrar panelInfo
+        JPanel contenedorInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        contenedorInfo.setBackground(fondo);
+        contenedorInfo.add(panelInfo);
+
+        add(contenedorInfo, BorderLayout.CENTER);
 
         // Panel de botones
         JPanel panelBotones = new JPanel();
+        panelBotones.setBackground(fondo);
+
         JButton btnVerArchivo = new JButton("Ver Archivo");
         JButton btnDescargarArchivo = new JButton("Descargar Archivo");
 
@@ -53,7 +109,7 @@ public class VerInformeEstudiante extends JFrame {
         panelBotones.add(btnVerArchivo);
         panelBotones.add(btnDescargarArchivo);
 
-        add(panelBotones, BorderLayout.CENTER);
+        add(panelBotones, BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -85,7 +141,6 @@ public class VerInformeEstudiante extends JFrame {
         }
 
         JFileChooser fileChooser = new JFileChooser();
-        // Se elimina el ID del nombre del archivo
         String nombreBase = "informe_" + informe.fechaEntrega().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".pdf";
         fileChooser.setSelectedFile(new File(nombreBase));
 

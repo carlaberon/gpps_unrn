@@ -6,7 +6,8 @@ import model.GestorDeProyectos;
 import model.PlanDeTrabajo;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -16,13 +17,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Dialog modal para construir un PlanDeTrabajo y devolverlo al frame llamador.
- */
 public class CrearPlanTrabajoDialog extends JDialog {
     private final GestorDeProyectos gestor;
-    private PlanDeTrabajo planCreado;              // ← se expone vía getter
-    /* ---------- UI ---------- */
+    private PlanDeTrabajo planCreado;
     private JTable tabla;
     private DefaultTableModel modelo;
     private JTextField txtDescripcion;
@@ -34,7 +31,7 @@ public class CrearPlanTrabajoDialog extends JDialog {
     private JDateChooser dcFinPlan;
 
     public CrearPlanTrabajoDialog(Frame owner, GestorDeProyectos gestor) {
-        super(owner, "Crear Plan de Trabajo", true); // true => modal
+        super(owner, "Crear Plan de Trabajo", true);
         this.gestor = gestor;
         init();
     }
@@ -44,9 +41,15 @@ public class CrearPlanTrabajoDialog extends JDialog {
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
 
-        /* ---------- datos generales del plan ---------- */
+        Color fondo = new Color(0xBFBFBF);
+        getContentPane().setBackground(fondo);
+
+        /* ---------- Panel de Fechas del Plan ---------- */
         JPanel panelFechasPlan = new JPanel(new GridLayout(1, 4, 5, 5));
-        panelFechasPlan.setBorder(BorderFactory.createTitledBorder("Fechas del Plan"));
+        TitledBorder bordePlan = BorderFactory.createTitledBorder("Fechas del Plan");
+        bordePlan.setTitleColor(new Color(3, 1, 1));
+        panelFechasPlan.setBorder(bordePlan);
+        panelFechasPlan.setBackground(fondo);
 
         dcInicioPlan = new JDateChooser();
         dcInicioPlan.setDateFormatString("yyyy-MM-dd");
@@ -58,22 +61,30 @@ public class CrearPlanTrabajoDialog extends JDialog {
         panelFechasPlan.add(new JLabel("Fin del Plan:"));
         panelFechasPlan.add(dcFinPlan);
 
+        /* ---------- Recursos ---------- */
         txtRecursos = new JTextArea(3, 20);
         txtRecursos.setLineWrap(true);
         txtRecursos.setWrapStyleWord(true);
+        JScrollPane scrollRecursos = new JScrollPane(txtRecursos);
+        scrollRecursos.getViewport().setBackground(Color.WHITE);
         JPanel panelRecursos = new JPanel(new BorderLayout());
         panelRecursos.setBorder(BorderFactory.createTitledBorder("Recursos necesarios"));
-        panelRecursos.add(new JScrollPane(txtRecursos), BorderLayout.CENTER);
+        panelRecursos.setBackground(fondo);
+        panelRecursos.add(scrollRecursos, BorderLayout.CENTER);
 
-        /* ---------- datos de una actividad ---------- */
+        /* ---------- Datos de Actividad ---------- */
         JPanel panelActividad = new JPanel(new GridLayout(5, 2, 5, 5));
-        panelActividad.setBorder(BorderFactory.createTitledBorder("Nueva Actividad"));
+        TitledBorder bordeActividad = BorderFactory.createTitledBorder("Nueva Actividad");
+        bordeActividad.setTitleColor(new Color(3, 1, 1));
+        panelActividad.setBorder(bordeActividad);
+        panelActividad.setBackground(fondo);
 
         txtDescripcion = new JTextField();
         dcFechaActividad = new JDateChooser();
         dcFechaActividad.setDateFormatString("yyyy-MM-dd");
         spHoras = new JSpinner(new SpinnerNumberModel(1, 1, 1000, 1));
         chkInforme = new JCheckBox("¿Requiere informe?");
+        chkInforme.setBackground(fondo);
 
         panelActividad.add(new JLabel("Descripción:"));
         panelActividad.add(txtDescripcion);
@@ -87,15 +98,35 @@ public class CrearPlanTrabajoDialog extends JDialog {
         JButton btnAgregarAct = new JButton("Agregar Actividad");
         panelActividad.add(btnAgregarAct);
 
-        /* ---------- tabla ---------- */
-        modelo = new DefaultTableModel(new String[]{"Descripción", "Fecha", "Horas", "Informe"}, 0);
-        tabla = new JTable(modelo);
-        JTableHeader header = tabla.getTableHeader();
-        header.setDefaultRenderer(centerHeader());
-        tabla.setRowHeight(30);
-        JScrollPane scroll = new JScrollPane(tabla);
+        /* ---------- Tabla de Actividades ---------- */
+        modelo = new DefaultTableModel(new String[]{"Descripción", "Fecha", "Horas", "Informe"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        /* ---------- botones inferiores ---------- */
+        tabla = new JTable(modelo);
+        tabla.setRowHeight(25);
+        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        tabla.setBackground(new Color(0xE0E0E0));
+        tabla.setGridColor(new Color(0x555555));
+        tabla.setShowGrid(true);
+        tabla.setShowVerticalLines(false);
+        tabla.setIntercellSpacing(new Dimension(0, 2));
+
+        JTableHeader header = tabla.getTableHeader();
+        header.setBackground(new Color(0x3A3A3A));
+        header.setForeground(Color.WHITE);
+        header.setFont(header.getFont().deriveFont(Font.BOLD));
+        header.setBorder(new LineBorder(new Color(0x222222), 2));
+
+        JScrollPane scroll = new JScrollPane(tabla);
+        scroll.getViewport().setBackground(fondo);
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(0x333333), 2));
+
+        /* ---------- Botones inferiores ---------- */
         JButton btnGuardar = new JButton("Aceptar Plan");
         JButton btnCancelar = new JButton("Cancelar");
 
@@ -104,11 +135,13 @@ public class CrearPlanTrabajoDialog extends JDialog {
         btnCancelar.addActionListener(e -> dispose());
 
         JPanel panelBotones = new JPanel();
+        panelBotones.setBackground(fondo);
         panelBotones.add(btnGuardar);
         panelBotones.add(btnCancelar);
 
-        /* ---------- armado general ---------- */
+        /* ---------- Panel superior ---------- */
         JPanel sup = new JPanel(new BorderLayout());
+        sup.setBackground(fondo);
         sup.add(panelFechasPlan, BorderLayout.NORTH);
         sup.add(panelRecursos, BorderLayout.CENTER);
         sup.add(panelActividad, BorderLayout.SOUTH);
@@ -116,13 +149,6 @@ public class CrearPlanTrabajoDialog extends JDialog {
         add(sup, BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
-    }
-
-    private DefaultTableCellRenderer centerHeader() {
-        return new DefaultTableCellRenderer() {{
-            setHorizontalAlignment(SwingConstants.CENTER);
-            setFont(getFont().deriveFont(Font.BOLD));
-        }};
     }
 
     private void agregarActividad() {
@@ -139,14 +165,13 @@ public class CrearPlanTrabajoDialog extends JDialog {
         LocalDate f = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         modelo.addRow(new Object[]{d, f.format(DateTimeFormatter.ISO_DATE), horas, reqInf ? "Sí" : "No"});
         txtDescripcion.setText("");
-        dcFechaActividad.setDate(null);          // limpiar fecha de actividad
+        dcFechaActividad.setDate(null);
         spHoras.setValue(1);
         chkInforme.setSelected(false);
     }
 
     private void aceptar() {
         try {
-            /* actividades */
             List<Actividad> acts = new ArrayList<>();
             for (int i = 0; i < modelo.getRowCount(); i++) {
                 String desc = (String) modelo.getValueAt(i, 0);
@@ -168,9 +193,7 @@ public class CrearPlanTrabajoDialog extends JDialog {
         }
     }
 
-    /* ---------- getter para el frame padre ---------- */
     public PlanDeTrabajo getPlanCreado() {
         return planCreado;
     }
 }
-

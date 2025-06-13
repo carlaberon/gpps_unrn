@@ -5,17 +5,11 @@ import model.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Ventana de detalle de un proyecto; muestra:
- * • Datos básicos del proyecto
- * • Tutores asignados
- * • (Opcional) Estudiante asignado
- * • Plan de trabajo y sus actividades
- */
 public class DetalleProyecto extends JFrame {
     private final GestorDeProyectos gestorDeProyectos;
     private final int idProyecto;
@@ -28,14 +22,14 @@ public class DetalleProyecto extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
+        getContentPane().setBackground(new Color(0xBFBFBF));
         setLayout(new BorderLayout());
 
-        /* ────────── Datos de dominio ────────── */
         Proyecto proyecto = gestorDeProyectos.obtenerProyecto(idProyecto);
-        Estudiante estudiante = gestorDeProyectos.obtenerEstudianteAsignado(idProyecto); // ← NUEVO
+        Estudiante estudiante = gestorDeProyectos.obtenerEstudianteAsignado(idProyecto);
 
-        /* ────────── Panel “Información del Proyecto” ────────── */
-        JPanel panelProyecto = new JPanel(new GridLayout(4, 2, 5, 5));
+        JPanel panelProyecto = new JPanel(new GridLayout(5, 2, 5, 5));
+        panelProyecto.setBackground(new Color(0xBFBFBF));
         panelProyecto.setBorder(BorderFactory.createTitledBorder("Información del Proyecto"));
 
         panelProyecto.add(new JLabel("Nombre:"));
@@ -50,22 +44,23 @@ public class DetalleProyecto extends JFrame {
         panelProyecto.add(new JLabel("Ubicación:"));
         panelProyecto.add(new JLabel(proyecto.getUbicacion()));
 
+        panelProyecto.add(new JLabel("Estado del Proyecto:"));
+        panelProyecto.add(new JLabel(proyecto.estadoProyecto() != null ? proyecto.estadoProyecto() : ""));
+
         add(panelProyecto, BorderLayout.NORTH);
 
-        /* ────────── Panel “Información de Tutores” ────────── */
         JPanel panelTutores = new JPanel(new GridBagLayout());
+        panelTutores.setBackground(new Color(0xBFBFBF));
         panelTutores.setBorder(BorderFactory.createTitledBorder("Información de Tutores"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 5, 2, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
         int filaActual = 0;
-
         try {
             List<Tutor> tutores = gestorDeProyectos.obtenerTutoresPorProyecto(idProyecto);
             for (Tutor tutor : tutores) {
                 if ("interno".equalsIgnoreCase(tutor.getTipo())) {
-                    // Nombre tutor interno
                     gbc.gridx = 0;
                     gbc.gridy = filaActual;
                     panelTutores.add(new JLabel("Tutor Interno:"), gbc);
@@ -73,7 +68,6 @@ public class DetalleProyecto extends JFrame {
                     panelTutores.add(new JLabel(tutor.nombre()), gbc);
                     filaActual++;
 
-                    // Email tutor interno
                     gbc.gridx = 0;
                     gbc.gridy = filaActual;
                     panelTutores.add(new JLabel("Email Tutor Interno:"), gbc);
@@ -81,7 +75,6 @@ public class DetalleProyecto extends JFrame {
                     panelTutores.add(new JLabel(tutor.getEmail()), gbc);
                     filaActual++;
                 } else if ("externo".equalsIgnoreCase(tutor.getTipo())) {
-                    // Nombre tutor externo
                     gbc.gridx = 0;
                     gbc.gridy = filaActual;
                     panelTutores.add(new JLabel("Tutor Externo:"), gbc);
@@ -89,7 +82,6 @@ public class DetalleProyecto extends JFrame {
                     panelTutores.add(new JLabel(tutor.nombre()), gbc);
                     filaActual++;
 
-                    // Email tutor externo
                     gbc.gridx = 0;
                     gbc.gridy = filaActual;
                     panelTutores.add(new JLabel("Email Tutor Externo:"), gbc);
@@ -104,42 +96,40 @@ public class DetalleProyecto extends JFrame {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        /* ────────── (Opcional) Panel “Estudiante asignado” ────────── */
         JPanel panelEstudiante = null;
         if (estudiante != null) {
             panelEstudiante = new JPanel(new GridLayout(3, 2, 5, 5));
+            panelEstudiante.setBackground(new Color(0xBFBFBF));
             panelEstudiante.setBorder(BorderFactory.createTitledBorder("Estudiante asignado"));
 
             panelEstudiante.add(new JLabel("Nombre:"));
             panelEstudiante.add(new JLabel(estudiante.nombre()));
-
             panelEstudiante.add(new JLabel("Email:"));
             panelEstudiante.add(new JLabel(estudiante.getEmail()));
-
             panelEstudiante.add(new JLabel("Legajo:"));
             panelEstudiante.add(new JLabel(estudiante.getLegajo()));
-
         }
 
-        /* Contenedor vertical para tutores (y estudiante si existe) */
         JPanel contenedorIzquierdo = new JPanel();
+        contenedorIzquierdo.setBackground(new Color(0xBFBFBF));
         contenedorIzquierdo.setLayout(new BoxLayout(contenedorIzquierdo, BoxLayout.Y_AXIS));
         contenedorIzquierdo.add(panelTutores);
-        if (panelEstudiante != null) contenedorIzquierdo.add(Box.createVerticalStrut(10)); // separación
-        if (panelEstudiante != null) contenedorIzquierdo.add(panelEstudiante);
+        if (panelEstudiante != null) {
+            contenedorIzquierdo.add(Box.createVerticalStrut(10));
+            contenedorIzquierdo.add(panelEstudiante);
+        }
 
-        /* ────────── Panel “Plan de Trabajo” ────────── */
         JPanel panelPlanTrabajo = construirPanelPlanTrabajo(proyecto, idProyecto);
 
-        /* Panel central: columna izquierda (tutores/estudiante) + columna derecha (plan) */
         JPanel panelCentro = new JPanel(new GridLayout(1, 2, 10, 0));
         panelCentro.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelCentro.setBackground(new Color(0xBFBFBF));
         panelCentro.add(contenedorIzquierdo);
         panelCentro.add(panelPlanTrabajo);
         add(panelCentro, BorderLayout.CENTER);
 
-        /* ────────── Botón Cerrar ────────── */
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelBotones.setBackground(new Color(0xBFBFBF));
         JButton btnCerrar = new JButton("Cerrar");
         btnCerrar.addActionListener(e -> dispose());
         panelBotones.add(btnCerrar);
@@ -148,31 +138,10 @@ public class DetalleProyecto extends JFrame {
         setVisible(true);
     }
 
-    /* ======= helpers ==================================================== */
-
-    private static void insertarTuplaTutores(JPanel panel, GridBagConstraints gbc,
-                                             String etiqueta1, String valor1,
-                                             String etiqueta2, String valor2) {
-        gbc.gridx = 0;
-        panel.add(new JLabel(etiqueta1), gbc);
-        gbc.gridx = 1;
-        panel.add(new JLabel(valor1), gbc);
-
-        gbc.gridy++;
-        gbc.gridx = 0;
-        panel.add(new JLabel(etiqueta2), gbc);
-        gbc.gridx = 1;
-        panel.add(new JLabel(valor2), gbc);
-
-        gbc.gridy++;
-    }
-
-    /**
-     * Crea el panel de plan de trabajo + actividades
-     */
     private JPanel construirPanelPlanTrabajo(Proyecto proyecto, int idProyecto) {
         JPanel panelPlanTrabajo = new JPanel();
         panelPlanTrabajo.setLayout(new BoxLayout(panelPlanTrabajo, BoxLayout.Y_AXIS));
+        panelPlanTrabajo.setBackground(new Color(0xBFBFBF));
         panelPlanTrabajo.setBorder(BorderFactory.createTitledBorder("Plan de Trabajo"));
 
         PlanDeTrabajo plan = gestorDeProyectos.obtenerPlan(idProyecto);
@@ -184,8 +153,8 @@ public class DetalleProyecto extends JFrame {
             return panelPlanTrabajo;
         }
 
-        /* 1) Datos del plan */
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
+        panelDetallesPlan.setBackground(new Color(0xBFBFBF));
         panelDetallesPlan.add(new JLabel("Fecha de Inicio:"));
         panelDetallesPlan.add(new JLabel(plan.fechaInicio().toString()));
         panelDetallesPlan.add(new JLabel("Fecha de Fin:"));
@@ -196,9 +165,10 @@ public class DetalleProyecto extends JFrame {
         panelDetallesPlan.add(new JLabel(String.valueOf(plan.cantHoras())));
         panelPlanTrabajo.add(panelDetallesPlan);
 
-        /* 2) Barra de progreso */
         JPanel panelActividadesTop = new JPanel(new BorderLayout());
+        panelActividadesTop.setBackground(new Color(0xBFBFBF));
         panelActividadesTop.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
+
         JLabel lblActividades = new JLabel("Actividades:");
         lblActividades.setFont(lblActividades.getFont().deriveFont(Font.BOLD, 14f));
         panelActividadesTop.add(lblActividades, BorderLayout.WEST);
@@ -206,11 +176,10 @@ public class DetalleProyecto extends JFrame {
         JProgressBar barra = new JProgressBar(0, 100);
         barra.setValue(plan.porcentajeDeFinalizado());
         barra.setStringPainted(true);
-        barra.setPreferredSize(new Dimension(200, 20));
+        barra.setPreferredSize(new Dimension(200, 14));
         panelActividadesTop.add(barra, BorderLayout.EAST);
         panelPlanTrabajo.add(panelActividadesTop);
 
-        /* 3) Tabla de actividades */
         String[] columnas = {"Descripción", "Horas"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
@@ -224,9 +193,32 @@ public class DetalleProyecto extends JFrame {
         }
 
         JTable tabla = new JTable(modelo);
-        tabla.setRowHeight(60);
-        tabla.getColumnModel().getColumn(0).setPreferredWidth(300);
-        tabla.getColumnModel().getColumn(1).setPreferredWidth(60);
+        tabla.setRowHeight(50);
+        tabla.setBackground(new Color(0xBFBFBF));
+        tabla.setGridColor(Color.DARK_GRAY);
+
+        // Encabezado personalizado
+        JTableHeader header = tabla.getTableHeader();
+        header.setReorderingAllowed(false);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            {
+                setHorizontalAlignment(SwingConstants.CENTER);
+                setFont(getFont().deriveFont(Font.BOLD, 13f));
+                setBackground(new Color(0x4A4A4A));
+                setForeground(Color.WHITE);
+                setOpaque(true);
+            }
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                ((JComponent) c).setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.GRAY));
+                return c;
+            }
+        });
+
+        // Renderizado para la descripción multilínea
         tabla.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object v,
@@ -235,6 +227,7 @@ public class DetalleProyecto extends JFrame {
                 ta.setLineWrap(true);
                 ta.setWrapStyleWord(true);
                 ta.setRows(3);
+                ta.setFont(t.getFont());
                 ta.setBackground(sel ? t.getSelectionBackground() : t.getBackground());
                 ta.setForeground(sel ? t.getSelectionForeground() : t.getForeground());
                 return ta;
@@ -243,6 +236,7 @@ public class DetalleProyecto extends JFrame {
 
         JScrollPane scroll = new JScrollPane(tabla);
         scroll.setPreferredSize(new Dimension(350, 200));
+        scroll.getViewport().setBackground(new Color(0xBFBFBF));
         panelPlanTrabajo.add(scroll);
 
         return panelPlanTrabajo;

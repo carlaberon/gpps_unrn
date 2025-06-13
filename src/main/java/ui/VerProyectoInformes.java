@@ -3,11 +3,13 @@ package ui;
 import model.*;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-public class VerProyectoInformes extends JFrame {
+public class VerProyectoInformes extends JFrame implements InformeValoradoListener {
     private GestorDeProyectos gestorDeProyectos;
     private int idProyecto;
 
@@ -19,52 +21,42 @@ public class VerProyectoInformes extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
+
+        Color fondo = Color.decode("#BFBFBF");
+        getContentPane().setBackground(fondo);
         setLayout(new BorderLayout());
 
         Proyecto proyecto = gestorDeProyectos.obtenerProyecto(idProyecto);
         PlanDeTrabajo plan = gestorDeProyectos.obtenerPlan(idProyecto);
         List<Actividad> actividades = plan.actividades();
 
+        // Panel proyecto
         JPanel panelProyecto = new JPanel(new GridLayout(5, 2, 5, 5));
-        panelProyecto.setBorder(BorderFactory.createTitledBorder("Información del Proyecto"));
-
-        panelProyecto.add(new JLabel("Nombre:"));
-        panelProyecto.add(new JLabel(proyecto.getNombre()));
-
-        panelProyecto.add(new JLabel("Descripción:"));
-        panelProyecto.add(new JLabel(proyecto.getDescripcion()));
-
-        panelProyecto.add(new JLabel("Área de Interés:"));
-        panelProyecto.add(new JLabel(proyecto.getAreaDeInteres()));
-
-        panelProyecto.add(new JLabel("Ubicación:"));
-        panelProyecto.add(new JLabel(proyecto.getUbicacion()));
-
-        panelProyecto.add(new JLabel("Estado:"));
-        panelProyecto.add(new JLabel(proyecto.estadoProyecto()));
+        panelProyecto.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.DARK_GRAY),
+                "Información del Proyecto", TitledBorder.LEFT, TitledBorder.TOP));
+        panelProyecto.setBackground(fondo);
+        addLabelConEstilo(panelProyecto, "Nombre:", proyecto.getNombre());
+        addLabelConEstilo(panelProyecto, "Descripción:", proyecto.getDescripcion());
+        addLabelConEstilo(panelProyecto, "Área de Interés:", proyecto.getAreaDeInteres());
+        addLabelConEstilo(panelProyecto, "Ubicación:", proyecto.getUbicacion());
+        addLabelConEstilo(panelProyecto, "Estado:", proyecto.estadoProyecto());
 
         add(panelProyecto, BorderLayout.NORTH);
 
-        // Detalles del plan
+        // Panel detalles plan
         JPanel panelDetallesPlan = new JPanel(new GridLayout(4, 2, 5, 5));
-        panelDetallesPlan.setBorder(BorderFactory.createTitledBorder("Detalles del Plan"));
-
+        panelDetallesPlan.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.DARK_GRAY),
+                "Detalles del Plan", TitledBorder.LEFT, TitledBorder.TOP));
+        panelDetallesPlan.setBackground(fondo);
         int totalHoras = plan.cantHoras();
+        addLabelConEstilo(panelDetallesPlan, "Fecha de Inicio:", plan.fechaInicio().toString());
+        addLabelConEstilo(panelDetallesPlan, "Fecha de Fin:", plan.fechaFin().toString());
+        addLabelConEstilo(panelDetallesPlan, "Recursos:", plan.recursos());
+        addLabelConEstilo(panelDetallesPlan, "Total de Horas:", String.valueOf(totalHoras));
 
-        panelDetallesPlan.add(new JLabel("Fecha de Inicio:"));
-        panelDetallesPlan.add(new JLabel(plan.fechaInicio().toString()));
-
-        panelDetallesPlan.add(new JLabel("Fecha de Fin:"));
-        panelDetallesPlan.add(new JLabel(plan.fechaFin().toString()));
-
-        panelDetallesPlan.add(new JLabel("Recursos:"));
-        panelDetallesPlan.add(new JLabel(plan.recursos()));
-
-        panelDetallesPlan.add(new JLabel("Total de Horas:"));
-        panelDetallesPlan.add(new JLabel(String.valueOf(totalHoras)));
-
-        // Subtítulo "Actividades:" y barra de progreso
+        // Panel actividades top
         JPanel panelActividadesTop = new JPanel(new BorderLayout());
+        panelActividadesTop.setBackground(fondo);
         panelActividadesTop.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
 
         JLabel lblActividades = new JLabel("Actividades:");
@@ -76,27 +68,25 @@ public class VerProyectoInformes extends JFrame {
         JProgressBar barraProgreso = new JProgressBar(0, 100);
         barraProgreso.setValue(porcentaje);
         barraProgreso.setStringPainted(true);
-        barraProgreso.setPreferredSize(new Dimension(200, 20));
+        barraProgreso.setPreferredSize(new Dimension(200, 14));
 
-        // Panel que contiene la barra y el botón
         JPanel panelProgresoFinal = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        panelProgresoFinal.setBackground(fondo);
         panelProgresoFinal.add(barraProgreso);
 
-        if (porcentaje == 100) {
-            if (gestorDeProyectos.existeInformeFinal(idProyecto)) {
-                JButton btnVerInformeFinal = new JButton("Ver Informe Final");
-                btnVerInformeFinal.addActionListener(e -> {
-                    Informe informe = gestorDeProyectos.obtenerInformeFinal(idProyecto);
-                    Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                    new VerInformeTutor(proyectos, informe).setVisible(true);
-                });
-                panelProgresoFinal.add(btnVerInformeFinal);
-            }
+        if (porcentaje == 100 && gestorDeProyectos.existeInformeFinal(idProyecto)) {
+            JButton btnVerInformeFinal = new JButton("Ver Informe Final");
+            btnVerInformeFinal.addActionListener(e -> {
+                Informe informe = gestorDeProyectos.obtenerInformeFinal(idProyecto);
+                Proyectos proyectos = new Proyectos(gestorDeProyectos);
+                new VerInformeTutor(proyectos, informe, VerProyectoInformes.this).setVisible(true);
+            });
+            panelProgresoFinal.add(btnVerInformeFinal);
         }
 
         panelActividadesTop.add(panelProgresoFinal, BorderLayout.EAST);
 
-        // Tabla de actividades con columna para ver informes
+        // Tabla de actividades
         String[] columnas = {"ID", "Descripción", "Finalizado", "Ver Informe"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
@@ -106,9 +96,8 @@ public class VerProyectoInformes extends JFrame {
         };
 
         for (Actividad actividad : actividades) {
-            boolean requiere = actividad.requiereInforme();
             String celdaInforme;
-            if (!requiere) {
+            if (!actividad.requiereInforme()) {
                 celdaInforme = "Esta actividad no requiere informe";
             } else if (actividad.getIdInforme() > 0) {
                 celdaInforme = "Ver Informe";
@@ -119,14 +108,22 @@ public class VerProyectoInformes extends JFrame {
             modelo.addRow(new Object[]{
                     actividad.getIdActividad(),
                     actividad.descripcion(),
-                    actividad.finalizado() ? "Si" : "No",
+                    actividad.finalizado() ? "Sí" : "No",
                     celdaInforme
             });
         }
 
         JTable tabla = new JTable(modelo);
-        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tabla.setRowHeight(60);
+        tabla.setRowHeight(40);
+        tabla.setShowGrid(false);
+        tabla.setIntercellSpacing(new Dimension(0, 0));
+        tabla.setSelectionBackground(new Color(184, 207, 229));
+        tabla.setBackground(new Color(0xE0E0E0));
+
+        tabla.getTableHeader().setBackground(new Color(64, 64, 64));
+        tabla.getTableHeader().setForeground(Color.WHITE);
+        tabla.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
+        ((DefaultTableCellRenderer) tabla.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.LEFT);
 
         tabla.getColumnModel().getColumn(0).setMinWidth(0);
         tabla.getColumnModel().getColumn(0).setMaxWidth(0);
@@ -136,9 +133,12 @@ public class VerProyectoInformes extends JFrame {
         tabla.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(), actividades, gestorDeProyectos));
 
         JScrollPane scroll = new JScrollPane(tabla);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
 
+        // Centro
         JPanel centro = new JPanel();
         centro.setLayout(new BoxLayout(centro, BoxLayout.Y_AXIS));
+        centro.setBackground(fondo);
         centro.add(panelDetallesPlan);
         centro.add(panelActividadesTop);
         centro.add(scroll);
@@ -146,6 +146,21 @@ public class VerProyectoInformes extends JFrame {
         add(centro, BorderLayout.CENTER);
 
         setVisible(true);
+    }
+
+    private void addLabelConEstilo(JPanel panel, String titulo, String valor) {
+        JLabel lblTitulo = new JLabel(titulo);
+        lblTitulo.setFont(lblTitulo.getFont().deriveFont(Font.BOLD));
+        panel.add(lblTitulo);
+
+        JLabel lblValor = new JLabel(valor);
+        panel.add(lblValor);
+    }
+
+    @Override
+    public void informeValorado() {
+        dispose(); // Cierra esta ventana
+        new VerProyectoInformes(gestorDeProyectos, idProyecto); // La vuelve a abrir actualizada
     }
 
     class ButtonRenderer extends JButton implements javax.swing.table.TableCellRenderer {
@@ -163,16 +178,17 @@ public class VerProyectoInformes extends JFrame {
             } else {
                 JLabel label = new JLabel(value.toString());
                 label.setOpaque(true);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
                 return label;
             }
         }
     }
 
     class ButtonEditor extends DefaultCellEditor {
-        private JButton button;
-        private List<Actividad> actividades;
+        private final JButton button;
+        private final List<Actividad> actividades;
+        private final GestorDeProyectos gestorDeProyectos;
         private int currentRow;
-        private GestorDeProyectos gestorDeProyectos;
 
         public ButtonEditor(JCheckBox checkBox, List<Actividad> actividades, GestorDeProyectos gestorDeProyectos) {
             super(checkBox);
@@ -185,7 +201,7 @@ public class VerProyectoInformes extends JFrame {
                     Informe informe = gestorDeProyectos.obtenerInforme(act.getIdInforme());
                     if (informe != null) {
                         Proyectos proyectos = new Proyectos(gestorDeProyectos);
-                        new VerInformeTutor(proyectos, informe).setVisible(true);
+                        new VerInformeTutor(proyectos, informe, VerProyectoInformes.this).setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(button, "No se encontró el informe asociado.");
                     }

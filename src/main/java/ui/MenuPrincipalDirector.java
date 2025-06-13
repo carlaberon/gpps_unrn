@@ -18,7 +18,7 @@ public class MenuPrincipalDirector extends JFrame {
         setLocationRelativeTo(null); // Centra la ventana en la pantalla
 
         // Crear botones
-        JButton aprobarBtn = new JButton("Aprobar proyectos");
+        JButton aprobarBtn = new JButton("Evaluar proyectos");
         JButton verListadoBtn = new JButton("Ver Listado de Proyectos");
 
         // Agregar listeners
@@ -39,7 +39,8 @@ public class MenuPrincipalDirector extends JFrame {
         // Panel de botones con espacio y centrado
         JPanel botonesPanel = new JPanel();
         botonesPanel.setLayout(new BoxLayout(botonesPanel, BoxLayout.Y_AXIS));
-        botonesPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Espacio alrededor
+        botonesPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        botonesPanel.setBackground(new Color(0xBFBFBF)); // Fondo gris
 
         aprobarBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         verListadoBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -48,13 +49,11 @@ public class MenuPrincipalDirector extends JFrame {
         botonesPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espacio entre botones
         botonesPanel.add(verListadoBtn);
 
-        // Panel contenedor para centrar en toda la ventana
+        // Panel contenedor
         JPanel container = new JPanel(new GridBagLayout());
+        container.setBackground(new Color(0xBFBFBF)); // Fondo gris
         container.add(botonesPanel);
 
         add(container);
     }
-
-
 }
-

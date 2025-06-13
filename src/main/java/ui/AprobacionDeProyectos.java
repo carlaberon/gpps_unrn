@@ -4,7 +4,9 @@ import model.GestorDeProyectos;
 import model.Proyecto;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.List;
 
@@ -19,6 +21,9 @@ public class AprobacionDeProyectos extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        // Pinta el fondo del frame
+        getContentPane().setBackground(new Color(0xBFBFBF));
 
         // Obtener proyectos no aprobados
         List<Proyecto> proyectos = gestorDeProyectos.obtenerProyectosSinAprobar();
@@ -40,12 +45,32 @@ public class AprobacionDeProyectos extends JFrame {
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabla.setRowHeight(25);
 
-        // Ocultar ID visualmente
+        // Pinta el fondo de la tabla
+        tabla.setBackground(new Color(0xE0E0E0));
+        tabla.setGridColor(new Color(0x555555)); // Color más oscuro para las líneas
+
+        // Pinta solo las líneas horizontales y con mayor grosor
+        tabla.setShowGrid(true);
+        tabla.setShowVerticalLines(false);
+        tabla.setIntercellSpacing(new Dimension(0, 2)); // Espacio vertical entre celdas para remarcar líneas horizontales
+
+        // Ocultar ID visualmente (columna 0)
         tabla.getColumnModel().getColumn(0).setMinWidth(0);
         tabla.getColumnModel().getColumn(0).setMaxWidth(0);
         tabla.getColumnModel().getColumn(0).setWidth(0);
 
+        // Remarcar cabecera con fondo oscuro y letra blanca negrita
+        JTableHeader header = tabla.getTableHeader();
+        header.setBackground(new Color(0x3A3A3A));
+        header.setForeground(Color.WHITE);
+        header.setFont(header.getFont().deriveFont(Font.BOLD));
+        header.setBorder(new LineBorder(new Color(0x222222), 2)); // borde más marcado en el header
+
         JScrollPane scroll = new JScrollPane(tabla);
+        scroll.getViewport().setBackground(new Color(0xBFBFBF)); // Fondo del área visible del scroll igual que frame
+
+        // Borde visible y oscuro alrededor del JScrollPane
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(0x333333), 2));
 
         // Botones
         JButton btnVer = new JButton("Ver proyecto");
@@ -142,20 +167,23 @@ public class AprobacionDeProyectos extends JFrame {
         // Panel inferior con distribución personalizada
         JPanel panelInferior = new JPanel(new BorderLayout());
         panelInferior.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelInferior.setBackground(new Color(0xBFBFBF)); // mismo color fondo
 
         panelInferior.add(btnVer, BorderLayout.WEST);
 
         JPanel panelDerecha = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelDerecha.setBackground(new Color(0xBFBFBF)); // mismo color fondo
         panelDerecha.add(btnDenegar);
         panelDerecha.add(btnAprobar);
         panelInferior.add(panelDerecha, BorderLayout.EAST);
 
         // Agregar al frame
-        add(new JLabel("Seleccione un proyecto pendiente de aprobación:"), BorderLayout.NORTH);
+        JLabel etiqueta = new JLabel("Seleccione un proyecto pendiente de aprobación:");
+        etiqueta.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(etiqueta, BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 }
-
