@@ -299,8 +299,9 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
         String sqlPlan = "UPDATE planes SET estado_aprobacion = 1 WHERE id_proyecto = ?";
         String sqlProyecto = "UPDATE proyectos SET estado = 1 WHERE id_proyecto = " +
                 "?";
-        String sqlProyectoConEstudiante = "UPDATE proyectos SET estado_proyecto = 'EN CURSO' WHERE id_proyecto = " +
+        String sqlProyecto1 = "UPDATE proyectos SET estado_proyecto = 'INACTIVO' WHERE id_proyecto = " +
                 "?";
+
 
         Estudiante existeEstudiante = obtenerEstudianteAsignado(idProyecto);
 
@@ -317,12 +318,12 @@ public class ServicioDePersistenciaGestionProyectos implements GestorDeProyectos
                 stmtProyecto.setInt(1, idProyecto);
                 stmtProyecto.executeUpdate();
             }
-            if (existeEstudiante != null) {
-                try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyectoConEstudiante)) {
-                    stmtProyecto.setInt(1, idProyecto);
-                    stmtProyecto.executeUpdate();
-                }
+            // Actualiza el estado_proyecto del proyecto relacionado
+            try (PreparedStatement stmtProyecto = conn.prepareStatement(sqlProyecto1)) {
+                stmtProyecto.setInt(1, idProyecto);
+                stmtProyecto.executeUpdate();
             }
+
         } catch (Exception e) {
             throw new RuntimeException("Problema con la persistencia", e);
         }
